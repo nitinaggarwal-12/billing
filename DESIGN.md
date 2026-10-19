@@ -156,6 +156,9 @@ The end user uploads clinical files via the HTML5 Multi-File Drag-and-Drop & Fil
      - **`ISA*` / `CLM*` / `SV1*HC:` (`X12_837P_EDI_CLAIM`)**: Parsed via `_extract_837p_or_text_claim` extracting `DTP*472*D8*YYYYMMDD` Date of Service, `HI*` ICD-10-CM diagnosis pointers, and `SV1*HC:<code>:<mod>*<charge>*UN*<units>` billed lines.
 2. **Nodes 1–5 — Line-by-Line Discrepancy Reconciliation Matrix (`#upload-discrepancy-table`)**:
    - Scrubs all 18 HIPAA Safe Harbor PHI identifiers (`Node 1`), routes to `AMA_CPT_2026` vs. `AMA_CPT_2027` (`Node 3`), evaluates deterministic NCCI Chapter 7 PTP/MUE/MPPR rules (`Node 4`), and produces an explicit `discrepancies` array comparing *What Uploaded Docs Prove* against *What Billing 837P Coded* with exact dollar recovery (`+$3,935.55` / `+$3,574.74` across the 5-file sample packet).
+3. **Rule 25H — Zero-Blank-Space Viewport, Card & Table-Cell Density Architecture**:
+   - **Zero Intra-Card Stretch Gaps**: `.section-card` uses `justify-content: flex-start; gap: 10px;` so side-by-side `.two-col-grid` cards never stretch empty whitespace between headers and footers. Paired columns are balanced with live clinical telemetry panels (`#ptp-pair-mue-telemetry` in Workspace 2, `#mac-lcd-guardrails-list` in Workspace 4, and uniform 44px modality telemetry strips across all 5 `.extracted-file-card` elements in Workspace 3).
+   - **100% Viewport Vertical Fill (`panelBottom >= 860px`)**: Workspace 2 includes a 4-card NCCI Chapter 7 KPI strip and the complete **16-Pair NCCI Chapter 7 Urology PTP Bundling & Modifier Matrix (`#ptp-full-matrix-tbody`)**; Workspace 5 includes a 4-card CMS PUF KPI strip, **16 visual peer comparison progress bars (`.peer-progress-track`)** inside Columns 1–6, and a 2-column bottom grid pairing the **7-Locality Medicare GPCI Matrix (`#gpci-localities-tbody`)** with the **7-Row Node 6 Continuous Learning HITL & X12 835 Remittance Log (`#hitl-feedback-tbody`)**.
 
 ---
 
@@ -176,3 +179,4 @@ python3 app.py
 python3 tests/test_e2e_forensic.py
 node scripts/stop_forensic_gate.mjs
 ```
+

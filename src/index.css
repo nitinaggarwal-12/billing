@@ -75,3 +75,35 @@ table.table-fixed tbody td,
   overflow-wrap: break-word;
   word-break: break-word;
 }
+
+/* Rule 25H: Zero Internal Card Blank-Space & High-Density Flex Packing */
+.section-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 10px;
+  min-width: 0;
+}
+
+.extracted-file-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 6px;
+  min-width: 0;
+}
+
+.peer-progress-track {
+  width: 100%;
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 99px;
+  overflow: hidden;
+  margin: 4px 0;
+}
+
+.peer-progress-fill {
+  height: 100%;
+  border-radius: 99px;
+}
+

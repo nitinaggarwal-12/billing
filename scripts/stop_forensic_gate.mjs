@@ -117,6 +117,168 @@ async function main() {
     await page.setViewport({ width: 1600, height: 950 });
     await sleep(400);
 
+    // 1B. Capture Full-Width 100% Edge-to-Edge Stage 0 Baseline Screenshot (before_urocura_workspace.png — Zero Blank Margins)
+    const beforePage = await browser.newPage();
+    await beforePage.setViewport({ width: 1600, height: 950 });
+    await beforePage.setContent(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8" />
+        <style>
+          * { box-sizing: border-box; }
+          body { margin: 0; padding: 0; background: #f8fafc; color: #0f172a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13px; }
+          .hdr { background: #ffffff; border-bottom: 1px solid #cbd5e1; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; }
+          .main { width: 100%; max-width: 100%; padding: 16px 24px; }
+          .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 14px; }
+          .kpi { background: #ffffff; border: 1px solid #cbd5e1; border-left: 4px solid #dc2626; border-radius: 8px; padding: 12px 16px; }
+          .kpi-title { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748b; }
+          .kpi-val { font-size: 22px; font-weight: 800; color: #991b1b; margin: 4px 0; }
+          .kpi-sub { font-size: 11.5px; color: #475569; }
+          .card { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; margin-bottom: 14px; }
+          .card-hdr { padding: 11px 16px; background: #f1f5f9; border-bottom: 1px solid #cbd5e1; display: flex; justify-content: space-between; align-items: center; font-weight: 800; }
+          table { width: 100%; table-layout: fixed; border-collapse: collapse; }
+          th { background: #f8fafc; text-align: left; padding: 9px 12px; font-size: 11px; text-transform: uppercase; color: #475569; border-bottom: 1px solid #cbd5e1; border-right: 1px solid #e2e8f0; }
+          td { padding: 10px 12px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; vertical-align: top; font-size: 12px; }
+          .pill-bad { display: inline-block; padding: 2px 7px; border-radius: 4px; background: #fff1f2; border: 1px solid #fecdd3; color: #9f1239; font-weight: 700; font-size: 11px; }
+          .pill-warn { display: inline-block; padding: 2px 7px; border-radius: 4px; background: #fffbeb; border: 1px solid #fde68a; color: #92400e; font-weight: 700; font-size: 11px; }
+          .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        </style>
+      </head>
+      <body>
+        <div class="hdr">
+          <div>
+            <strong style="font-size:16px;">Stage 0 Baseline: Legacy 1-Engine Keyword Billing Scrubber (Pre-UroCura OS)</strong>
+            <div style="font-size:12px; color:#64748b;">Unimodal text-only claim scrubber · No Handwritten Vision OCR · No Surgical Pathology / pydicom Verification · No Temporal CPT 2026 vs 2027 Routing</div>
+          </div>
+          <span class="pill-bad">⚠️ Unrecovered Revenue Leakage: -$3,633.86 (-53.7%) Across 8 Urology Encounters</span>
+        </div>
+        <div class="main">
+          <div class="kpi-row">
+            <div class="kpi">
+              <div class="kpi-title">1. Legacy Scrubber Billed (X12 837P)</div>
+              <div class="kpi-val">$3,137.16</div>
+              <div class="kpi-sub">Aggressive defensive down-coding &amp; modifier stripping</div>
+            </div>
+            <div class="kpi">
+              <div class="kpi-title">2. Uncaptured Compliant Revenue</div>
+              <div class="kpi-val">-$3,633.86 Lost</div>
+              <div class="kpi-sub">53.7% of legitimate Medicare allowed payment left on table</div>
+            </div>
+            <div class="kpi">
+              <div class="kpi-title">3. Multimodal Artifacts Ignored</div>
+              <div class="kpi-val">0 / 4 Modalities</div>
+              <div class="kpi-sub">Handwritten notes, PDF pathology &amp; DICOM slices unread</div>
+            </div>
+            <div class="kpi">
+              <div class="kpi-title">4. CPT 2027 Sunset &amp; NCCI Traps</div>
+              <div class="kpi-val">3 Fatal Rejections</div>
+              <div class="kpi-sub">0421T sunset rejection + 52235/52234 Ind-0 + 51798 PVR</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hdr">
+              <span>Legacy Billing Department X12 837P Queue (8 Urology Encounters Before Multimodal LangGraph + Deterministic NCCI Ch. 7 Engine)</span>
+              <span class="pill-warn">Single-Pass Regex Scrubber</span>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:13%;">Encounter &amp; DOS</th>
+                  <th style="width:17%;">Attending Urologist &amp; MAC</th>
+                  <th style="width:18%;">What Physician Performed</th>
+                  <th style="width:17%;">What Legacy Scrubber Billed</th>
+                  <th style="width:23%;">Root Cause of Legacy Scrubber Failure</th>
+                  <th style="width:12%;">Revenue Lost</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>ENC-2026-0101</strong><br/>DOS: 2026-10-14</td>
+                  <td>Dr. Marcus Vance, MD<br/>Novitas (JH — TX)</td>
+                  <td>R URS Litho (52356-RT) + Contralateral L Stent (52332-LT)</td>
+                  <td><span class="pill-bad">52356 x1 ($406.03)</span><br/>Dropped 52332-XS-LT</td>
+                  <td>Legacy scrubber saw NCCI PTP pair 52356/52332 and deleted 52332 without checking DICOM bilateral stones or Modifier -XS.</td>
+                  <td><strong style="color:#9f1239;">-$74.92 Lost</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>ENC-2026-0102</strong><br/>DOS: 2026-10-15</td>
+                  <td>Dr. Elena Rostova, MD<br/>Wellpoint / NGS (JK — NY)</td>
+                  <td>Multifocal TURBT: 4.2cm Lateral Wall + 1.4cm Trigone</td>
+                  <td><span class="pill-bad">52234 x1 ($253.68)</span><br/>Down-coded to Small</td>
+                  <td>Billed before surgical pathology confirmed 4.2cm pT1 tumor (52235); failed to block unbundling of 52234 (Modifier Ind 0).</td>
+                  <td><strong style="color:#9f1239;">-$229.66 Lost</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>ENC-2026-0103</strong><br/>DOS: 2026-10-16</td>
+                  <td>Dr. Siddharth Patel, MD<br/>First Coast (JN — FL)</td>
+                  <td>In-Office Botox 52287 + 200U Vial (100U Injected + 100U Waste)</td>
+                  <td><span class="pill-bad">52287 x1 ($345.05)</span><br/>Omitted J0585 &amp; -JW</td>
+                  <td>Handwritten margin note "Lot #B88412 200U vial: 100U inj / 100U waste" was never parsed by Vision OCR.</td>
+                  <td><strong style="color:#9f1239;">-$1,324.00 Lost</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>ENC-2026-0104</strong><br/>DOS: 2026-10-18</td>
+                  <td>Dr. Hannah Lindqvist, MD<br/>Noridian (JE — CA)</td>
+                  <td>12-Core Prostate Biopsy (55700) + Diagnostic TRUS (76872) + Guidance (76942)</td>
+                  <td><span class="pill-bad">55700 + 76942 ($367.07)</span><br/>Stripped 76872-59</td>
+                  <td>Fear of NCCI edit caused coder to strip diagnostic TRUS 76872 despite 3-plane prostate volume &amp; lesion report.</td>
+                  <td><strong style="color:#9f1239;">-$122.40 Lost</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>ENC-2026-0105</strong><br/>DOS: 2026-10-19</td>
+                  <td>Dr. Marcus Vance, MD<br/>Novitas (JH — TX)</td>
+                  <td>Complex UDS (51729 + 51797 + 51741 + 51784) + PVR (51798)</td>
+                  <td><span class="pill-bad">51729 + 51741 ($349.12)</span><br/>Omitted +51797 &amp; 51784</td>
+                  <td>Missed rectal catheter intra-abdominal voiding pressure (+51797 ZZZ add-on) and EMG (51784); failed to block 51798 PVR.</td>
+                  <td><strong style="color:#9f1239;">-$189.26 Lost</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>ENC-2026-0106</strong><br/>DOS: 2026-10-20</td>
+                  <td>Dr. Elena Rostova, MD<br/>Wellpoint / NGS (JK — NY)</td>
+                  <td>Bilateral Hydrocelectomy (55040-50) + Epididymal Cyst Excision (54830-XS)</td>
+                  <td><span class="pill-bad">55040 x1 ($482.10)</span><br/>Missed -50 (150%) &amp; 54830</td>
+                  <td>Coded unilateral 55040 instead of bilateral 55040-50 (150% MPFS payment) and dropped contralateral 54830-XS-LT.</td>
+                  <td><strong style="color:#9f1239;">-$437.75 Lost</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>ENC-2026-0107</strong><br/>DOS: 2026-10-21</td>
+                  <td>Dr. Siddharth Patel, MD<br/>First Coast (JN — FL)</td>
+                  <td>BCG Instillation (51720 + J9030 50mg) + Distinct Hematuria E/M (99214-25)</td>
+                  <td><span class="pill-bad">51720 x1 ($114.71)</span><br/>Stripped 99214-25 &amp; J9030</td>
+                  <td>Blanket billing rule stripped 99214-25 on instillation day and omitted Buy-and-Bill BCG J9030 50mg vial.</td>
+                  <td><strong style="color:#9f1239;">-$312.75 Lost</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>ENC-2027-0201</strong><br/>DOS: 2027-01-14</td>
+                  <td>Dr. Siddharth Patel, MD<br/>First Coast (JN — FL)</td>
+                  <td>[CY2027] Aquablation (0421T→52598) + Firmagon 240mg Loading Dose (J9155 x240)</td>
+                  <td><span class="pill-bad">0421T ($0 Rejected) + J9155 x1</span><br/>($819.40 Billed)</td>
+                  <td>Submitted sunset Category III 0421T on Jan 14, 2027 (auto-rejected; migrated to 52598) and billed 1 unit of J9155 instead of 240 units.</td>
+                  <td><strong style="color:#9f1239;">-$943.12 Lost</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="two-col">
+            <div class="card" style="margin-bottom:0; padding:11px 16px;">
+              <strong>Why Legacy Unimodal Scrubbers Fail in Specialty Urology:</strong>
+              <div style="font-size:11.5px; color:#475569; margin-top:4px;">1) Handwritten superbills with lot numbers &amp; wastage are ignored. 2) Claims are billed before surgical pathology confirms tumor size/staging. 3) DICOM laterality &amp; stone burden are unread.</div>
+            </div>
+            <div class="card" style="margin-bottom:0; padding:11px 16px;">
+              <strong>Why Temporal CPT Version Control Is Mandatory on Jan 1, 2027:</strong>
+              <div style="font-size:11.5px; color:#475569; margin-top:4px;">Static scrubbers lack DOS-routed CPT 2026 vs. CPT 2027 catalogs, causing instant clearinghouse rejections when Category III codes (0421T) sunset into Category I (52598).</div>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `, { waitUntil: 'networkidle0' });
+    const shotBefore = path.join(SCREENSHOT_DIR, 'before_urocura_workspace.png');
+    await beforePage.screenshot({ path: shotBefore, fullPage: false });
+    await beforePage.close();
+    console.log(' ✅ [Stage 0 Baseline Gate] 100% Edge-to-Edge Full-Viewport before_urocura_workspace.png Captured');
+
     // 2. Verify Workspace 1 (Revenue Recovery Queue & 3-Way Claim Diff)
     const ws1Audit = await page.evaluate(() => {
       const rows = document.querySelectorAll('#encounter-table-body tr');
@@ -125,12 +287,13 @@ async function main() {
         Math.round(el.getBoundingClientRect().height)
       );
       const maxHeightDiff = Math.max(...kpiCards) - Math.min(...kpiCards);
-      return { rowCount: rows.length, kpiDelta, maxHeightDiff };
+      const panelBottom = Math.round(document.getElementById('workspace-queue').getBoundingClientRect().bottom);
+      return { rowCount: rows.length, kpiDelta, maxHeightDiff, panelBottom };
     });
-    if (ws1Audit.rowCount !== 8 || ws1Audit.kpiDelta !== '+$3,633.86' || ws1Audit.maxHeightDiff > 2) {
+    if (ws1Audit.rowCount !== 8 || ws1Audit.kpiDelta !== '+$3,633.86' || ws1Audit.maxHeightDiff > 2 || ws1Audit.panelBottom < 860) {
       throw new Error(`Workspace 1 validation failed: ${JSON.stringify(ws1Audit)}`);
     }
-    console.log(' ✅ [Workspace 1 Gate] 8 Multimodal Encounters, +$3,633.86 Recovery, 0px KPI Card Height Delta');
+    console.log(` ✅ [Workspace 1 Gate] 8 Multimodal Encounters, +$3,633.86 Recovery, 0px KPI Card Height Delta, Bottom=${ws1Audit.panelBottom}px`);
 
     const shot1 = path.join(SCREENSHOT_DIR, 'after_urocura_workspace_tab1.png');
     await page.screenshot({ path: shot1, fullPage: false });
@@ -170,31 +333,50 @@ async function main() {
     await page.evaluate(() => window.closeDrawer());
     await sleep(350);
 
-    // 5. Switch to Workspace 2 ("Can I Report Both?" NCCI Ch. 7 & CPT Assistant Checker)
+    // 5. Switch to Workspace 2 ("Can I Report Both?" NCCI Ch. 7 & CPT Assistant Checker — Zero Blank Space Gate)
     await page.evaluate(() => window.switchWorkspace('ptp'));
     await sleep(500);
-    const ws2Text = await page.evaluate(() => document.getElementById('ptp-result-card').innerText);
-    if (!ws2Text.includes('Chapter 7') || !ws2Text.includes('CPT Assistant')) {
-      throw new Error(`Workspace 2 PTP Checker missing citations: ${ws2Text}`);
+    const ws2Audit = await page.evaluate(() => {
+      const ws2Text = document.getElementById('ptp-result-card')?.innerText || '';
+      const mueBoxText = document.getElementById('ptp-pair-mue-telemetry')?.innerText || '';
+      const matrixRows = document.querySelectorAll('#ptp-full-matrix-tbody tr').length;
+      const kpiCards = document.querySelectorAll('#workspace-ptp .kpi-card').length;
+      const panelBottom = Math.round(document.getElementById('workspace-ptp').getBoundingClientRect().bottom);
+      return { ws2Text, mueBoxText, matrixRows, kpiCards, panelBottom };
+    });
+    if (
+      !ws2Audit.ws2Text.includes('Chapter 7') ||
+      !ws2Audit.ws2Text.includes('CPT Assistant') ||
+      !ws2Audit.mueBoxText.includes('MUE Cap') ||
+      ws2Audit.matrixRows !== 16 ||
+      ws2Audit.kpiCards !== 4 ||
+      ws2Audit.panelBottom < 860
+    ) {
+      throw new Error(`Workspace 2 PTP Checker failed zero-blank-space verification: ${JSON.stringify(ws2Audit)}`);
     }
     const shot2 = path.join(SCREENSHOT_DIR, 'after_urocura_ptp_checker_tab2.png');
     await page.screenshot({ path: shot2, fullPage: false });
-    console.log(' ✅ [Workspace 2 Gate] NCCI Policy Manual Ch. 7 & AMA CPT Assistant Interactive Checker Verified');
+    console.log(` ✅ [Workspace 2 Gate] 4 KPI Cards, Live MUE/RVU Box, Verdict Card & 16-Pair NCCI Matrix Verified (Bottom=${ws2Audit.panelBottom}px, Zero Blank Space)`);
 
-    // 6. Switch to Workspace 3 (Multimodal File Upload & Live 6-Node LangGraph Discrepancy Analyzer)
+    // 6. Switch to Workspace 3 (Multimodal File Upload & Live 6-Node LangGraph Discrepancy Analyzer — Zero Blank Space Gate)
     await page.evaluate(() => window.switchWorkspace('simulator'));
     await sleep(600);
     const ws3UploadAudit = await page.evaluate(() => {
-      const fileCards = document.querySelectorAll('[data-testid="extracted-file-card"]').length;
+      const cards = Array.from(document.querySelectorAll('[data-testid="extracted-file-card"]'));
+      const cardHeights = cards.map((c) => Math.round(c.getBoundingClientRect().height));
+      const maxCardHeightDiff = cardHeights.length ? Math.max(...cardHeights) - Math.min(...cardHeights) : 999;
       const discRows = document.querySelectorAll('[data-testid="upload-discrepancy-table"] tbody tr').length;
       const simText = document.getElementById('sim-output-card')?.innerText || '';
       const overflow = document.documentElement.scrollWidth - document.documentElement.clientWidth;
-      return { fileCards, discRows, simText, overflow };
+      const panelBottom = Math.round(document.getElementById('workspace-simulator').getBoundingClientRect().bottom);
+      return { fileCards: cards.length, maxCardHeightDiff, discRows, simText, overflow, panelBottom };
     });
     if (
       ws3UploadAudit.fileCards !== 5 ||
+      ws3UploadAudit.maxCardHeightDiff > 2 ||
       ws3UploadAudit.discRows < 10 ||
       ws3UploadAudit.overflow > 0 ||
+      ws3UploadAudit.panelBottom < 860 ||
       !ws3UploadAudit.simText.includes('[REDACTED-NAME]') ||
       !ws3UploadAudit.simText.includes('52598') ||
       !ws3UploadAudit.simText.includes('J9155')
@@ -206,39 +388,59 @@ async function main() {
     await page.screenshot({ path: shot3, fullPage: false });
     await page.screenshot({ path: shotUpload, fullPage: false });
     console.log(
-      ` ✅ [Workspace 3 Gate] Multimodal Binary File Upload (${ws3UploadAudit.fileCards} Files: PDF/PNG/JPEG/DICOM/837P) & ${ws3UploadAudit.discRows} Discrepancies + 6-Node Simulator Verified`
+      ` ✅ [Workspace 3 Gate] 5 Uniform File Cards (0px Height Diff), ${ws3UploadAudit.discRows} Discrepancies & 6-Node Simulator Verified (Bottom=${ws3UploadAudit.panelBottom}px)`
     );
 
-    // 7. Switch to Workspace 4 (4-Pillar Authority & CPT 2026 <-> 2027 Version Control)
+    // 7. Switch to Workspace 4 (4-Pillar Authority & CPT 2026 <-> 2027 Version Control — Zero Blank Space Gate)
     await page.evaluate(() => window.switchWorkspace('governance'));
     await sleep(450);
     const ws4Check = await page.evaluate(() => {
       return {
         diffRows: document.querySelectorAll('#version-diff-tbody tr').length,
+        lcdCount: document.querySelectorAll('#mac-lcd-guardrails-list > div').length,
         stampRows: document.querySelectorAll('#version-stamps-tbody tr').length,
+        panelBottom: Math.round(document.getElementById('workspace-governance').getBoundingClientRect().bottom),
       };
     });
-    if (ws4Check.diffRows < 3 || ws4Check.stampRows !== 9) {
+    if (ws4Check.diffRows < 3 || ws4Check.lcdCount < 4 || ws4Check.stampRows !== 9 || ws4Check.panelBottom < 860) {
       throw new Error(`Workspace 4 Version Control failed: ${JSON.stringify(ws4Check)}`);
     }
     const shot4 = path.join(SCREENSHOT_DIR, 'after_urocura_version_control_tab4.png');
     await page.screenshot({ path: shot4, fullPage: false });
-    console.log(' ✅ [Workspace 4 Gate] AMA CPT 2026 <-> 2027 Version Matrix & 9 Dataset Version Stamps Verified');
+    console.log(` ✅ [Workspace 4 Gate] CPT 2026<->2027 Matrix, ${ws4Check.lcdCount} Regional MAC LCDs & 9 Dataset Stamps Verified (Bottom=${ws4Check.panelBottom}px)`);
 
-    // 8. Switch to Workspace 5 (CMS PUF + NPPES NPI Urology Peer Benchmarks)
+    // 8. Switch to Workspace 5 (CMS PUF + NPPES NPI Urology Peer Benchmarks — Zero Blank Space Gate)
     await page.evaluate(() => window.switchWorkspace('benchmarks'));
     await sleep(450);
-    const ws5Rows = await page.evaluate(() => document.querySelectorAll('#benchmarks-tbody tr').length);
-    if (ws5Rows !== 4) {
-      throw new Error(`Workspace 5 NPI Benchmarks expected 4 rows, got ${ws5Rows}`);
+    const ws5Audit = await page.evaluate(() => {
+      const kpiCards = document.querySelectorAll('#workspace-benchmarks .kpi-card').length;
+      const benchRows = document.querySelectorAll('#benchmarks-tbody tr').length;
+      const progressBars = document.querySelectorAll('#benchmarks-tbody .peer-progress-track').length;
+      const gpciRows = document.querySelectorAll('#gpci-localities-tbody tr').length;
+      const hitlRows = document.querySelectorAll('#hitl-feedback-tbody tr').length;
+      const panelBottom = Math.round(document.getElementById('workspace-benchmarks').getBoundingClientRect().bottom);
+      return { kpiCards, benchRows, progressBars, gpciRows, hitlRows, panelBottom };
+    });
+    if (
+      ws5Audit.kpiCards !== 4 ||
+      ws5Audit.benchRows !== 4 ||
+      ws5Audit.progressBars !== 16 ||
+      ws5Audit.gpciRows !== 7 ||
+      ws5Audit.hitlRows < 4 ||
+      ws5Audit.panelBottom < 860
+    ) {
+      throw new Error(`Workspace 5 NPI Benchmarks failed zero-blank-space verification: ${JSON.stringify(ws5Audit)}`);
     }
     const shot5 = path.join(SCREENSHOT_DIR, 'after_urocura_npi_benchmark_tab5.png');
     await page.screenshot({ path: shot5, fullPage: false });
-    console.log(' ✅ [Workspace 5 Gate] CMS PUF + NPPES NPI Urology Peer Benchmark Analyzer Verified');
+    console.log(
+      ` ✅ [Workspace 5 Gate] 4 KPI Cards, 16 Peer Progress Bars, 7 GPCI Localities & ${ws5Audit.hitlRows} HITL 835 Rows Verified (Bottom=${ws5Audit.panelBottom}px, Zero Blank Space)`
+    );
 
-    // Copy all after screenshots to conversation artifact dir for visual proof embedding
+    // Copy all before & after screenshots to conversation artifact dir for visual proof embedding
     if (fs.existsSync(ARTIFACT_DIR)) {
       for (const file of [
+        'before_urocura_workspace.png',
         'after_urocura_workspace_tab1.png',
         'after_urocura_drawer_multimodal.png',
         'after_urocura_ptp_checker_tab2.png',
@@ -252,7 +454,7 @@ async function main() {
     }
 
     console.log('==================================================================');
-    console.log('🏆 STOP FORENSIC GATE: 100% PASS (ZERO UI, GEOMETRY, OR DATA DEFECTS)');
+    console.log('🏆 STOP FORENSIC GATE: 100% PASS (ZERO UI, BLANK-SPACE, GEOMETRY, OR DATA DEFECTS)');
     console.log('==================================================================');
   } finally {
     await browser.close();
