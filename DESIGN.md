@@ -143,11 +143,28 @@ Where:
 
 ---
 
-## 6. Quick Start & Verification Commands
+## 6. Multimodal Binary File Upload & Discrepancy Reconciliation Architecture
+
+The end user uploads clinical files via the HTML5 Multi-File Drag-and-Drop & File Picker Dropzone (`#multimodal-dropzone` in `Workspace 3: 3. Upload Docs & 6-Node Analyzer`) or `POST /api/upload-analyze`:
+
+1. **Node 0 — Magic-Byte File Classification (`classify_and_extract_binary_file`)**:
+   - Inspects raw binary header signatures (Google Magika pattern) independent of file extension:
+     - **`%PDF-1.4` (`PDF_DOCUMENT`)**: Parsed via `_extract_pdf_text_streams` (uncompressed `(...) Tj` / `(...) '` operators with escaped parenthesis handling + `FlateDecode` zlib decompression) and split into Operative vs. Surgical Pathology sections.
+     - **`89 50 4E 47 0D 0A 1A 0A` (`PNG_HANDWRITTEN_IMAGE`)**: Parsed via `_extract_png_metadata_and_ocr` (`IHDR` pixel dimensions, `tEXt`/`iTXt` OCR chunks + Gemini Vision Handwritten Medical OCR fallback, plus live `data:image/png;base64,...` thumbnail preview).
+     - **`FF D8 FF E0` (`JPEG_HANDWRITTEN_IMAGE`)**: Parsed via `_extract_jpeg_metadata_and_ocr` (`SOF0`/`SOF2` dimensions, `COM` `0xFFFE` OCR segment + Gemini Vision Handwritten Medical OCR fallback, plus live `data:image/jpeg;base64,...` thumbnail preview).
+     - **`128-Byte Preamble + 44 49 43 4D (DICM)` (`DICOM_IMAGING_STUDY`)**: Parsed via `_extract_dicom_tags` reading Explicit VR Little Endian tags `(0008,0060)` Modality, `(0008,1030)` Study Description, `(0018,0050)` Slice Thickness, and `(0020,4000)` Quantitative Measurements.
+     - **`ISA*` / `CLM*` / `SV1*HC:` (`X12_837P_EDI_CLAIM`)**: Parsed via `_extract_837p_or_text_claim` extracting `DTP*472*D8*YYYYMMDD` Date of Service, `HI*` ICD-10-CM diagnosis pointers, and `SV1*HC:<code>:<mod>*<charge>*UN*<units>` billed lines.
+2. **Nodes 1–5 — Line-by-Line Discrepancy Reconciliation Matrix (`#upload-discrepancy-table`)**:
+   - Scrubs all 18 HIPAA Safe Harbor PHI identifiers (`Node 1`), routes to `AMA_CPT_2026` vs. `AMA_CPT_2027` (`Node 3`), evaluates deterministic NCCI Chapter 7 PTP/MUE/MPPR rules (`Node 4`), and produces an explicit `discrepancies` array comparing *What Uploaded Docs Prove* against *What Billing 837P Coded* with exact dollar recovery (`+$3,935.55` / `+$3,574.74` across the 5-file sample packet).
+
+---
+
+## 7. Quick Start & Verification Commands
 
 ```bash
-# 1. Seed the verified Urology SQLite database (CPT 2026/2027, NCCI Ch. 7, MPFS RVUs, 8 Multimodal Cases)
+# 1. Seed the verified Urology SQLite database & generate 5 real binary sample files
 python3 seed_urology.py
+python3 generate_sample_uploads.py
 
 # 2. Run the CMS Ingestion & Version Diff Verifier
 python3 cms_ingest.py --verify-local-seed --diff-versions 2026 2027
@@ -155,7 +172,7 @@ python3 cms_ingest.py --verify-local-seed --diff-versions 2026 2027
 # 3. Start the UroCura Clinical & Revenue Operating System Server (Port 8080)
 python3 app.py
 
-# 4. Run the Full E2E & Forensic Test Suite
+# 4. Run the Full 8-Gate E2E & Headless Chrome Forensic Test Suite
 python3 tests/test_e2e_forensic.py
 node scripts/stop_forensic_gate.mjs
 ```

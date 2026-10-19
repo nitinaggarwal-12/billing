@@ -181,16 +181,33 @@ async function main() {
     await page.screenshot({ path: shot2, fullPage: false });
     console.log(' ✅ [Workspace 2 Gate] NCCI Policy Manual Ch. 7 & AMA CPT Assistant Interactive Checker Verified');
 
-    // 6. Switch to Workspace 3 (Live 6-Node LangGraph Multimodal Simulator)
+    // 6. Switch to Workspace 3 (Multimodal File Upload & Live 6-Node LangGraph Discrepancy Analyzer)
     await page.evaluate(() => window.switchWorkspace('simulator'));
-    await sleep(500);
-    const ws3Text = await page.evaluate(() => document.getElementById('sim-output-card').innerText);
-    if (!ws3Text.includes('[REDACTED-NAME]') || !ws3Text.includes('52598') || !ws3Text.includes('J9155')) {
-      throw new Error(`Workspace 3 Simulator failed verification: ${ws3Text}`);
+    await sleep(600);
+    const ws3UploadAudit = await page.evaluate(() => {
+      const fileCards = document.querySelectorAll('[data-testid="extracted-file-card"]').length;
+      const discRows = document.querySelectorAll('[data-testid="upload-discrepancy-table"] tbody tr').length;
+      const simText = document.getElementById('sim-output-card')?.innerText || '';
+      const overflow = document.documentElement.scrollWidth - document.documentElement.clientWidth;
+      return { fileCards, discRows, simText, overflow };
+    });
+    if (
+      ws3UploadAudit.fileCards !== 5 ||
+      ws3UploadAudit.discRows < 10 ||
+      ws3UploadAudit.overflow > 0 ||
+      !ws3UploadAudit.simText.includes('[REDACTED-NAME]') ||
+      !ws3UploadAudit.simText.includes('52598') ||
+      !ws3UploadAudit.simText.includes('J9155')
+    ) {
+      throw new Error(`Workspace 3 Upload & Simulator failed verification: ${JSON.stringify(ws3UploadAudit)}`);
     }
     const shot3 = path.join(SCREENSHOT_DIR, 'after_urocura_simulator_tab3.png');
+    const shotUpload = path.join(SCREENSHOT_DIR, 'after_urocura_multimodal_upload_tab3.png');
     await page.screenshot({ path: shot3, fullPage: false });
-    console.log(' ✅ [Workspace 3 Gate] Live 6-Node LangGraph Simulator (PHI Redaction + CPT 2027 0421T->52598) Verified');
+    await page.screenshot({ path: shotUpload, fullPage: false });
+    console.log(
+      ` ✅ [Workspace 3 Gate] Multimodal Binary File Upload (${ws3UploadAudit.fileCards} Files: PDF/PNG/JPEG/DICOM/837P) & ${ws3UploadAudit.discRows} Discrepancies + 6-Node Simulator Verified`
+    );
 
     // 7. Switch to Workspace 4 (4-Pillar Authority & CPT 2026 <-> 2027 Version Control)
     await page.evaluate(() => window.switchWorkspace('governance'));
@@ -226,6 +243,7 @@ async function main() {
         'after_urocura_drawer_multimodal.png',
         'after_urocura_ptp_checker_tab2.png',
         'after_urocura_simulator_tab3.png',
+        'after_urocura_multimodal_upload_tab3.png',
         'after_urocura_version_control_tab4.png',
         'after_urocura_npi_benchmark_tab5.png',
       ]) {

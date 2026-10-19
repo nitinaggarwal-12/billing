@@ -712,6 +712,38 @@
       display: none;
     }
 
+    .upload-dropzone {
+      border: 2px dashed #93c5fd;
+      background: linear-gradient(180deg, #f8fafc 0%, #eff6ff 100%);
+      border-radius: 10px;
+      padding: 18px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      margin-bottom: 14px;
+    }
+
+    .upload-dropzone:hover, .upload-dropzone.drag-active {
+      border-color: var(--primary);
+      background: #dbeafe;
+    }
+
+    .extracted-files-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .extracted-file-card {
+      background: #f8fafc;
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      padding: 10px 12px;
+      min-width: 0;
+      overflow: hidden;
+    }
+
     @media (max-width: 1100px) {
       .workspace-tabs-bar {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -778,8 +810,8 @@
         <span class="tab-badge">16 Pairs</span>
       </button>
       <button type="button" class="workspace-tab-btn" data-tab="simulator" id="tab-btn-simulator" onclick="switchWorkspace('simulator')">
-        <span class="truncate">3. Live 6-Node LangGraph Simulator</span>
-        <span class="tab-badge">2026/27</span>
+        <span class="truncate">3. Upload Docs &amp; 6-Node Analyzer</span>
+        <span class="tab-badge">PDF/PNG/DCM</span>
       </button>
       <button type="button" class="workspace-tab-btn" data-tab="governance" id="tab-btn-governance" onclick="switchWorkspace('governance')">
         <span class="truncate">4. 4-Pillar &amp; CPT 2026 ↔ 2027 Control</span>
@@ -865,7 +897,8 @@
             <option value="CODER_VERIFIED">Coder Verified &amp; Released</option>
           </select>
         </div>
-        <div>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <button type="button" class="btn-primary" id="btn-jump-uploader" onclick="switchWorkspace('simulator')">📤 Upload PDF / PNG / JPEG / DICOM / 837P</button>
           <button type="button" class="btn-secondary" onclick="resetQueueFilters()">↺ Reset Filters</button>
         </div>
       </div>
@@ -991,9 +1024,74 @@
     </section>
 
     <!-- ======================================================================
-         WORKSPACE 3: LIVE 6-NODE LANGGRAPH MULTIMODAL CLAIM SIMULATOR
+         WORKSPACE 3: MULTIMODAL FILE UPLOAD & LIVE 6-NODE LANGGRAPH ANALYZER
          ====================================================================== -->
     <section id="workspace-simulator" class="workspace-panel" data-testid="workspace-simulator">
+      <!-- STEP 1: MULTIMODAL BINARY FILE UPLOAD & DISCREPANCY RECONCILIATION STUDIO -->
+      <div class="section-card" id="multimodal-upload-studio" data-testid="multimodal-upload-studio" style="margin-bottom: 16px;">
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+            <div>
+              <h2 class="section-title" style="margin-bottom:2px;">
+                <span>📤 Multimodal Clinical Packet Upload &amp; Line-by-Line Discrepancy Analyzer (.PDF · .PNG · .JPG/.JPEG · .DCM DICOM · .837P EDI)</span>
+              </h2>
+              <p class="section-desc" style="margin-bottom:0;">
+                Drop or select multiple clinical files from your computer. Node 0 inspects binary magic headers (<code>%PDF-1.4</code>, <code>89 50 4E 47</code> PNG, <code>FF D8 FF E0</code> JPEG, <code>DICM</code> Part-10 DICOM, <code>ANSI X12 837P</code>), Node 1 scrubs 18 HIPAA Safe Harbor PHI identifiers, Node 2 extracts text/OCR/tags, and Nodes 3–5 reconcile every clinical fact against the Billing Dept's 837P claim.
+              </p>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button type="button" class="btn-emerald" id="btn-load-binary-samples" onclick="loadAndAnalyzeSampleBinaryPacket()">
+                📂 Load &amp; Analyze 5 Real Binary Sample Files (.PDF + .PNG + .JPG + .DCM + .837P)
+              </button>
+              <button type="button" class="btn-secondary" onclick="document.getElementById('file-upload-input').click()">
+                💻 Browse Local Files...
+              </button>
+            </div>
+          </div>
+
+          <!-- HTML5 Drag-and-Drop + File Input Zone -->
+          <div
+            id="multimodal-dropzone"
+            class="upload-dropzone"
+            data-testid="multimodal-dropzone"
+            onclick="document.getElementById('file-upload-input').click()"
+            ondragover="handleDragOver(event)"
+            ondragleave="handleDragLeave(event)"
+            ondrop="handleFileDrop(event)"
+          >
+            <input
+              type="file"
+              id="file-upload-input"
+              multiple
+              accept=".pdf,.png,.jpg,.jpeg,.dcm,.txt,.csv,.837p"
+              style="display:none;"
+              onchange="handleFileSelect(event)"
+            />
+            <div style="font-size:15px; font-weight:800; color:var(--primary-dark); margin-bottom:4px;">
+              📥 Drag &amp; Drop PDF Operative/Pathology Reports, PNG/JPEG Handwritten Superbills, DICOM (.dcm) Imaging &amp; X12 837P Claims Here
+            </div>
+            <div style="font-size:12px; color:var(--text-sub);">
+              Or click anywhere in this box to select files from disk · Raw binary streams are classified via Magic-Byte Gate &amp; HIPAA Safe Harbor PHI Redactor before analysis
+            </div>
+            <div style="margin-top:8px; display:flex; justify-content:center; gap:8px; flex-wrap:wrap; font-size:11.5px;" onclick="event.stopPropagation();">
+              <span style="color:var(--text-muted); font-weight:700;">Download Real Sample Files to Test Local Drag-and-Drop:</span>
+              <a href="/api/sample-files/operative_and_pathology_report_turbt.pdf" download style="color:var(--primary-dark); font-weight:700;">📄 operative_and_pathology_report_turbt.pdf</a>
+              <a href="/api/sample-files/handwritten_superbill_botox_52287.png" download style="color:var(--primary-dark); font-weight:700;">🖼️ handwritten_superbill_botox_52287.png</a>
+              <a href="/api/sample-files/handwritten_note_contralateral_urs.jpg" download style="color:var(--primary-dark); font-weight:700;">📸 handwritten_note_contralateral_urs.jpg</a>
+              <a href="/api/sample-files/ct_urogram_stone_study.dcm" download style="color:var(--primary-dark); font-weight:700;">🩻 ct_urogram_stone_study.dcm</a>
+              <a href="/api/sample-files/billing_dept_scrubbed_claim.837p.txt" download style="color:var(--primary-dark); font-weight:700;">🧾 billing_dept_scrubbed_claim.837p.txt</a>
+            </div>
+          </div>
+
+          <!-- Per-File Magic-Byte & Multimodal Extraction Cards -->
+          <div id="uploaded-files-extraction-grid" class="extracted-files-grid" data-testid="uploaded-files-extraction-grid"></div>
+
+          <!-- Line-by-Line Discrepancy Reconciliation Table -->
+          <div id="upload-discrepancy-table-container" data-testid="upload-discrepancy-table-container"></div>
+        </div>
+      </div>
+
+      <!-- STEP 2: INTERACTIVE 6-NODE LANGGRAPH TEXT & PARAMETER INSPECTOR -->
       <div class="two-col-grid">
         <div class="section-card">
           <div>
@@ -1001,7 +1099,7 @@
               <span>Multimodal Clinical Input &amp; Billing Dept 837P Simulator</span>
               <span class="badge badge-emerald">HIPAA Safe Harbor PHI Gate</span>
             </h2>
-            <p class="section-desc">Load a multimodal urology scenario (or enter custom notes, pathology, DICOM metrics, and DOS in 2026 vs. 2027) to watch the 6-Node LangGraph &amp; NCCI engine calculate the exact Money Left on the Table.</p>
+            <p class="section-desc">Automatically populated from your uploaded PDF/PNG/JPEG/DICOM/837P files above, or select a 1-click preset / edit text directly to re-run the 6-Node LangGraph &amp; NCCI engine.</p>
 
             <div class="preset-pills">
               <button type="button" class="preset-pill-btn active" onclick="loadSimScenario('AQUA_2027')">1. [CPT 2027] Aquablation 0421T→52598 + Degarelix 240mg</button>
@@ -1680,7 +1778,237 @@
     }
 
     // ========================================================================
-    // WORKSPACE 3: LIVE 6-NODE LANGGRAPH MULTIMODAL SIMULATOR
+    // WORKSPACE 3A: MULTIMODAL BINARY FILE UPLOAD & DISCREPANCY ANALYZER
+    // ========================================================================
+    function handleDragOver(evt) {
+      evt.preventDefault();
+      evt.stopPropagation();
+      const dz = document.getElementById('multimodal-dropzone');
+      if (dz) dz.classList.add('drag-active');
+    }
+
+    function handleDragLeave(evt) {
+      evt.preventDefault();
+      evt.stopPropagation();
+      const dz = document.getElementById('multimodal-dropzone');
+      if (dz) dz.classList.remove('drag-active');
+    }
+
+    function handleFileDrop(evt) {
+      evt.preventDefault();
+      evt.stopPropagation();
+      const dz = document.getElementById('multimodal-dropzone');
+      if (dz) dz.classList.remove('drag-active');
+      if (evt.dataTransfer && evt.dataTransfer.files && evt.dataTransfer.files.length > 0) {
+        processBrowserFiles(evt.dataTransfer.files);
+      }
+    }
+
+    function handleFileSelect(evt) {
+      if (evt.target && evt.target.files && evt.target.files.length > 0) {
+        processBrowserFiles(evt.target.files);
+      }
+    }
+
+    function readFileAsBase64(fileObj) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const dataUrl = String(reader.result || '');
+          const b64 = dataUrl.includes(',') ? dataUrl.split(',', 2)[1] : dataUrl;
+          resolve({
+            filename: fileObj.name,
+            size_bytes: fileObj.size,
+            mime_type: fileObj.type || 'application/octet-stream',
+            content_base64: b64
+          });
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(fileObj);
+      });
+    }
+
+    async function processBrowserFiles(fileList) {
+      const filesArr = Array.from(fileList || []);
+      if (!filesArr.length) return;
+      showToast(`📤 Ingesting ${filesArr.length} binary file(s) via Node 0 Magic-Byte Gate & Node 1 PHI Redactor...`);
+      const encodedFiles = await Promise.all(filesArr.map(readFileAsBase64));
+      await submitUploadedFilesForDiscrepancyAnalysis(encodedFiles, false);
+    }
+
+    async function loadAndAnalyzeSampleBinaryPacket(silentBootstrap = false) {
+      try {
+        const res = await fetch('/api/sample-files');
+        if (!res.ok) return;
+        const data = await res.json();
+        const sampleFiles = (data.sample_files || []).map(f => ({
+          filename: f.filename,
+          content_base64: f.content_base64
+        }));
+        if (!sampleFiles.length) return;
+        await submitUploadedFilesForDiscrepancyAnalysis(sampleFiles, silentBootstrap);
+      } catch (e) {
+        console.warn('Sample binary packet load warning:', e);
+      }
+    }
+
+    async function submitUploadedFilesForDiscrepancyAnalysis(encodedFiles, silentBootstrap = false) {
+      try {
+        const res = await fetch('/api/upload-analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            files: encodedFiles,
+            facility_type: document.getElementById('sim-facility')?.value || 'NON_FACILITY',
+            locality_code: document.getElementById('sim-locality')?.value || '11',
+            is_qp: true
+          })
+        });
+        if (!res.ok) return;
+        const result = await res.json();
+        renderUploadDiscrepancyAnalysis(result, silentBootstrap);
+      } catch (e) {
+        console.warn('Upload analyze error:', e);
+      }
+    }
+
+    function renderUploadDiscrepancyAnalysis(result, silentBootstrap = false) {
+      if (!result || !result.ok) return;
+      const parsedFiles = result.parsed_files || [];
+      const discrepancies = result.discrepancies || [];
+      const audit = result.audit || {};
+
+      // 1. Render Per-File Magic-Byte & Multimodal Extraction Cards
+      const gridEl = document.getElementById('uploaded-files-extraction-grid');
+      if (gridEl) {
+        gridEl.innerHTML = parsedFiles.map(f => {
+          let fmtBadge = 'badge-blue';
+          if (f.detected_format === 'PDF_DOCUMENT') fmtBadge = 'badge-blue';
+          else if (f.detected_format.includes('IMAGE')) fmtBadge = 'badge-amber';
+          else if (f.detected_format === 'DICOM_IMAGING_STUDY') fmtBadge = 'badge-emerald';
+          else if (f.detected_format === 'X12_837P_EDI_CLAIM') fmtBadge = 'badge-rose';
+
+          const thumbHtml = f.preview_data_uri
+            ? `<div style="margin:6px 0; display:flex; align-items:center; gap:8px; background:#fffdf5; border:1px solid #fde68a; border-radius:6px; padding:6px;">
+                 <img src="${f.preview_data_uri}" alt="${f.filename}" style="width:78px; height:32px; object-fit:cover; border-radius:4px; border:1px solid #cbd5e1; flex-shrink:0;" />
+                 <span style="font-size:11px; color:#92400e; font-weight:700;">Vision OCR Confidence: ${((f.ocr_confidence || 0.96) * 100).toFixed(1)}% (${f.dimensions || '220x70px'})</span>
+               </div>`
+            : '';
+
+          return `
+            <div class="extracted-file-card" data-testid="extracted-file-card">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; margin-bottom:4px;">
+                <span class="truncate" style="font-weight:800; font-size:12.5px; color:var(--text-main);">${f.filename}</span>
+                <span class="badge ${fmtBadge}">${f.detected_format}</span>
+              </div>
+              <div style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">
+                <strong>Magic Bytes:</strong> <code>${f.magic_signature}</code> · <strong>Size:</strong> ${f.size_bytes} B · <strong>PHI Scrubbed:</strong> ${f.phi_redactions || 0}
+              </div>
+              <div style="font-size:11px; color:var(--primary-dark); font-weight:700; margin-bottom:5px;">
+                ⚙️ ${f.parser_engine}
+              </div>
+              ${thumbHtml}
+              <div class="leading-tight break-words" style="font-size:11.5px; color:var(--text-sub); background:#ffffff; border:1px solid var(--border-light); border-radius:6px; padding:6px 8px; max-height:84px; overflow-y:auto; font-family:monospace;">
+                ${(f.clean_text_preview || '').replace(/</g, '&lt;')}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // 2. Render Line-by-Line Discrepancy Reconciliation Matrix
+      const tableContainer = document.getElementById('upload-discrepancy-table-container');
+      if (tableContainer) {
+        const rowsHtml = discrepancies.map(d => {
+          const deltaVal = Number(d.revenue_delta_usd || 0);
+          const deltaHtml = deltaVal > 0
+            ? `<span style="font-weight:800; font-size:13.5px; color:#047857;">+${formatUsd(deltaVal)}</span>`
+            : `<span class="badge badge-blue">LCD Guardrail</span>`;
+          return `
+            <tr>
+              <td>
+                <div style="font-weight:800; color:var(--text-main);">${d.discrepancy_id}</div>
+                <span class="badge ${d.severity === 'CRITICAL_DENIAL_PREVENTION' ? 'badge-rose' : 'badge-amber'}">${d.category}</span>
+              </td>
+              <td class="leading-tight break-words" style="font-size:11.5px; font-weight:700; color:var(--primary-dark);">
+                ${d.source_modality}
+              </td>
+              <td class="leading-tight break-words" style="font-size:11.5px; color:var(--text-main);">
+                ${d.what_uploaded_docs_prove}
+              </td>
+              <td class="leading-tight break-words" style="font-size:11.5px; color:var(--rose-text); font-weight:700;">
+                ${d.what_billing_837p_coded}
+              </td>
+              <td class="leading-tight break-words" style="font-size:11.5px;">
+                <div style="font-weight:800; color:#047857;">${d.ai_verified_correction}</div>
+                <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">${d.regulatory_citation}</div>
+              </td>
+              <td style="font-variant-numeric:tabular-nums;">
+                ${deltaHtml}
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        tableContainer.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px; padding:10px 14px; background:var(--emerald-bg); border:1px solid var(--emerald-border); border-radius:8px;">
+            <div>
+              <strong style="font-size:13.5px; color:var(--emerald-text);">
+                ✅ Multimodal Packet Reconciled: ${parsedFiles.length} Binary Files Ingested · ${discrepancies.length} Coding &amp; Revenue Discrepancies Detected
+              </strong>
+              <div style="font-size:11.5px; color:var(--text-sub);">
+                Temporal Router: <strong>${audit.version_stamp || 'AMA_CPT_2027'}</strong> · HIPAA Safe Harbor Scrubbed: <strong>${result.total_phi_redactions || 0} PHI Identifiers</strong> · Extracted ICD-10-CM: <strong>${(audit.extracted_icd10 || []).join(', ')}</strong>
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Billed 837P (${formatUsd(audit.billed_allowed_usd)}) → AI Verified (${formatUsd(audit.verified_allowed_usd)})</div>
+              <div style="font-size:18px; font-weight:800; color:#047857;">Net Discrepancy Recovery: +${formatUsd(audit.money_left_on_table_usd)}</div>
+            </div>
+          </div>
+
+          <div class="data-grid-card">
+            <table class="gp-blue-grid-table table-fixed" data-testid="upload-discrepancy-table">
+              <thead>
+                <tr>
+                  <th style="width:15%;">Discrepancy &amp; Type</th>
+                  <th style="width:16%;">Source File &amp; Modality</th>
+                  <th style="width:22%;">What Uploaded Docs Prove</th>
+                  <th style="width:16%;">What Billing 837P Coded</th>
+                  <th style="width:21%;">AI-Verified Fix &amp; Warrant</th>
+                  <th style="width:10%;">+$Δ Impact</th>
+                </tr>
+              </thead>
+              <tbody>${rowsHtml}</tbody>
+            </table>
+          </div>
+        `;
+      }
+
+      // 3. Sync extracted multimodal content into the 6-Node LangGraph Simulator inputs below
+      if (!silentBootstrap) {
+        const opTexts = parsedFiles.map(f => f.operative_text || f.handwritten_ocr_text || '').filter(Boolean).join('\n\n');
+        const pathTexts = parsedFiles.map(f => f.pathology_text || '').filter(Boolean).join('\n\n');
+        const dicomTexts = parsedFiles.map(f => f.dicom_summary || '').filter(Boolean).join('\n\n');
+        const billedTokens = [];
+        parsedFiles.forEach(f => {
+          (f.billed_codes || []).forEach(bc => {
+            billedTokens.push(`${bc.code}:${bc.units || 1}`);
+          });
+        });
+
+        if (audit.date_of_service) document.getElementById('sim-dos').value = audit.date_of_service;
+        if (opTexts) document.getElementById('sim-note').value = opTexts;
+        if (pathTexts) document.getElementById('sim-path').value = pathTexts;
+        if (dicomTexts) document.getElementById('sim-dicom').value = dicomTexts;
+        if (billedTokens.length) document.getElementById('sim-billed').value = billedTokens.join(', ');
+
+        renderSimulatorAuditCard(audit);
+        showToast(`✅ Analyzed ${parsedFiles.length} binary files: Found ${discrepancies.length} discrepancies (+${formatUsd(audit.money_left_on_table_usd)} recovery)`);
+      }
+    }
+
+    // ========================================================================
+    // WORKSPACE 3B: LIVE 6-NODE LANGGRAPH MULTIMODAL SIMULATOR
     // ========================================================================
     const SIM_PRESETS = {
       AQUA_2027: {
@@ -1733,40 +2061,8 @@
       runLiveSimulator();
     }
 
-    async function runLiveSimulator() {
-      const dos = document.getElementById('sim-dos').value;
-      const facility = document.getElementById('sim-facility').value;
-      const locality = document.getElementById('sim-locality').value;
-      const note = document.getElementById('sim-note').value;
-      const path = document.getElementById('sim-path').value;
-      const dicom = document.getElementById('sim-dicom').value;
-      const billedStr = document.getElementById('sim-billed').value;
-
-      const billedCodes = billedStr.split(',').map(tok => {
-        const parts = tok.trim().split(':');
-        return { code: (parts[0] || '').trim().toUpperCase(), units: Number(parts[1] || 1), modifiers: [] };
-      }).filter(x => x.code);
-
-      let data = null;
-      try {
-        const res = await fetch('/api/audit', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            date_of_service: dos,
-            facility_type: facility,
-            locality_code: locality,
-            clinical_note: note,
-            pathology_text: path,
-            dicom_summary: dicom,
-            billed_codes: billedCodes
-          })
-        });
-        if (res.ok) data = await res.json();
-      } catch (e) {}
-
+    function renderSimulatorAuditCard(data) {
       if (!data) return;
-
       const outCard = document.getElementById('sim-output-card');
       const vLines = (data.verified_lines || []).map(l => `
         <div style="padding:8px 10px; background:#f0fdf4; border:1px solid var(--emerald-border); border-radius:7px; margin-bottom:7px;">
@@ -1804,6 +2100,42 @@
           <span style="font-size:20px; font-weight:800; color:#047857;">+${formatUsd(data.money_left_on_table_usd)}</span>
         </div>
       `;
+    }
+
+    async function runLiveSimulator() {
+      const dos = document.getElementById('sim-dos').value;
+      const facility = document.getElementById('sim-facility').value;
+      const locality = document.getElementById('sim-locality').value;
+      const note = document.getElementById('sim-note').value;
+      const path = document.getElementById('sim-path').value;
+      const dicom = document.getElementById('sim-dicom').value;
+      const billedStr = document.getElementById('sim-billed').value;
+
+      const billedCodes = billedStr.split(',').map(tok => {
+        const parts = tok.trim().split(':');
+        return { code: (parts[0] || '').trim().toUpperCase(), units: Number(parts[1] || 1), modifiers: [] };
+      }).filter(x => x.code);
+
+      let data = null;
+      try {
+        const res = await fetch('/api/audit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            date_of_service: dos,
+            facility_type: facility,
+            locality_code: locality,
+            clinical_note: note,
+            pathology_text: path,
+            dicom_summary: dicom,
+            billed_codes: billedCodes
+          })
+        });
+        if (res.ok) data = await res.json();
+      } catch (e) {}
+
+      if (!data) return;
+      renderSimulatorAuditCard(data);
     }
 
     // ========================================================================
@@ -1924,6 +2256,7 @@
       renderEncounterTable();
       runPtpEvaluation();
       loadSimScenario('AQUA_2027');
+      loadAndAnalyzeSampleBinaryPacket(true);
       renderGovernanceAndBenchmarks();
     }
 

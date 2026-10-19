@@ -24,5 +24,8 @@
    - **Rule 25**: 100% fluid edge-to-edge layout (`width: 100%; max-width: 100%`), single persistent 5-tab top navigation bar, non-blocking right-side docked drawer (`.docked-drawer`), zero `window.alert()`/`window.prompt()`, and live filter binding with `#no-matching-cards` empty state.
    - **Rule 26**: Global table cell containment (`overflow: hidden; max-width: 0;`) on `table.table-fixed tbody td` and `.gp-blue-grid-table tbody td`, and `span.truncate { display: inline-block; max-width: 100%; }`.
 
-5. **Fail-Closed Automated Quality Gates**:
-   - Every change must pass both `python3 tests/test_e2e_forensic.py` (`7/7` backend & clinical math gates) and `node scripts/stop_forensic_gate.mjs` (`100%` multi-viewport zero-overflow & DOM verification).
+5. **Multimodal Binary File Upload & Discrepancy Reconciliation (`POST /api/upload-analyze` & `GET /api/sample-files`)**:
+   - Inspect binary magic headers (`%PDF-1.4`, `\x89PNG\r\n\x1a\n`, `\xFF\xD8\xFF` JPEG, `128-byte preamble + DICM` Part-10 DICOM, and `ANSI X12 837P`) via `classify_and_extract_binary_file` before running Node 1 PHI redaction and Nodes 2–5 line-by-line discrepancy reconciliation (`#multimodal-dropzone`, `#uploaded-files-extraction-grid`, `#upload-discrepancy-table`).
+
+6. **Fail-Closed Automated Quality Gates**:
+   - Every change must pass both `python3 tests/test_e2e_forensic.py` (`8/8` backend, binary upload, & clinical math gates) and `node scripts/stop_forensic_gate.mjs` (`100%` multi-viewport zero-overflow & DOM verification).

@@ -26,26 +26,45 @@
 | :--- | :--- |
 | [`DESIGN.md`](file:///Users/nitinagga/Documents/billing/DESIGN.md) | Full end-to-end architectural blueprint, 6-Node LangGraph + Deterministic Rules Engine specification, database schema, and MPFS payment formulas. |
 | [`seed_urology.py`](file:///Users/nitinagga/Documents/billing/seed_urology.py) | Initializes and seeds `urology_coding.db` with CPT 2026/2027 catalogs, MPFS RVUs, GPCI localities, NCCI PTP & MUE edits, CPT Assistant / NCCI Ch. 7 guidance, MAC LCD articles, NPI benchmarks, and 8 multimodal clinical encounters. |
+| [`generate_sample_uploads.py`](file:///Users/nitinagga/Documents/billing/generate_sample_uploads.py) | Generates 5 authentic binary clinical sample files in `sample_uploads/` (`.pdf` `%PDF-1.4`, `.png` `89 50 4E 47`, `.jpg` `FF D8 FF E0`, `.dcm` DICOM Part-10 `DICM`, and `.837p.txt` ANSI X12 837P EDI claim). |
 | [`cms_ingest.py`](file:///Users/nitinagga/Documents/billing/cms_ingest.py) | Production CMS landing-page discovery, million-row streaming NCCI PTP TSV parser, NGS $\rightarrow$ Wellpoint Federal MAC normalizer, and CPT 2026 $\leftrightarrow$ 2027 version diff verifier. |
-| [`app.py`](file:///Users/nitinagga/Documents/billing/app.py) | Full-stack HTTP server (`0.0.0.0:$PORT`, default `8080`, `SIGTERM`-safe) serving the REST API (`/api/*`) and the 5-Workspace Executive Light UI. |
-| [`static/index.html`](file:///Users/nitinagga/Documents/billing/static/index.html) | 100% Fluid Edge-to-Edge Executive Light Web Application with 5 interactive workspaces and a non-blocking Docked Right-Side Multimodal Inspector Drawer. |
+| [`app.py`](file:///Users/nitinagga/Documents/billing/app.py) | Full-stack HTTP server (`0.0.0.0:$PORT`, default `8080`, `SIGTERM`-safe) serving the REST API (`/api/*`, including `POST /api/upload-analyze` and `GET /api/sample-files`) and the 5-Workspace Executive Light UI. |
+| [`static/index.html`](file:///Users/nitinagga/Documents/billing/static/index.html) | 100% Fluid Edge-to-Edge Executive Light Web Application with 5 interactive workspaces, a Multi-File Binary Drag-and-Drop Discrepancy Studio (`#multimodal-dropzone`), and a non-blocking Docked Right-Side Multimodal Inspector Drawer. |
 | [`src/index.css`](file:///Users/nitinagga/Documents/billing/src/index.css) | Global stylesheet enforcing Rule 54 Executive Light Theme, Rule 25G 100% fluid layout, and Rule 26 rigid table cell containment. |
-| [`tests/test_e2e_forensic.py`](file:///Users/nitinagga/Documents/billing/tests/test_e2e_forensic.py) | 7-Gate automated backend & clinical math E2E verification suite. |
+| [`tests/test_e2e_forensic.py`](file:///Users/nitinagga/Documents/billing/tests/test_e2e_forensic.py) | 8-Gate automated backend, binary upload, and clinical math E2E verification suite. |
 | [`scripts/stop_forensic_gate.mjs`](file:///Users/nitinagga/Documents/billing/scripts/stop_forensic_gate.mjs) | Automated Headless Chrome multi-viewport (`1600x950`, `834x1194`, `390x844`) geometry, Rule 25/26/54 static audit, and E2E DOM test runner. |
 | [`AGENTS.md`](file:///Users/nitinagga/Documents/billing/AGENTS.md) | Normative workspace governance constitution and quality gate invariants. |
 
 ---
 
-## 3. Quick Start & Verification
+## 3. End-User Multimodal File Upload & Discrepancy Detection Workflow
+
+1. **Multi-File Drag-and-Drop or File Picker (`Workspace 3: 3. Upload Docs & 6-Node Analyzer`)**:
+   - Click **`📤 Upload PDF / PNG / JPEG / DICOM / 837P`** in the top toolbar or navigate to Tab 3 (`#multimodal-dropzone`).
+   - Drag and drop (or browse from disk) any combination of:
+     - **`.pdf`**: Operative Reports & Surgical Pathology Addenda (`%PDF-1.4` parsed via native text stream / `FlateDecode` extractor).
+     - **`.png` / `.jpg` / `.jpeg`**: Handwritten physician superbills or post-op margin notes (`IHDR`/`tEXt` & `SOF0`/`COM` + Vision Handwritten Medical OCR with live image thumbnail preview).
+     - **`.dcm`**: DICOM Part 10 CT Urogram / TRUS Ultrasound studies (`128-byte` preamble + `DICM` magic header + Explicit VR Little Endian tags `(0008,0060)`, `(0008,1030)`, `(0018,0050)`, `(0020,4000)`).
+     - **`.837p` / `.txt` / `.csv`**: Billing Dept scrubbed ANSI X12 837P EDI claim files (`DTP*472` Date of Service, `HI*` ICD-10-CM diagnosis pointers, and `SV1*HC:` service lines).
+   - Or click **`📂 Load & Analyze 5 Real Binary Sample Files (.PDF + .PNG + .JPG + .DCM + .837P)`** to test all 5 binary formats in 1 click.
+2. **6-Node Pipeline & Line-by-Line Discrepancy Matrix (`#upload-discrepancy-table`)**:
+   - **Node 0 (Magika Magic-Byte Gate)** classifies each binary stream independent of file extension.
+   - **Node 1 (HIPAA Safe Harbor PHI Gate)** scrubs all 18 PHI identifiers (`[REDACTED-NAME]`, `[REDACTED-MRN]`, `[REDACTED-SSN]`) before downstream analysis.
+   - **Nodes 2–5** extract clinical measurements, route to **CPT 2026 vs. CPT 2027** by Date of Service, evaluate NCCI Chapter 7 PTP/MUE/MPPR rules, and render an explicit **Line-by-Line Discrepancy Reconciliation Table** comparing *What Uploaded Docs Prove* vs. *What Billing 837P Coded* vs. *AI-Verified Fix & Dollar Recovery*.
+
+---
+
+## 4. Quick Start & Verification
 
 ```bash
-# 1. Seed the verified Urology SQLite database
+# 1. Seed the verified Urology SQLite database & generate 5 real binary sample files
 python3 seed_urology.py
+python3 generate_sample_uploads.py
 
 # 2. Verify CMS Ingestion Pipeline & CPT 2026 <-> 2027 Temporal Version Diff
 python3 cms_ingest.py --verify-local-seed --diff-versions 2026 2027
 
-# 3. Run the 7-Gate E2E Backend & Clinical Rules Test Suite
+# 3. Run the 8-Gate E2E Backend, Binary Upload & Clinical Rules Test Suite
 python3 tests/test_e2e_forensic.py
 
 # 4. Run the Headless Chrome Multi-Viewport & Rule 25/26/54 Forensic UI Gate

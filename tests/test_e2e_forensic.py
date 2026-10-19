@@ -56,7 +56,7 @@ def run_forensic_e2e_suite() -> dict:
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
 
-    results = {"gates_passed": 0, "total_gates": 7, "details": []}
+    results = {"gates_passed": 0, "total_gates": 8, "details": []}
 
     try:
         # -------------------------------------------------------------------
@@ -230,6 +230,42 @@ def run_forensic_e2e_suite() -> dict:
         results["gates_passed"] += 1
         results["details"].append("GATE 7 PASS: CMS PUF + NPPES NPI Urology Peer Benchmark Analyzer (4 NPIs & 7 MAC Localities)")
 
+        # -------------------------------------------------------------------
+        # GATE 8: Multimodal Binary File Upload & Discrepancy Reconciliation
+        # -------------------------------------------------------------------
+        samples_resp = http_get_json(base_url, "/api/sample-files")
+        assert samples_resp["ok"] is True and samples_resp["count"] == 5
+        sample_files = samples_resp["sample_files"]
+        detected_formats = {f["detected_format"] for f in sample_files}
+        assert "PDF_DOCUMENT" in detected_formats
+        assert "PNG_HANDWRITTEN_IMAGE" in detected_formats
+        assert "JPEG_HANDWRITTEN_IMAGE" in detected_formats
+        assert "DICOM_IMAGING_STUDY" in detected_formats
+        assert "X12_837P_EDI_CLAIM" in detected_formats
+
+        upload_res = http_post_json(
+            base_url,
+            "/api/upload-analyze",
+            {
+                "files": [
+                    {"filename": f["filename"], "content_base64": f["content_base64"]}
+                    for f in sample_files
+                ],
+                "facility_type": "NON_FACILITY",
+                "locality_code": "11",
+                "is_qp": True,
+            },
+        )
+        assert upload_res["ok"] is True
+        assert upload_res["uploaded_file_count"] == 5
+        assert upload_res["total_phi_redactions"] >= 6
+        assert len(upload_res["discrepancies"]) >= 6
+        assert upload_res["audit"]["money_left_on_table_usd"] > 3000.0
+        results["gates_passed"] += 1
+        results["details"].append(
+            f"GATE 8 PASS: Multimodal Binary File Upload & Discrepancy Analyzer (5 Binary Formats: PDF/PNG/JPEG/DICOM/837P, {len(upload_res['discrepancies'])} Discrepancies, +${upload_res['audit']['money_left_on_table_usd']} Recovery)"
+        )
+
     finally:
         server.server_close()
 
@@ -239,7 +275,7 @@ def run_forensic_e2e_suite() -> dict:
 if __name__ == "__main__":
     report = run_forensic_e2e_suite()
     print("==================================================================")
-    print("🛡️  UROCURA OS — 7-GATE FORENSIC & E2E VERIFICATION REPORT")
+    print("🛡️  UROCURA OS — 8-GATE FORENSIC & E2E VERIFICATION REPORT")
     print("==================================================================")
     for line in report["details"]:
         print(" ✅", line)
