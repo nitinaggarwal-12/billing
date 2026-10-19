@@ -1,0 +1,161 @@
+# UroCura OS — End-to-End Architecture & System Design (`v2.0`)
+**Multimodal Urology AI Coding, NCCI Chapter 7 Deterministic Rules Engine & Revenue Recovery Platform**
+*(Inspired by Vitrocura Clinical & Revenue-Cycle Operating System — "The chart and the claim should not tell different stories.")*
+
+---
+
+## 1. Executive Summary & Business Viability ("Is It Worth It?")
+
+### Why Urology Revenue Leakage Is a High-ROI Opportunity
+In US hospital outpatient departments (HOPDs), Ambulatory Surgery Centers (ASCs), and specialty urology practices, **11% to 18% of legitimate, clinically documented revenue is lost between the physician's encounter documentation and the submitted X12 837P claim**. Unlike primary care (which relies predominantly on E/M codes `99213`–`99215`), urology combines:
+1. **High-Complexity Endoscopic & Surgical Bundling (`CPT 50010–58999`)**: Procedures such as ureteroscopy with laser lithotripsy (`52353`), indwelling ureteral stent insertion (`52332`), and bundled lithotripsy-with-stent (`52356`) interact with hundreds of **CMS National Correct Coding Initiative (NCCI) Procedure-to-Procedure (PTP)** edits. Over-cautious billing departments frequently strip legitimate secondary procedures (e.g., contralateral stenting or separate-site biopsy) out of fear of NCCI denials instead of applying the appropriate anatomical/distinct-procedural modifiers (`-59`, `-XS`, `-XU`, `-RT`, `-LT`, `-50`).
+2. **Morphology- & Measurement-Dependent Code Stratification**: Transurethral resection of bladder tumors (**TURBT**: `52234` small `0.5–2.0 cm`, `52235` medium `2.0–5.0 cm`, `52240` large `>5.0 cm`) depends on the exact centimeter measurement recorded in the operative note or pathology gross description. When a billing coder defaults to `52234` because the tumor dimension was buried in a handwritten diagram or ultrasound image, the practice loses **$240–$410 per case** in Medicare allowed amounts (and **$600–$1,100+** under commercial contracts).
+3. **Buy-and-Bill HCPCS Level II J-Code Under-Capture**: In-office urology heavily utilizes expensive biologics and chemotherapeutics—intravesical **BCG (`J9030`)**, **OnabotulinumtoxinA / Botox (`J0585`)** for overactive bladder (`52287`), **Leuprolide acetate (`J9217`)**, and **Degarelix (`J9155`)**. Omitting drug units, failing to document single-dose vial wastage (`-JW` / `-JZ` modifiers), or dropping the paired administration code (`51720` / `96402`) creates immediate thousands-of-dollars leakage.
+4. **Multimodal Documentation Fragmentation**: The evidence justifying a code rarely lives in a single text box. The procedure is in the **Operative Note PDF**, the exact stone burden (`14 mm`) or prostate volume (`68 cc`) is in the **DICOM CT/TRUS header & slice image**, the malignancy stage (`C67.2` lateral wall bladder cancer vs. `D49.4` unspecified neoplasm) arrives 72 hours later in the **Surgical Pathology Report**, and the physician's immediate post-op billing intent is sketched on a **Handwritten Encounter Superbill / Margin Note**.
+
+---
+
+## 2. Two-Engine Hybrid Architecture: Stateful LangGraph Orchestration + Deterministic Rules Engine
+
+Pure LLM prompt frameworks (like unstructured chat agents or BMAD) fail in healthcare billing because LLMs hallucinate NCCI modifier indicators, confuse 2026 and 2027 CPT descriptors, and miscalculate Medicare Multiple Procedure Payment Reduction (**MPPR**) math. Conversely, pure legacy claim scrubbers only inspect the codes *after* the billing clerk has already deleted them—they never read the operative PDF, handwritten note, pathology report, or DICOM slices to discover what *should* have been billed.
+
+UroCura combines **two tightly coupled engines** inside a 6-Node Stateful Cyclic Graph:
+
+```
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                       UROCURA CLINICAL & REVENUE OPERATING SYSTEM                      │
+│     100% Fluid Executive Light UI · 3-Way Claim Reconciliation · Docked Audit Drawer   │
+└──────────────────────────────────────────┬─────────────────────────────────────────────┘
+                                           │ REST API (`/api/audit`, `/api/ptp-check`)
+                                           ▼
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│               NODE 1: HIPAA SAFE HARBOR PHI REDACTION & MAGIKA ROUTER                  │
+│   • Strips 18 HIPAA identifiers (Name, MRN, DOB, SSN, Address, Dates->Year/DOS Token)  │
+│   • Classifies payloads: Handwritten Image | Operative/Pathology PDF | DICOM (.dcm)    │
+└──────────────┬───────────────────────────┬─────────────────────────────┬───────────────┘
+               │                           │                             │
+               ▼                           ▼                             ▼
+┌──────────────────────────┐ ┌───────────────────────────┐ ┌─────────────────────────────┐
+│ NODE 2A: HANDWRITTEN OCR │ │ NODE 2B: PDF/DOCLING NODE │ │ NODE 2C: DICOM VISION NODE  │
+│ • Vision OCR & Layout    │ │ • Operative Report Parser │ │ • pydicom Tag Extractor     │
+│ • Shorthand expansion    │ │ • Pathology Stage/Grade   │ │ • 16-bit Voxel -> PNG Slice │
+│   ("R URS/LL + B/L stnt")│ │ • Urodynamics Matrix      │ │ • Stone mm / Prostate cc    │
+└──────────────┬───────────┘ └─────────────┬─────────────┘ └─────────────┬───────────────┘
+               └───────────────────────────┼─────────────────────────────┘
+                                           ▼
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│            NODE 3: TEMPORAL VERSION CONTROLLER & CLINICAL ENTITY SYNTHESIZER           │
+│   • Resolves Date of Service (DOS) -> Selects `CPT 2026` vs. `CPT 2027` Catalog        │
+│   • Extracts Anatomic Site, Laterality (RT/LT/Bilateral), Tumor cm, Stone mm, Drug mg  │
+└──────────────────────────────────────────┬─────────────────────────────────────────────┘
+                                           ▼
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│            NODE 4: DETERMINISTIC CMS / NCCI / MPFS / MAC LCD RULES ENGINE              │
+│   • Check 1: Temporal Code Validity (Active vs. Deleted/Superseded in 2026 vs. 2027)   │
+│   • Check 2: NCCI PTP Bundling Matrix (Col 1 / Col 2 + Modifier Indicator 0 / 1 / 9)   │
+│   • Check 3: NCCI Medically Unlikely Edits (MUE Daily Unit Ceiling & MAI 1/2/3)        │
+│   • Check 4: MPFS RVU Indicators (Bilateral 0/1/2/3, MPPR 50%, Global 000/010/090/ZZZ) │
+│   • Check 5: MAC-Specific LCD & Billing Article ICD-10-CM Medical Necessity Crosswalk  │
+└──────────────────────────────────────────┬─────────────────────────────────────────────┘
+                                           ▼
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│          NODE 5: INTERPRETIVE RAG & SPECIALTY UROLOGY REASONING ENGINE                 │
+│   • AMA CPT Assistant Clinical Vignette & Interpretive Guidance Retrieval              │
+│   • CMS NCCI Policy Manual Chapter 7 (Urinary/Male/Female Genital) Verbatim Citations  │
+│   • Specialty Urology Heuristics (Buy-and-Bill J-Codes, TURBT Single-Largest Rule,     │
+│     TRUS + Ultrasonic Guidance 76872+76942, E/M Modifier -25 Justification)            │
+│   • Calculates Exact "Money Left on the Table" ($Δ = Verified Claim − Billing 837P)    │
+└──────────────────────────────────────────┬─────────────────────────────────────────────┘
+                                           ▼
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│         NODE 6: HUMAN-IN-THE-LOOP (HITL) CHECKPOINT & X12 835 LEARNING LOOP            │
+│   • Pauses high-dollar / modifier-unbundled claims for Coder or Physician Sign-Off     │
+│   • Ingests X12 835 Remittance Advice (CARC/RARC denials & payments) to update weights │
+└────────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 3. Evaluation of the 4 Core Coding & Interpretive Pillars
+
+### Pillar 1: AMA CPT with Strict Temporal Version Control (`CPT 2026` vs. `CPT 2027`)
+- **Architectural Requirement**: Every CPT code, descriptor, RVU weight, and bundling edit is keyed by `(code, effective_year, effective_start_date, effective_end_date)`.
+- **Why Version Control Is Non-Negotiable**:
+  - The AMA releases the new CPT code set annually (e.g., **CPT 2027** effective **January 1, 2027**).
+  - An encounter with a Date of Service (`DOS`) of `2026-11-15` audited or appealed in `2027-02-10` **must** be evaluated strictly against the `CPT 2026` + `NCCI Q4 2026` + `MPFS RVU26D` rule set. Conversely, a service performed on `2027-01-12` must use `CPT 2027` descriptors and `RVU27A`.
+  - UroCura stores explicit version stamps on every audit finding (`cpt_version`, `ncci_version`, `mpfs_version`, `lcd_version`) and exposes a dedicated **CPT 2026 $\leftrightarrow$ 2027 Version Diff & Migration Matrix** in the UI.
+
+### Pillar 2: AMA CPT Assistant (Interpretive Authority & Clinical Vignette RAG)
+- **Architectural Requirement**: A raw 5-digit CPT descriptor (`52356 — Cystourethroscopy, with ureteroscopy and/or pyeloscopy; with lithotripsy including insertion of indwelling ureteral stent`) tells you *what* the code is, but not *edge-case clinical boundaries*.
+- **How UroCura Uses It**:
+  - The `interpretive_guidance` table indexes structured rule summaries and clinical scenarios mapped to CPT Assistant citations (e.g., *CPT Assistant, Vol. 26, Issue 3: Reporting 52356 with contralateral 52332-59*; *CPT Assistant, Vol. 31, Issue 8: Reporting diagnostic TRUS 76872 alongside ultrasonic needle guidance 76942 during prostate biopsy 55700 when both a diagnostic anatomical survey and needle placement guidance are documented*).
+  - Every AI recommendation cites the exact CPT Assistant issue and explains the documentation elements present in the operative report that satisfy the vignette criteria.
+
+### Pillar 3: CMS / NCCI Deterministic Edits & Policy Manual Chapter 7 (`CPT 50000–58999`)
+- **Architectural Requirement**: Answering *"I performed X and Y. Can I report both?"* requires two distinct CMS artifacts:
+  1. **The Quantitative Edit Tables (`ncci_ptp_edits` & `ncci_mue`)**:
+     - Contains `(column1_code, column2_code, modifier_indicator, effective_date)`.
+     - `modifier_indicator = 0`: **Never unbundle**. Column 2 is an integral component of Column 1 under all circumstances (e.g., `52240` + `52234` multiple bladder tumors during the same session).
+     - `modifier_indicator = 1`: **Conditionally unbundleable** with an NCCI-associated modifier (`-59`, `-XE` Separate Encounter, `-XS` Separate Structure/Organ, `-XP` Separate Practitioner, `-XU` Unusual Non-Overlapping Service) *only if* clinical documentation proves a distinct anatomic site, contralateral organ, or separate session.
+  2. **The Qualitative Narrative Authority (`NCCI Policy Manual — Chapter 7: Genitourinary System`)**:
+     - Provides the verbatim regulatory prose shown to the physician and billing compliance officer (e.g., *NCCI Policy Manual Chap. 7, Sec. F.4: "Diagnostic cystourethroscopy (CPT code 52000) is integral to surgical cystourethroscopy procedures and shall not be separately reported."*).
+
+### Pillar 4: Specialty-Specific Urology Coding Layer (AUA CodingPlus-Equivalent Domain Rules)
+- **Compliance & IP Hygiene**: Because AUA terms prohibit ingesting raw proprietary AUA publications directly into external LLM training corpora, UroCura encodes specialty-specific urology coding logic as **first-party deterministic clinical rules (`urology_specialty_rules`)** authored from public CMS/AMA regulations and verified urology clinical standards while flagging human reference pointers for certified urology coders:
+  - **Rule URO-01 (TURBT Single-Largest-Tumor Mandate)**: Resection of multiple bladder tumors (`52234`, `52235`, `52240`) in one session maps strictly to a single unit of the code corresponding to the **single largest tumor diameter** (not the sum of diameters under Medicare NCCI Chapter 7, and never multiple TURBT codes together).
+  - **Rule URO-02 (Ureteroscopy + Lithotripsy + Stent Bundling & Contralateral Carve-Out)**: Same-side `52353` + `52332` collapses into `52356`. However, if a diagnostic or therapeutic stent (`52332`) is placed in the **contralateral** ureter, `52356-RT` + `52332-XS-LT` is compliant and recovers **+$186–$410**.
+  - **Rule URO-03 (Prostate Biopsy Dual Ultrasound Capture)**: When performing `55700` (prostate needle biopsy), if the urologist documents both a diagnostic transrectal ultrasound evaluation of prostate volume/lesions (`76872`) AND ultrasonic needle placement guidance (`76942`), both codes are reportable with distinct documentation.
+  - **Rule URO-04 (Buy-and-Bill J-Code & Wastage Recovery)**: Every intravesical instillation (`51720`) or bladder chemodenervation (`52287`) or LHRH depot injection (`96402`) triggers an automatic cross-check against the medication administration log and NDC barcode (`J9030` BCG, `J0585` Botox 100U + `-JW`/`-JZ`, `J9217` Leuprolide, `J9155` Degarelix).
+  - **Rule URO-05 (Pathology-Driven ICD-10-CM Specificity Upgrade)**: Holds or amends claims when initial post-op diagnosis (`R31.0` gross hematuria or `D49.4` neoplasm of unspecified behavior) is upgraded by surgical pathology to site-specific urothelial carcinoma (`C67.2` lateral wall, `C67.5` bladder neck, `C61` prostate adenocarcinoma) required by MAC Local Coverage Articles.
+
+---
+
+## 4. Database Schema (`urology_coding.db`)
+
+| Table | Primary Key | Description |
+| :--- | :--- | :--- |
+| `cpt_hcpcs_catalog` | `(code, version_year)` | Version-controlled CPT (`2026`, `2027`) & HCPCS Level II codes, descriptors, category, status (`ACTIVE`, `REVISED`, `DELETED`, `NEW_2027`), and change notes. |
+| `mpfs_rvu` | `(code, version_year)` | Work RVU, Non-Facility PE RVU, Facility PE RVU, MP RVU, Global Period (`000`/`010`/`090`/`ZZZ`), Bilateral Indicator (`0`/`1`/`2`/`3`), Multiple Procedure Indicator (`0`/`2`/`3`), and 2026 `-2.5%` efficiency adjustment flag. |
+| `ncci_ptp_edits` | `(col1_code, col2_code, effective_year)` | Deterministic NCCI Procedure-to-Procedure pairs, Modifier Indicator (`0`/`1`/`9`), allowed modifiers, unbundle clinical condition, and NCCI Policy Manual Chapter 7 section citation. |
+| `ncci_mue` | `(code, effective_year)` | Medically Unlikely Edits max daily units (`mue_limit`), MUE Adjudication Indicator (`MAI 1/2/3`), and unit rationale. |
+| `interpretive_guidance` | `guidance_id` | AMA CPT Assistant clinical vignettes, NCCI Policy Manual Chapter 7 narrative sections, and Specialty Urology (`URO-01`..`URO-08`) decision rules. |
+| `mac_lcd_articles` | `(article_id, mac_contractor)` | Medicare Administrative Contractor (`Novitas`, `Palmetto GBA`, `Wellpoint Federal / NGS`, `Noridian`, `CGS`, `First Coast`, `WPS`) Local Coverage Determinations & covered ICD-10-CM arrays. |
+| `clinical_encounters` | `encounter_id` | Full multimodal patient cases: Handwritten Note OCR, Operative PDF, Pathology Report, DICOM `.dcm` tags & slice metrics, Doctor's Draft Codes, Billing Dept `837P` Codes, and AI Verified Claim. |
+| `npi_peer_benchmarks` | `npi` | CMS Medicare Physician & Other Practitioners PUF + NPPES urologist profiles and state specialty decile benchmarks. |
+| `coder_feedback_loop` | `feedback_id` | HITL coder/physician sign-offs, overrides, documentation addenda, and X12 835 Remittance (`CARC`/`RARC`) outcome logs. |
+| `dataset_version_stamps` | `source_key` | Tracks exact version, effective date, row count, and SHA-256 hash of every ingested CMS/AMA dataset. |
+
+---
+
+## 5. MPFS Payment & "Money Left on the Table" Formula
+
+For each line item $i$ in a claim under locality GPCI $(G_w, G_{pe}, G_{mp})$ and Conversion Factor $CF$ (where $CF_{2026,\text{non-QP}} = \$33.4009$, $CF_{2026,\text{QP}} = \$33.5675$, and $CF_{2027} = \$33.8500$):
+
+$$\text{BaseAllowed}_i = \left[ (\text{RVU}_{w,i} \cdot E_{\text{adj}} \cdot G_w) + (\text{RVU}_{pe,i} \cdot G_{pe}) + (\text{RVU}_{mp,i} \cdot G_{mp}) \right] \times CF$$
+
+Where:
+1. **2026 Efficiency Adjustment ($E_{\text{adj}}$)**: For non-time-based surgical/endoscopic codes subject to the CY 2026 MPFS Final Rule efficiency adjustment, $E_{\text{adj}} = 0.975$ ($-2.5\%$).
+2. **Bilateral Surgery Adjustment (`bilateral_ind = 1` with Modifier `-50`)**: Paid at **$150\%$** of the single-side base allowed amount.
+3. **Multiple Procedure Payment Reduction (`mult_proc_ind = 2`)**: When multiple surgical procedures are performed in the same session, the highest-RVU procedure is paid at **$100\%$** and each subsequent `mult_proc_ind = 2` surgical procedure is paid at **$50\%$**.
+4. **Add-On Codes (`global_period = ZZZ`) & Buy-and-Bill Drugs (`J-codes`)**: Paid at **$100\%$** (exempt from MPPR reduction; J-codes priced via CMS ASP $+ 6\%$ $\times$ billed units).
+5. **Money Left on the Table ($\Delta_{\text{recovery}}$)**:
+   $$\Delta_{\text{recovery}} = \sum_{i \in \text{AI Verified Claim}} \text{NetAllowed}_i - \sum_{j \in \text{Billing Dept 837P}} \text{NetAllowed}_j$$
+
+---
+
+## 6. Quick Start & Verification Commands
+
+```bash
+# 1. Seed the verified Urology SQLite database (CPT 2026/2027, NCCI Ch. 7, MPFS RVUs, 8 Multimodal Cases)
+python3 seed_urology.py
+
+# 2. Run the CMS Ingestion & Version Diff Verifier
+python3 cms_ingest.py --verify-local-seed --diff-versions 2026 2027
+
+# 3. Start the UroCura Clinical & Revenue Operating System Server (Port 8080)
+python3 app.py
+
+# 4. Run the Full E2E & Forensic Test Suite
+python3 tests/test_e2e_forensic.py
+node scripts/stop_forensic_gate.mjs
+```

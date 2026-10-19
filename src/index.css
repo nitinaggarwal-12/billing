@@ -1,0 +1,77 @@
+/*
+ * src/index.css — UroCura Clinical & Revenue-Cycle Operating System Stylesheet
+ * Enforces:
+ *   - Rule 54 / Law 15: Universal Executive Light Theme Default (#f8fafc root, #ffffff cards/tables/drawers)
+ *   - Rule 25G / Rule 50A: 100% Fluid Edge-to-Edge Desktop Layout (width: 100%; max-width: 100%)
+ *   - Rule 26A–26E: Rigid Table Cell Containment & Inline Truncate Safety
+ */
+
+:root {
+  --bg-canvas: #f8fafc;
+  --bg-card: #ffffff;
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --border-subtle: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --accent-primary: #2563eb;
+  --accent-emerald: #059669;
+  --accent-amber: #d97706;
+  --accent-rose: #e11d48;
+}
+
+html, body, #root {
+  background-color: #f8fafc;
+  color: #0f172a;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.fluid-workspace-container {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 16px clamp(16px, 1.8vw, 28px);
+}
+
+/* Rule 26A: Strict Ban on Naked Inline span.truncate */
+span.truncate {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+}
+
+/* Rule 26B: Flexbox Floor Reset */
+.flex-child-safe, .min-w-0 {
+  min-width: 0;
+}
+
+/* Rule 26C: Mandatory Global Table Cell Containment */
+table.table-fixed {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table.table-fixed tbody td,
+.gp-blue-grid-table tbody td {
+  overflow: hidden;
+  max-width: 0;
+  vertical-align: top;
+  word-wrap: break-word;
+}
+
+/* Rule 26D: Multi-Line Wrapping for Dense Operational Status */
+.status-wrap-safe {
+  line-height: 1.35;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}

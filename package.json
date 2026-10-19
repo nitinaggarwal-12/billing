@@ -1,0 +1,15 @@
+{
+  "name": "urocura-urology-ai-billing-os",
+  "version": "2.0.0",
+  "description": "UroCura OS — Multimodal Urology AI Coding, NCCI Chapter 7 Rules Engine & Revenue Recovery Platform",
+  "private": true,
+  "scripts": {
+    "seed": "python3 seed_urology.py",
+    "ingest-verify": "python3 cms_ingest.py --verify-local-seed --diff-versions 2026 2027",
+    "start": "python3 app.py",
+    "test:backend": "python3 tests/test_e2e_forensic.py",
+    "test:ui": "node scripts/stop_forensic_gate.mjs",
+    "quality-gate": "python3 seed_urology.py && python3 cms_ingest.py --verify-local-seed && python3 tests/test_e2e_forensic.py && node scripts/stop_forensic_gate.mjs",
+    "test": "npm run quality-gate"
+  }
+}
