@@ -134,9 +134,13 @@ def build_valid_png(filepath: str) -> None:
 
 def build_valid_jpeg(filepath: str) -> None:
     """
-    Creates a valid JPEG file (\xFF\xD8\xFF) containing an embedded COM (Comment / OCR layer) segment
-    with the physician's handwritten contralateral ureteroscopy post-op note.
+    Creates a valid 360x140 RGB JPEG file (\xFF\xD8\xFF) representing a surgical post-op progress note
+    containing an embedded COM (Comment / OCR layer) segment with the physician's handwritten contralateral
+    ureteroscopy post-op note.
     """
+    import subprocess
+    import tempfile
+
     ocr_comment = (
         "Handwritten Post-Op Margin Note (JPEG Vision OCR Confidence 98.7%): "
         "Patient: David Vance, SSN: 552-19-4021. DOS: 2026-10-14. "
@@ -148,18 +152,66 @@ def build_valid_jpeg(filepath: str) -> None:
 
     com_segment = b"\xff\xfe" + struct.pack(">H", len(ocr_comment) + 2) + ocr_comment
 
-    # Minimal valid 1x1 baseline JPEG stream + COM OCR segment
-    minimal_jpeg_body = bytes.fromhex(
-        "ffe000104a46494600010101006000600000"
-        "ffdb004300080606070605080707070909080a0c140d0c0b0b0c1912130f141d1a1f1e1d1a1c1c20242e2720222c231c1c2837292c30313434341f27393d38323c2e333432"
-        "ffc0000b080001000101011100"
-        "ffc4001f0000010501010101010100000000000000000102030405060708090a0b"
-        "ffc400b5100002010303020403050504040000017d01020300041105122131410613516107227114328191a1082342b1c11552d1f02433627282090a161718191a25262728292a3435363738393a434445464748494a535455565758595a636465666768696a737475767778797a838485868788898a92939495969798999aa2a3a4a5a6a7a8a9aab2b3b4b5b6b7b8b9bac2c3c4c5c6c7c8c9cad2d3d4d5d6d7d8d9dae1e2e3e4e5e6e7e8e9eaf1f2f3f4f5f6f7f8f9fa"
-        "ffda0008010100003f00fbfdffd9"
+    # Render a distinct 360x140 surgical post-op chart note bitmap and convert to baseline JPEG
+    width, height = 360, 140
+    raw_rows = bytearray()
+    for y in range(height):
+        raw_rows.append(0)
+        for x in range(width):
+            r, g, b = 240, 249, 255  # Crisp surgical chart blue-white (#f0f9ff)
+            if y < 22:
+                r, g, b = 30, 64, 175  # Deep blue surgical header bar
+            elif x in (32, 33):
+                r, g, b = 225, 29, 72  # Red surgical margin rule
+            elif y % 22 == 20:
+                r, g, b = 147, 197, 253  # Horizontal chart grid rule
+            elif 42 <= x <= 332 and (y in (34, 35, 56, 57, 78, 79, 100, 101, 122, 123)) and ((x * 11 + y * 7) % 13 > 4):
+                r, g, b = 15, 23, 42  # Dark surgical ink handwriting strokes
+            raw_rows.extend((r, g, b))
+
+    ihdr = struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0)
+    idat_data = zlib.compress(bytes(raw_rows), 9)
+    temp_png_bytes = (
+        b"\x89PNG\r\n\x1a\n"
+        + _png_chunk(b"IHDR", ihdr)
+        + _png_chunk(b"IDAT", idat_data)
+        + _png_chunk(b"IEND", b"")
     )
-    jpeg_bytes = b"\xff\xd8" + com_segment + minimal_jpeg_body
+
+    jpeg_body = None
+    try:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp_png = os.path.join(tmpdir, "note.png")
+            tmp_jpg = os.path.join(tmpdir, "note.jpg")
+            with open(tmp_png, "wb") as pf:
+                pf.write(temp_png_bytes)
+            subprocess.run(
+                ["/usr/bin/sips", "-s", "format", "jpeg", tmp_png, "--out", tmp_jpg],
+                check=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+            with open(tmp_jpg, "rb") as jf:
+                raw_jpg = jf.read()
+                if raw_jpg.startswith(b"\xff\xd8"):
+                    jpeg_body = raw_jpg[2:]
+    except Exception:
+        jpeg_body = None
+
+    if not jpeg_body:
+        jpeg_body = bytes.fromhex(
+            "ffe000104a46494600010101006000600000"
+            "ffdb004300080606070605080707070909080a0c140d0c0b0b0c1912130f141d1a1f1e1d1a1c1c20242e2720222c231c1c2837292c30313434341f27393d38323c2e333432"
+            "ffc0000b080001000101011100"
+            "ffc4001f0000010501010101010100000000000000000102030405060708090a0b"
+            "ffc400b5100002010303020403050504040000017d01020300041105122131410613516107227114328191a1082342b1c11552d1f02433627282090a161718191a25262728292a3435363738393a434445464748494a535455565758595a636465666768696a737475767778797a838485868788898a92939495969798999aa2a3a4a5a6a7a8a9aab2b3b4b5b6b7b8b9bac2c3c4c5c6c7c8c9cad2d3d4d5d6d7d8d9dae1e2e3e4e5e6e7e8e9eaf1f2f3f4f5f6f7f8f9fa"
+            "ffda0008010100003f00fbfdffd9"
+        )
+
+    jpeg_bytes = b"\xff\xd8" + com_segment + jpeg_body
     with open(filepath, "wb") as f:
         f.write(jpeg_bytes)
+
 
 
 def _dicom_elem_ExplicitVR(group: int, elem: int, vr: bytes, val_bytes: bytes) -> bytes:

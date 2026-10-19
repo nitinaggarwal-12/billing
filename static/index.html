@@ -3,12 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>UroCura OS — Multimodal Urology AI Coding, NCCI Ch. 7 Rules Engine & Revenue Recovery Platform</title>
+  <title>UroCura OS — Multimodal Urology AI Coding, NCCI Ch. 7 Rules Engine &amp; Revenue Recovery Platform</title>
+  <link rel="stylesheet" href="/src/index.css" />
   <style>
     /* ==========================================================================
        Rule 54 / Law 15: Mandatory Universal Executive Light Theme Default
        Rule 25G / Rule 50A: 100% Fluid Edge-to-Edge Layout
+       Rule 25H: Zero Internal Card, Table-Cell & Viewport-Bottom Blank Space
        Rule 26A–26E: Rigid Table Cell Containment & Safe Truncation
+       WCAG 2.1 AA: High-Contrast Muted Text (#475569 >= 6.4:1) & :focus-visible
        ========================================================================== */
     :root {
       --bg-canvas: #f8fafc;
@@ -16,7 +19,7 @@
       --bg-subtle: #f1f5f9;
       --text-main: #0f172a;
       --text-sub: #334155;
-      --text-muted: #64748b;
+      --text-muted: #475569;
       --border-light: #e2e8f0;
       --border-strong: #cbd5e1;
       --primary: #2563eb;
@@ -55,7 +58,8 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Rule 26A: Strict Ban on Naked Inline span.truncate */
+    /* Rule 26A: Strict Ban on Naked Inline span.truncate & Block Truncate Support */
+    .truncate,
     span.truncate {
       display: inline-block;
       max-width: 100%;
@@ -65,29 +69,29 @@
       vertical-align: bottom;
     }
 
+    div.truncate {
+      display: block;
+    }
+
     /* Rule 26B: Flexbox Floor Reset */
     .min-w-0 {
       min-width: 0;
     }
 
     /* Rule 26C: Mandatory Global Table Cell Containment */
-    table.table-fixed {
+    table.table-fixed,
+    .gp-blue-grid-table {
       table-layout: fixed;
       width: 100%;
       border-collapse: collapse;
     }
 
-    table.table-fixed tbody td,
-    .gp-blue-grid-table tbody td {
-      overflow: hidden;
-      max-width: 0;
-      vertical-align: top;
-      word-wrap: break-word;
+    /* Rule 26D: Multi-Line Wrapping for Dense Operational Status */
+    .leading-tight {
+      line-height: 1.32;
     }
 
-    /* Rule 26D: Multi-Line Wrapping for Dense Operational Status */
-    .leading-tight.break-words {
-      line-height: 1.32;
+    .break-words {
       overflow-wrap: break-word;
       word-break: break-word;
     }
@@ -109,9 +113,9 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
+      gap: 14px;
       flex-wrap: wrap;
-      margin-bottom: 10px;
+      margin-bottom: 9px;
     }
 
     .brand-cluster {
@@ -203,15 +207,15 @@
       background: var(--bg-canvas);
       border: 1px solid var(--border-light);
       color: var(--text-sub);
-      padding: 7px 10px;
+      padding: 6px 9px;
       border-radius: 7px;
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 6px;
+      gap: 5px;
       min-width: 0;
       white-space: nowrap;
       overflow: hidden;
@@ -221,7 +225,7 @@
     .workspace-tab-btn:hover {
       border-color: var(--border-strong);
       color: var(--text-main);
-      background: #f1f5f9;
+      background: var(--bg-subtle);
     }
 
     .workspace-tab-btn.active {
@@ -234,14 +238,15 @@
     .tab-badge {
       padding: 1px 6px;
       border-radius: 99px;
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 700;
-      background: rgba(15, 23, 42, 0.07);
+      background: rgba(15, 23, 42, 0.08);
       color: inherit;
+      flex-shrink: 0;
     }
 
     .workspace-tab-btn.active .tab-badge {
-      background: rgba(255, 255, 255, 0.22);
+      background: rgba(15, 23, 42, 0.34);
       color: #ffffff;
     }
 
@@ -250,7 +255,7 @@
       width: 100%;
       max-width: 100%;
       box-sizing: border-box;
-      padding: 16px clamp(16px, 1.8vw, 28px) 48px;
+      padding: 16px clamp(16px, 1.8vw, 28px) 28px;
     }
 
     .workspace-panel {
@@ -307,7 +312,7 @@
     }
 
     .kpi-value {
-      font-size: 23px;
+      font-size: 22px;
       font-weight: 800;
       color: var(--text-main);
       font-variant-numeric: tabular-nums;
@@ -324,50 +329,37 @@
       margin-top: 5px;
     }
 
-    /* Filter Bar (Rule 25C: Live filter on input/change, zero redundant Search/Submit button) */
+    /* Filter Bar (Rule 25C: Single-Row Full-Width Grid on Desktop, Zero Blank Second Row) */
     .filter-toolbar {
       background: var(--bg-card);
       border: 1px solid var(--border-strong);
       border-radius: 10px;
       padding: 10px 14px;
       margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .filter-controls {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1.6fr 1fr 1.15fr 0.95fr auto;
       align-items: center;
       gap: 10px;
-      flex-wrap: wrap;
-      flex: 1;
-      min-width: 0;
+      width: 100%;
     }
 
     .input-control, .select-control {
       height: 34px;
-      padding: 0 11px;
+      padding: 0 10px;
       border-radius: 7px;
       border: 1px solid var(--border-strong);
       background: #ffffff;
       color: var(--text-main);
       font-size: 12.5px;
       font-family: inherit;
-      outline: none;
+      width: 100%;
+      min-width: 0;
     }
 
     .input-control:focus, .select-control:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.14);
-    }
-
-    .search-box {
-      min-width: 280px;
-      flex: 1;
-      max-width: 420px;
+      outline: 2px solid var(--primary);
+      outline-offset: 1px;
     }
 
     /* Data Grid Card & Rigid Table Cell Containment (Rule 26) */
@@ -379,14 +371,8 @@
       box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
     }
 
-    .gp-blue-grid-table {
-      width: 100%;
-      table-layout: fixed;
-      border-collapse: collapse;
-    }
-
     .gp-blue-grid-table thead th {
-      background: #f1f5f9;
+      background: var(--bg-subtle);
       color: var(--text-main);
       font-size: 11.5px;
       font-weight: 700;
@@ -398,9 +384,18 @@
       border-right: 1px solid var(--border-light);
     }
 
+    .gp-blue-grid-table thead th:last-child,
+    .gp-blue-grid-table tbody td:last-child {
+      border-right: none;
+    }
+
     .gp-blue-grid-table tbody tr {
       border-bottom: 1px solid var(--border-light);
       transition: background 0.12s ease;
+    }
+
+    .gp-blue-grid-table tbody tr:last-child {
+      border-bottom: none;
     }
 
     .gp-blue-grid-table tbody tr:nth-child(even) {
@@ -411,12 +406,14 @@
       background: #eff6ff;
     }
 
+    table.table-fixed tbody td,
     .gp-blue-grid-table tbody td {
       padding: 11px 12px;
       border-right: 1px solid var(--border-light);
       overflow: hidden;
       max-width: 0;
       vertical-align: top;
+      word-wrap: break-word;
     }
 
     /* Semantic Badges */
@@ -424,12 +421,16 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      padding: 2px 8px;
+      padding: 2px 7px;
       border-radius: 5px;
       font-size: 11px;
       font-weight: 700;
       border: 1px solid transparent;
       white-space: nowrap;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex-shrink: 0;
     }
 
     .badge-emerald {
@@ -469,7 +470,7 @@
       font-weight: 700;
       padding: 2px 6px;
       border-radius: 4px;
-      background: #f1f5f9;
+      background: var(--bg-subtle);
       border: 1px solid #cbd5e1;
       color: #0f172a;
       margin: 1px 3px 2px 0;
@@ -500,6 +501,8 @@
       display: inline-flex;
       align-items: center;
       gap: 5px;
+      white-space: nowrap;
+      flex-shrink: 0;
       transition: background 0.15s ease;
     }
 
@@ -520,10 +523,12 @@
       display: inline-flex;
       align-items: center;
       gap: 5px;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .btn-secondary:hover {
-      background: #f1f5f9;
+      background: var(--bg-subtle);
     }
 
     .btn-emerald {
@@ -539,11 +544,31 @@
       display: inline-flex;
       align-items: center;
       gap: 5px;
+      white-space: nowrap;
+      flex-shrink: 0;
       transition: background 0.15s ease;
     }
 
     .btn-emerald:hover {
       background: #047857;
+    }
+
+    .link-btn {
+      appearance: none;
+      background: none;
+      border: none;
+      padding: 0;
+      font: inherit;
+      font-weight: 800;
+      color: var(--primary-dark);
+      cursor: pointer;
+      text-align: left;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .link-btn:hover {
+      color: var(--primary);
     }
 
     /* Resilient Empty State (Rule 25K) */
@@ -567,17 +592,19 @@
       box-shadow: -8px 0 28px rgba(15, 23, 42, 0.14);
       z-index: 50;
       transform: translateX(102%);
-      transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+      visibility: hidden;
+      transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.24s;
       display: flex;
       flex-direction: column;
     }
 
     .docked-drawer.open {
       transform: translateX(0);
+      visibility: visible;
     }
 
     .drawer-header {
-      padding: 14px 18px;
+      padding: 13px 18px;
       background: #f8fafc;
       border-bottom: 1px solid var(--border-strong);
       display: flex;
@@ -587,12 +614,12 @@
     }
 
     .drawer-subtabs {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 6px;
       padding: 8px 18px;
       background: #ffffff;
       border-bottom: 1px solid var(--border-light);
-      overflow-x: auto;
     }
 
     .drawer-subtab-btn {
@@ -600,12 +627,22 @@
       background: #f8fafc;
       border: 1px solid var(--border-light);
       color: var(--text-sub);
-      padding: 5px 11px;
+      padding: 6px 8px;
       border-radius: 6px;
-      font-size: 12px;
-      font-weight: 600;
+      font-size: 11.5px;
+      font-weight: 700;
       cursor: pointer;
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: center;
+      transition: all 0.12s ease;
+    }
+
+    .drawer-subtab-btn:hover {
+      background: var(--bg-subtle);
+      color: var(--text-main);
+      border-color: var(--border-strong);
     }
 
     .drawer-subtab-btn.active {
@@ -615,13 +652,13 @@
     }
 
     .drawer-body {
-      padding: 16px 18px;
+      padding: 14px 18px;
       overflow-y: auto;
       flex: 1;
     }
 
     .drawer-footer {
-      padding: 12px 18px;
+      padding: 10px 18px;
       background: #f8fafc;
       border-top: 1px solid var(--border-strong);
       display: flex;
@@ -631,12 +668,39 @@
       flex-wrap: wrap;
     }
 
-    /* Two-Column & Bento Grids for Workspaces 2, 3, 4, 5 (Rule 25H Zero Blank Space) */
+    /* Two-Column & Form Grids for Workspaces 2, 3, 4, 5 (Rule 25H Zero Blank Space) */
     .two-col-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 16px;
       align-items: stretch;
+    }
+
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .form-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .form-grid-ptp-3 {
+      display: grid;
+      grid-template-columns: 1.4fr 0.8fr 0.8fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .mac-lcd-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
     }
 
     .section-card {
@@ -685,6 +749,7 @@
       font-size: 11.5px;
       font-weight: 600;
       cursor: pointer;
+      transition: all 0.12s ease;
     }
 
     .preset-pill-btn:hover, .preset-pill-btn.active {
@@ -734,7 +799,7 @@
     }
 
     .upload-dropzone {
-      border: 2px dashed #93c5fd;
+      border: 2px dashed #3b82f6;
       background: linear-gradient(180deg, #f8fafc 0%, #eff6ff 100%);
       border-radius: 10px;
       padding: 14px 18px;
@@ -745,7 +810,7 @@
     }
 
     .upload-dropzone:hover, .upload-dropzone.drag-active {
-      border-color: var(--primary);
+      border-color: var(--primary-dark);
       background: #dbeafe;
     }
 
@@ -770,6 +835,24 @@
       gap: 6px;
     }
 
+    .file-preview-snippet {
+      flex: 1;
+      font-size: 11px;
+      line-height: 15px;
+      height: 74px;
+      max-height: 74px;
+      color: var(--text-sub);
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: 6px;
+      padding: 6px 8px;
+      overflow: hidden;
+      font-family: 'SFMono-Regular', Consolas, monospace;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+    }
+
     .peer-progress-track {
       width: 100%;
       height: 6px;
@@ -784,12 +867,34 @@
       border-radius: 99px;
     }
 
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible,
+    [role="button"]:focus-visible,
+    [role="tab"]:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+
     @media (max-width: 1100px) {
       .workspace-tabs-bar {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
+      .workspace-tabs-bar > :last-child:nth-child(odd),
+      .extracted-files-grid > :last-child:nth-child(odd),
+      .mac-lcd-grid > :last-child:nth-child(odd) {
+        grid-column: 1 / -1;
+      }
       .hero-kpi-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .filter-toolbar {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .filter-toolbar > :first-child {
+        grid-column: 1 / -1;
       }
       .two-col-grid {
         grid-template-columns: 1fr;
@@ -797,16 +902,21 @@
       .extracted-files-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
+      .mac-lcd-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
     @media (max-width: 640px) {
-      .workspace-tabs-bar {
-        grid-template-columns: 1fr;
-      }
-      .hero-kpi-grid {
-        grid-template-columns: 1fr;
-      }
-      .extracted-files-grid {
+      .workspace-tabs-bar,
+      .hero-kpi-grid,
+      .filter-toolbar,
+      .extracted-files-grid,
+      .mac-lcd-grid,
+      .form-grid-2,
+      .form-grid-3,
+      .form-grid-ptp-3,
+      .drawer-subtabs {
         grid-template-columns: 1fr;
       }
       .docked-drawer {
@@ -815,7 +925,14 @@
       .gp-blue-grid-table thead {
         display: none;
       }
-      .gp-blue-grid-table, .gp-blue-grid-table tbody, .gp-blue-grid-table tr, .gp-blue-grid-table td {
+      table.table-fixed,
+      table.table-fixed tbody,
+      table.table-fixed tr,
+      table.table-fixed tbody td,
+      .gp-blue-grid-table,
+      .gp-blue-grid-table tbody,
+      .gp-blue-grid-table tr,
+      .gp-blue-grid-table tbody td {
         display: block;
         width: 100%;
         max-width: 100%;
@@ -846,24 +963,24 @@
       </div>
     </div>
 
-    <nav class="workspace-tabs-bar" aria-label="Primary Workspaces">
-      <button type="button" class="workspace-tab-btn active" data-tab="queue" id="tab-btn-queue" onclick="switchWorkspace('queue')">
-        <span class="truncate">1. Revenue Recovery Queue (3-Way Diff)</span>
+    <nav id="workspace-tabs-bar" class="workspace-tabs-bar" role="tablist" aria-label="Primary Workspaces">
+      <button type="button" role="tab" aria-selected="true" aria-controls="workspace-queue" class="workspace-tab-btn active" data-tab="queue" id="tab-btn-queue" onclick="switchWorkspace('queue')">
+        <span class="truncate">1. Revenue Recovery Queue (3-Way)</span>
         <span class="tab-badge" id="badge-queue-count">8 Cases</span>
       </button>
-      <button type="button" class="workspace-tab-btn" data-tab="ptp" id="tab-btn-ptp" onclick="switchWorkspace('ptp')">
+      <button type="button" role="tab" aria-selected="false" aria-controls="workspace-ptp" class="workspace-tab-btn" data-tab="ptp" id="tab-btn-ptp" onclick="switchWorkspace('ptp')">
         <span class="truncate">2. "Can I Report Both?" NCCI Ch. 7</span>
         <span class="tab-badge">16 Pairs</span>
       </button>
-      <button type="button" class="workspace-tab-btn" data-tab="simulator" id="tab-btn-simulator" onclick="switchWorkspace('simulator')">
-        <span class="truncate">3. Upload Docs &amp; 6-Node Analyzer</span>
+      <button type="button" role="tab" aria-selected="false" aria-controls="workspace-simulator" class="workspace-tab-btn" data-tab="simulator" id="tab-btn-simulator" onclick="switchWorkspace('simulator')">
+        <span class="truncate">3. Multimodal Upload &amp; 6-Node AI</span>
         <span class="tab-badge">PDF/PNG/DCM</span>
       </button>
-      <button type="button" class="workspace-tab-btn" data-tab="governance" id="tab-btn-governance" onclick="switchWorkspace('governance')">
-        <span class="truncate">4. 4-Pillar &amp; CPT 2026 ↔ 2027 Control</span>
+      <button type="button" role="tab" aria-selected="false" aria-controls="workspace-governance" class="workspace-tab-btn" data-tab="governance" id="tab-btn-governance" onclick="switchWorkspace('governance')">
+        <span class="truncate">4. 4-Pillar &amp; CPT 2026 ↔ 2027</span>
         <span class="tab-badge">9 Sources</span>
       </button>
-      <button type="button" class="workspace-tab-btn" data-tab="benchmarks" id="tab-btn-benchmarks" onclick="switchWorkspace('benchmarks')">
+      <button type="button" role="tab" aria-selected="false" aria-controls="workspace-benchmarks" class="workspace-tab-btn" data-tab="benchmarks" id="tab-btn-benchmarks" onclick="switchWorkspace('benchmarks')">
         <span class="truncate">5. CMS PUF NPI Peer Benchmarks</span>
         <span class="tab-badge">4 NPIs</span>
       </button>
@@ -878,7 +995,7 @@
     <!-- ======================================================================
          WORKSPACE 1: REVENUE RECOVERY QUEUE & 3-WAY CLAIM RECONCILIATION
          ====================================================================== -->
-    <section id="workspace-queue" class="workspace-panel active" data-testid="workspace-queue">
+    <section id="workspace-queue" role="tabpanel" aria-labelledby="tab-btn-queue" class="workspace-panel active" data-testid="workspace-queue">
       <div class="hero-kpi-grid">
         <div class="kpi-card highlight-blue">
           <div>
@@ -910,56 +1027,59 @@
         </div>
       </div>
 
-      <!-- Live Filter Toolbar (Rule 25C & Rule 25K) -->
-      <div class="filter-toolbar">
-        <div class="filter-controls">
-          <input
-            type="text"
-            id="search-input"
-            class="input-control search-box"
-            placeholder="Filter by CPT/HCPCS (52356, 52235, J0585, 52598), physician, or clinical finding..."
-            aria-label="Search encounters"
-            oninput="renderEncounterTable()"
-          />
-          <select id="filter-version" class="select-control" aria-label="Filter by CPT Version Year" onchange="renderEncounterTable()">
-            <option value="ALL">All CPT Version Years (2026 &amp; 2027)</option>
-            <option value="2026">CPT 2026 Encounters (DOS in CY2026)</option>
-            <option value="2027">CPT 2027 Encounters (DOS >= Jan 1, 2027)</option>
-          </select>
-          <select id="filter-category" class="select-control" aria-label="Filter by Leakage Category" onchange="renderEncounterTable()">
-            <option value="ALL">All Revenue Leakage Categories</option>
-            <option value="Contralateral">Contralateral Stent Unbundling (-XS)</option>
-            <option value="TURBT">TURBT Tumor Size &amp; Pathology Upgrade</option>
-            <option value="Buy-and-Bill">Buy-and-Bill J-Code &amp; -JW Wastage</option>
-            <option value="TRUS">Prostate Biopsy Dual TRUS (76872+76942)</option>
-            <option value="Urodynamics">Multichannel Urodynamics (+51797 / 51729)</option>
-            <option value="Bilateral">Bilateral Modifier -50 (150% Math)</option>
-            <option value="Modifier -25">Same-Day E/M Modifier -25</option>
-            <option value="CPT 2026→2027">CPT 2026 → 2027 Version Sunset Migration</option>
-          </select>
-          <select id="filter-status" class="select-control" aria-label="Filter by HITL Status" onchange="renderEncounterTable()">
-            <option value="ALL">All HITL Review Statuses</option>
-            <option value="PENDING_PHYSICIAN_REVIEW">Pending Physician / Coder Sign-Off</option>
-            <option value="CODER_VERIFIED">Coder Verified &amp; Released</option>
-          </select>
-        </div>
-        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-          <button type="button" class="btn-primary" id="btn-jump-uploader" onclick="switchWorkspace('simulator')">📤 Upload PDF / PNG / JPEG / DICOM / 837P</button>
-          <button type="button" class="btn-secondary" onclick="resetQueueFilters()">↺ Reset Filters</button>
-        </div>
+      <!-- Live Filter Toolbar (Rule 25A Zero Duplicate Navigation & Rule 25C Single-Row Full-Width Grid) -->
+      <div class="filter-toolbar" data-testid="queue-filter-toolbar">
+        <input
+          type="text"
+          id="search-input"
+          class="input-control"
+          placeholder="Search CPT/HCPCS (52356, 52235, J0585, 52598), physician, or finding..."
+          aria-label="Search clinical encounters"
+          oninput="renderEncounterTable()"
+        />
+        <select id="filter-version" class="select-control" aria-label="Filter by CPT Version Year" onchange="renderEncounterTable()">
+          <option value="ALL">All CPT Version Years (2026 &amp; 2027)</option>
+          <option value="2026">CPT 2026 Encounters (CY2026 DOS)</option>
+          <option value="2027">CPT 2027 Encounters (CY2027 DOS)</option>
+        </select>
+        <select id="filter-category" class="select-control" aria-label="Filter by Leakage Category" onchange="renderEncounterTable()">
+          <option value="ALL">All Revenue Leakage Categories</option>
+          <option value="Contralateral">Contralateral Stent Unbundling (-XS)</option>
+          <option value="TURBT">TURBT Tumor Size &amp; Pathology Upgrade</option>
+          <option value="Buy-and-Bill">Buy-and-Bill J-Code &amp; -JW Wastage</option>
+          <option value="TRUS">Prostate Biopsy Dual TRUS (76872+76942)</option>
+          <option value="Urodynamics">Multichannel Urodynamics (+51797 / 51729)</option>
+          <option value="Bilateral">Bilateral Modifier -50 (150% Math)</option>
+          <option value="Modifier -25">Same-Day E/M Modifier -25</option>
+          <option value="CPT 2026→2027">CPT 2026 → 2027 Version Sunset Migration</option>
+        </select>
+        <select id="filter-status" class="select-control" aria-label="Filter by HITL Status" onchange="renderEncounterTable()">
+          <option value="ALL">All HITL Review Statuses</option>
+          <option value="PENDING_PHYSICIAN_REVIEW">Pending Physician / Coder Sign-Off</option>
+          <option value="CODER_VERIFIED">Coder Verified &amp; Released</option>
+        </select>
+        <button type="button" class="btn-secondary" onclick="resetQueueFilters()">↺ Reset Filters</button>
       </div>
 
       <!-- 3-Way Reconciliation Table (Rule 26C Rigid Table Cell Containment) -->
       <div class="data-grid-card">
-        <table class="gp-blue-grid-table table-fixed" data-testid="reconciliation-table">
+        <table class="gp-blue-grid-table table-fixed" aria-label="3-Way Clinical Claim Reconciliation Queue" data-testid="reconciliation-table">
+          <colgroup>
+            <col style="width: 14%;" />
+            <col style="width: 21%;" />
+            <col style="width: 13%;" />
+            <col style="width: 17%;" />
+            <col style="width: 22%;" />
+            <col style="width: 13%;" />
+          </colgroup>
           <thead>
             <tr>
-              <th style="width: 14%;">Encounter &amp; Version</th>
-              <th style="width: 21%;">Multimodal Clinical Evidence</th>
-              <th style="width: 13%;">1. Doctor Wrote</th>
-              <th style="width: 17%;">2. Billing Dept 837P (Scrubbed)</th>
-              <th style="width: 22%;">3. AI Verified Claim &amp; Warrant</th>
-              <th style="width: 13%;">Money Left on Table</th>
+              <th scope="col" style="width: 14%;">Encounter &amp; Version</th>
+              <th scope="col" style="width: 21%;">Multimodal Clinical Evidence</th>
+              <th scope="col" style="width: 13%;">1. Doctor Wrote</th>
+              <th scope="col" style="width: 17%;">2. Billing Dept 837P (Scrubbed)</th>
+              <th scope="col" style="width: 22%;">3. AI Verified Claim &amp; Warrant</th>
+              <th scope="col" style="width: 13%;">Money Left on Table</th>
             </tr>
           </thead>
           <tbody id="encounter-table-body"></tbody>
@@ -977,7 +1097,7 @@
     <!-- ======================================================================
          WORKSPACE 2: "CAN I REPORT BOTH?" NCCI CH. 7 & CPT ASSISTANT CHECKER
          ====================================================================== -->
-    <section id="workspace-ptp" class="workspace-panel" data-testid="workspace-ptp">
+    <section id="workspace-ptp" role="tabpanel" aria-labelledby="tab-btn-ptp" class="workspace-panel" data-testid="workspace-ptp">
       <div class="hero-kpi-grid">
         <div class="kpi-card highlight-blue">
           <div>
@@ -1019,21 +1139,21 @@
             <p class="section-desc">Evaluates any pair of Urology CPT/HCPCS codes against CMS NCCI Procedure-to-Procedure (PTP) edits, Modifier Indicators (0 vs 1), NCCI Policy Manual Chapter 7, and AMA CPT Assistant clinical vignettes.</p>
 
             <div style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase;">1-Click Urology Clinical Presets:</div>
-            <div class="preset-pills">
-              <button type="button" class="preset-pill-btn active" onclick="loadPtpPreset('52356','52332','contralateral',2026)">52356 + 52332 (Contralateral Stent -XS)</button>
-              <button type="button" class="preset-pill-btn" onclick="loadPtpPreset('52353','52332','same_side',2026)">52353 + 52332 (Same Ureter Trap → 52356)</button>
-              <button type="button" class="preset-pill-btn" onclick="loadPtpPreset('52235','52234','same_session_multifocal',2026)">52235 + 52234 (Multifocal TURBT Ind 0)</button>
-              <button type="button" class="preset-pill-btn" onclick="loadPtpPreset('76872','76942','separate_diagnostic_and_guidance',2026)">76872 + 76942 (Dual TRUS + Biopsy Guidance)</button>
-              <button type="button" class="preset-pill-btn" onclick="loadPtpPreset('51720','99214','separate_em_soap',2026)">51720 + 99214 (BCG + Separate E/M -25)</button>
-              <button type="button" class="preset-pill-btn" onclick="loadPtpPreset('51729','51797','same_side',2026)">51729 + 51797 (Urodynamics Add-On ZZZ)</button>
-              <button type="button" class="preset-pill-btn" onclick="loadPtpPreset('51729','51798','same_side',2026)">51729 + 51798 (UDS + PVR Ultrasound Trap)</button>
-              <button type="button" class="preset-pill-btn" onclick="loadPtpPreset('52648','52601','same_side',2026)">52648 + 52601 (GreenLight + TURP Cleanup)</button>
+            <div class="preset-pills" id="ptp-preset-pills">
+              <button type="button" class="preset-pill-btn active" onclick="loadPtpPreset('52356','52332','contralateral',2026,this)">52356 + 52332 (Contralateral Stent -XS)</button>
+              <button type="button" class="preset-pill-btn" onclick="loadPtpPreset('52353','52332','same_side',2026,this)">52353 + 52332 (Same Ureter Trap → 52356)</button>
+              <button type="button" class="preset-pill-btn" onclick="loadPtpPreset('52235','52234','same_session_multifocal',2026,this)">52235 + 52234 (Multifocal TURBT Ind 0)</button>
+              <button type="button" class="preset-pill-btn" onclick="loadPtpPreset('76872','76942','separate_diagnostic_and_guidance',2026,this)">76872 + 76942 (Dual TRUS + Biopsy Guidance)</button>
+              <button type="button" class="preset-pill-btn" onclick="loadPtpPreset('51720','99214','separate_em_soap',2026,this)">51720 + 99214 (BCG + Separate E/M -25)</button>
+              <button type="button" class="preset-pill-btn" onclick="loadPtpPreset('51729','51797','same_side',2026,this)">51729 + 51797 (Urodynamics Add-On ZZZ)</button>
+              <button type="button" class="preset-pill-btn" onclick="loadPtpPreset('51729','51798','same_side',2026,this)">51729 + 51798 (UDS + PVR Ultrasound Trap)</button>
+              <button type="button" class="preset-pill-btn" onclick="loadPtpPreset('52648','52601','same_side',2026,this)">52648 + 52601 (GreenLight + TURP Cleanup)</button>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 10px;">
+            <div class="form-grid-2">
               <div>
-                <label style="display:block; font-size:11.5px; font-weight:700; margin-bottom:4px;">Primary Procedure (Code X)</label>
-                <select id="ptp-code-a" class="select-control" style="width:100%;" onchange="runPtpEvaluation()">
+                <label for="ptp-code-a" style="display:block; font-size:11.5px; font-weight:700; margin-bottom:4px;">Primary Procedure (Code X)</label>
+                <select id="ptp-code-a" class="select-control" onchange="runPtpEvaluation()">
                   <option value="52356">52356 — URS w/ lithotripsy &amp; indwelling stent</option>
                   <option value="52353">52353 — URS w/ lithotripsy (no stent)</option>
                   <option value="52240">52240 — TURBT Large (&gt;5.0 cm)</option>
@@ -1047,8 +1167,8 @@
                 </select>
               </div>
               <div>
-                <label style="display:block; font-size:11.5px; font-weight:700; margin-bottom:4px;">Secondary Procedure (Code Y)</label>
-                <select id="ptp-code-b" class="select-control" style="width:100%;" onchange="runPtpEvaluation()">
+                <label for="ptp-code-b" style="display:block; font-size:11.5px; font-weight:700; margin-bottom:4px;">Secondary Procedure (Code Y)</label>
+                <select id="ptp-code-b" class="select-control" onchange="runPtpEvaluation()">
                   <option value="52332">52332 — Cystoscopy w/ indwelling ureteral stent</option>
                   <option value="52234">52234 — TURBT Small (0.5–2.0 cm)</option>
                   <option value="76942">76942 — Ultrasonic guidance for needle placement</option>
@@ -1062,10 +1182,10 @@
               </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1.4fr 0.8fr 0.8fr; gap: 10px; margin-bottom: 10px;">
+            <div class="form-grid-ptp-3">
               <div>
-                <label style="display:block; font-size:11.5px; font-weight:700; margin-bottom:4px;">Anatomic / Documentation Context</label>
-                <select id="ptp-context" class="select-control" style="width:100%;" onchange="runPtpEvaluation()">
+                <label for="ptp-context" style="display:block; font-size:11.5px; font-weight:700; margin-bottom:4px;">Anatomic / Documentation Context</label>
+                <select id="ptp-context" class="select-control" onchange="runPtpEvaluation()">
                   <option value="contralateral">Contralateral Paired Organ (Left vs. Right Ureter)</option>
                   <option value="same_side">Ipsilateral / Same Anatomic Site &amp; Session</option>
                   <option value="separate_diagnostic_and_guidance">Both Diagnostic 3-Plane Survey &amp; Needle Guidance Documented</option>
@@ -1074,15 +1194,15 @@
                 </select>
               </div>
               <div>
-                <label style="display:block; font-size:11.5px; font-weight:700; margin-bottom:4px;">CPT Version Year</label>
-                <select id="ptp-year" class="select-control" style="width:100%;" onchange="runPtpEvaluation()">
+                <label for="ptp-year" style="display:block; font-size:11.5px; font-weight:700; margin-bottom:4px;">CPT Version Year</label>
+                <select id="ptp-year" class="select-control" onchange="runPtpEvaluation()">
                   <option value="2026">CPT 2026</option>
                   <option value="2027">CPT 2027</option>
                 </select>
               </div>
               <div>
-                <label style="display:block; font-size:11.5px; font-weight:700; margin-bottom:4px;">Place of Service</label>
-                <select id="ptp-facility" class="select-control" style="width:100%;" onchange="runPtpEvaluation()">
+                <label for="ptp-facility" style="display:block; font-size:11.5px; font-weight:700; margin-bottom:4px;">Place of Service</label>
+                <select id="ptp-facility" class="select-control" onchange="runPtpEvaluation()">
                   <option value="FACILITY">Facility (HOPD/ASC)</option>
                   <option value="NON_FACILITY">Non-Facility (Office)</option>
                 </select>
@@ -1107,15 +1227,23 @@
           </div>
           <span class="badge badge-emerald">16 Deterministic Urology PTP Rules Active</span>
         </div>
-        <table class="gp-blue-grid-table table-fixed" data-testid="ptp-full-matrix-table">
+        <table class="gp-blue-grid-table table-fixed" aria-label="CMS NCCI Chapter 7 Urology PTP Bundling Matrix" data-testid="ptp-full-matrix-table">
+          <colgroup>
+            <col style="width:13%;" />
+            <col style="width:13%;" />
+            <col style="width:15%;" />
+            <col style="width:15%;" />
+            <col style="width:32%;" />
+            <col style="width:12%;" />
+          </colgroup>
           <thead>
             <tr>
-              <th style="width:13%;">Col 1 (Primary)</th>
-              <th style="width:13%;">Col 2 (Bundled)</th>
-              <th style="width:15%;">Modifier Indicator</th>
-              <th style="width:15%;">Allowed Modifiers</th>
-              <th style="width:32%;">Clinical Bundling Rationale &amp; NCCI Ch. 7 / CPT Assistant Citation</th>
-              <th style="width:12%;">Action</th>
+              <th scope="col" style="width:13%;">Col 1 (Primary)</th>
+              <th scope="col" style="width:13%;">Col 2 (Bundled)</th>
+              <th scope="col" style="width:15%;">Modifier Indicator</th>
+              <th scope="col" style="width:15%;">Allowed Modifiers</th>
+              <th scope="col" style="width:32%;">Clinical Bundling Rationale &amp; NCCI Ch. 7 / CPT Assistant Citation</th>
+              <th scope="col" style="width:12%;">Action</th>
             </tr>
           </thead>
           <tbody id="ptp-full-matrix-tbody"></tbody>
@@ -1126,7 +1254,7 @@
     <!-- ======================================================================
          WORKSPACE 3: MULTIMODAL FILE UPLOAD & LIVE 6-NODE LANGGRAPH ANALYZER
          ====================================================================== -->
-    <section id="workspace-simulator" class="workspace-panel" data-testid="workspace-simulator">
+    <section id="workspace-simulator" class="workspace-panel" role="tabpanel" aria-labelledby="tab-btn-simulator" data-testid="workspace-simulator">
       <!-- STEP 1: MULTIMODAL BINARY FILE UPLOAD & DISCREPANCY RECONCILIATION STUDIO -->
       <div class="section-card" id="multimodal-upload-studio" data-testid="multimodal-upload-studio" style="margin-bottom: 16px;">
         <div>
@@ -1153,8 +1281,12 @@
           <div
             id="multimodal-dropzone"
             class="upload-dropzone"
+            role="button"
+            tabindex="0"
+            aria-label="Drag and drop multimodal clinical files or press Enter to browse files"
             data-testid="multimodal-dropzone"
             onclick="document.getElementById('file-upload-input').click()"
+            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('file-upload-input').click();}"
             ondragover="handleDragOver(event)"
             ondragleave="handleDragLeave(event)"
             ondrop="handleFileDrop(event)"
@@ -1162,6 +1294,7 @@
             <input
               type="file"
               id="file-upload-input"
+              aria-label="Upload multimodal clinical files (.PDF, .PNG, .JPG, .DCM, .837P)"
               multiple
               accept=".pdf,.png,.jpg,.jpeg,.dcm,.txt,.csv,.837p"
               style="display:none;"
@@ -1201,27 +1334,27 @@
             </h2>
             <p class="section-desc">Automatically populated from your uploaded PDF/PNG/JPEG/DICOM/837P files above, or select a 1-click preset / edit text directly to re-run the 6-Node LangGraph &amp; NCCI engine.</p>
 
-            <div class="preset-pills">
-              <button type="button" class="preset-pill-btn active" onclick="loadSimScenario('AQUA_2027')">1. [CPT 2027] Aquablation 0421T→52598 + Degarelix 240mg</button>
-              <button type="button" class="preset-pill-btn" onclick="loadSimScenario('BOTOX_JW')">2. Botox 52287 + J0585 100U + 100U -JW Wastage</button>
-              <button type="button" class="preset-pill-btn" onclick="loadSimScenario('CONTRALATERAL_URS')">3. R URS Litho 52356-RT + Contralateral L Stent 52332-XS-LT</button>
-              <button type="button" class="preset-pill-btn" onclick="loadSimScenario('TURBT_MULTIFOCAL')">4. Multifocal TURBT 4.2cm + 1.4cm (52234→52235)</button>
+            <div class="preset-pills" id="sim-preset-pills">
+              <button type="button" class="preset-pill-btn active" data-sim-key="AQUA_2027" onclick="loadSimScenario('AQUA_2027')">1. [CPT 2027] Aquablation 0421T→52598 + Degarelix 240mg</button>
+              <button type="button" class="preset-pill-btn" data-sim-key="BOTOX_JW" onclick="loadSimScenario('BOTOX_JW')">2. Botox 52287 + J0585 100U + 100U -JW Wastage</button>
+              <button type="button" class="preset-pill-btn" data-sim-key="CONTRALATERAL_URS" onclick="loadSimScenario('CONTRALATERAL_URS')">3. R URS Litho 52356-RT + Contralateral L Stent 52332-XS-LT</button>
+              <button type="button" class="preset-pill-btn" data-sim-key="TURBT_MULTIFOCAL" onclick="loadSimScenario('TURBT_MULTIFOCAL')">4. Multifocal TURBT 4.2cm + 1.4cm (52234→52235)</button>
             </div>
 
-            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-bottom:10px;">
+            <div class="form-grid-3">
               <div>
-                <label style="display:block; font-size:11.5px; font-weight:700; margin-bottom:3px;">Date of Service (Routes CPT Year)</label>
+                <label for="sim-dos" style="display:block; font-size:11.5px; font-weight:700; margin-bottom:3px;">Date of Service (Routes CPT Year)</label>
                 <input type="date" id="sim-dos" class="input-control" style="width:100%;" value="2027-01-14" />
               </div>
               <div>
-                <label style="display:block; font-size:11.5px; font-weight:700; margin-bottom:3px;">Place of Service</label>
+                <label for="sim-facility" style="display:block; font-size:11.5px; font-weight:700; margin-bottom:3px;">Place of Service</label>
                 <select id="sim-facility" class="select-control" style="width:100%;">
                   <option value="FACILITY">Facility (HOPD / ASC)</option>
                   <option value="NON_FACILITY">Non-Facility (In-Office)</option>
                 </select>
               </div>
               <div>
-                <label style="display:block; font-size:11.5px; font-weight:700; margin-bottom:3px;">MAC Locality</label>
+                <label for="sim-locality" style="display:block; font-size:11.5px; font-weight:700; margin-bottom:3px;">MAC Locality</label>
                 <select id="sim-locality" class="select-control" style="width:100%;">
                   <option value="04">04 — Miami / First Coast (FL)</option>
                   <option value="01">01 — Manhattan / Wellpoint NGS (NY)</option>
@@ -1232,24 +1365,38 @@
             </div>
 
             <div style="margin-bottom:8px;">
-              <label style="display:block; font-size:11.5px; font-weight:700; margin-bottom:3px;">Handwritten Physician Note &amp; Operative Report (Raw PHI Automatically Redacted)</label>
+              <label for="sim-note" style="display:block; font-size:11.5px; font-weight:700; margin-bottom:3px;">Handwritten Physician Note &amp; Operative Report (Raw PHI Automatically Redacted)</label>
               <textarea id="sim-note" rows="4" class="input-control" style="width:100%; height:auto; padding:8px;"></textarea>
             </div>
 
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
+            <div class="form-grid-2">
               <div>
-                <label style="display:block; font-size:11.5px; font-weight:700; margin-bottom:3px;">Surgical Pathology Report</label>
+                <label for="sim-path" style="display:block; font-size:11.5px; font-weight:700; margin-bottom:3px;">Surgical Pathology Report</label>
                 <textarea id="sim-path" rows="2" class="input-control" style="width:100%; height:auto; padding:8px;"></textarea>
               </div>
               <div>
-                <label style="display:block; font-size:11.5px; font-weight:700; margin-bottom:3px;">pydicom / Ultrasound / UDS Metrics</label>
+                <label for="sim-dicom" style="display:block; font-size:11.5px; font-weight:700; margin-bottom:3px;">pydicom / Ultrasound / UDS Metrics</label>
                 <textarea id="sim-dicom" rows="2" class="input-control" style="width:100%; height:auto; padding:8px;"></textarea>
               </div>
             </div>
 
             <div style="margin-bottom:10px;">
-              <label style="display:block; font-size:11.5px; font-weight:700; margin-bottom:3px;">What Billing Dept Coded on X12 837P (JSON or Code:Units list)</label>
+              <label for="sim-billed" style="display:block; font-size:11.5px; font-weight:700; margin-bottom:3px;">What Billing Dept Coded on X12 837P (JSON or Code:Units list)</label>
               <input type="text" id="sim-billed" class="input-control" style="width:100%;" value="0421T:1, 96402:1, J9155:1" />
+            </div>
+
+            <!-- Active Node 0-3 Pipeline & Locality GPCI Telemetry Strip (Balances Left/Right Simulator Cards) -->
+            <div id="sim-left-telemetry-strip" style="background:#f8fafc; border:1px solid var(--border-light); border-radius:7px; padding:8px 10px; margin-bottom:8px; font-size:11.5px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:4px;">
+                <strong style="color:var(--primary-dark);">⚙️ Active 6-Node Stateful Graph &amp; Locality GPCI Guardrails</strong>
+                <span class="badge badge-blue" id="sim-telemetry-version-badge">CPT 2027 Router Active</span>
+              </div>
+              <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:4px 10px; color:var(--text-sub); font-size:11px;">
+                <div><strong>Node 0–1:</strong> Magic-Byte + 18 Safe Harbor Regexes</div>
+                <div><strong>Node 2:</strong> Docling PDF + Vision OCR + pydicom</div>
+                <div><strong>Node 3:</strong> Temporal DOS Router + 4-Pillar RAG</div>
+                <div><strong>Node 4–5:</strong> Deterministic NCCI PTP/MUE + 3-Way Diff</div>
+              </div>
             </div>
           </div>
 
@@ -1267,7 +1414,7 @@
     <!-- ======================================================================
          WORKSPACE 4: 4-PILLAR AUTHORITY & CPT 2026 <-> 2027 VERSION CONTROL
          ====================================================================== -->
-    <section id="workspace-governance" class="workspace-panel" data-testid="workspace-governance">
+    <section id="workspace-governance" class="workspace-panel" role="tabpanel" aria-labelledby="tab-btn-governance" data-testid="workspace-governance">
       <div class="hero-kpi-grid">
         <div class="kpi-card highlight-blue">
           <div class="kpi-label">Pillar 1: AMA CPT Version Control</div>
@@ -1299,27 +1446,29 @@
               <span class="badge badge-amber">Effective Jan 1, 2027</span>
             </h2>
             <p class="section-desc">Prevents retrospective audit failure and clearinghouse rejections by routing every claim strictly by Date of Service (DOS).</p>
-            <table class="gp-blue-grid-table table-fixed" style="margin-bottom: 12px;">
+            <table class="gp-blue-grid-table table-fixed" id="version-diff-table" aria-label="AMA CPT 2026 to CPT 2027 Temporal Version Control Matrix" style="margin-bottom: 12px;">
+              <colgroup>
+                <col style="width:14%;" />
+                <col style="width:18%;" />
+                <col style="width:18%;" />
+                <col style="width:18%;" />
+                <col style="width:32%;" />
+              </colgroup>
               <thead>
                 <tr>
-                  <th style="width:14%;">Code</th>
-                  <th style="width:18%;">2026 Status</th>
-                  <th style="width:18%;">2027 Status</th>
-                  <th style="width:18%;">RVU 26 → 27</th>
-                  <th style="width:32%;">Temporal Rule &amp; Migration Action</th>
+                  <th scope="col" style="width:14%;">Code</th>
+                  <th scope="col" style="width:18%;">2026 Status</th>
+                  <th scope="col" style="width:18%;">2027 Status</th>
+                  <th scope="col" style="width:18%;">RVU 26 → 27</th>
+                  <th scope="col" style="width:32%;">Temporal Rule &amp; Migration Action</th>
                 </tr>
               </thead>
               <tbody id="version-diff-tbody"></tbody>
             </table>
-
-            <!-- Regional MAC LCD Coverage Guardrails & MPFS Conversion Factors (Eliminates Left-Column Blank Space) -->
-            <div style="border-top: 1px solid var(--border-light); padding-top: 10px;">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                <strong style="font-size:13px; color:var(--text-main);">Regional MAC Local Coverage Determinations (LCDs) &amp; MPFS Conversion Factors</strong>
-                <span class="badge badge-blue">5 Active MAC LCDs</span>
-              </div>
-              <div id="mac-lcd-guardrails-list"></div>
-            </div>
+          </div>
+          <div style="margin-top:auto; padding-top:8px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; font-size:11.5px; color:var(--text-muted);">
+            <span>Temporal Cutover: <code>DOS &lt; 2027-01-01</code> → AMA CPT 2026 · <code>DOS ≥ 2027-01-01</code> → AMA CPT 2027</span>
+            <span class="badge badge-amber">11 Lifecycle &amp; Descriptor Rules</span>
           </div>
         </div>
 
@@ -1331,21 +1480,63 @@
             </h2>
             <p class="section-desc">Structured clinical vignettes from AMA CPT Assistant, CMS NCCI Policy Manual Chapter 7, and Specialty Urology heuristics.</p>
             <div id="interpretive-guidance-list"></div>
+
+            <!-- CY 2026 vs CY 2027 MPFS Conversion Factor & Efficiency Adjustment (-2.5%) Reference Box -->
+            <div style="background:#f8fafc; border:1px solid var(--border-light); border-radius:7px; padding:10px 12px; font-size:11.5px; margin-top:8px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:5px;">
+                <strong style="color:var(--primary-dark);">📊 CY 2026 RVU26D vs. CY 2027 MPFS Conversion Factors &amp; -2.5% Efficiency Adjustment</strong>
+                <span class="badge badge-blue">Deterministic Node 3 &amp; 4 Router</span>
+              </div>
+              <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:6px 12px; color:var(--text-sub);">
+                <div><strong>Non-QP Conversion Factor:</strong> <code>$33.4009</code> (Standard MPFS)</div>
+                <div><strong>QP APM Conversion Factor:</strong> <code>$33.5675</code> (+0.5% APM Bonus)</div>
+                <div><strong>CMS Efficiency Adj:</strong> <code>-2.5%</code> non-time Work RVU (52000–53899)</div>
+                <div><strong>Temporal Cutover Gate:</strong> <code>DOS &lt; 2027-01-01</code> → 0421T · <code>≥ 2027-01-01</code> → 52598</div>
+              </div>
+            </div>
           </div>
+          <div style="margin-top:auto; padding-top:8px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; font-size:11.5px; color:var(--text-muted);">
+            <span>Every AI claim mutation requires an explicit 4-Pillar Regulatory Warrant</span>
+            <span class="badge badge-emerald">100% Citation Grounded</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Full-Width 5-Card Regional MAC LCD Coverage Guardrails Strip -->
+      <div class="section-card" style="margin-bottom: 16px;">
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+            <div>
+              <h3 class="section-title" style="margin-bottom:2px;">
+                <span>Regional MAC Local Coverage Determinations (LCDs) &amp; Medical Necessity Guardrails</span>
+              </h3>
+              <p class="section-desc" style="margin-bottom:0;">Jurisdiction-specific ICD-10-CM and clinical threshold checks enforced before X12 837P claim release (including NGS → Wellpoint Federal MAC transition).</p>
+            </div>
+            <span class="badge badge-blue">5 Active MAC LCDs</span>
+          </div>
+          <div id="mac-lcd-guardrails-list" class="mac-lcd-grid"></div>
         </div>
       </div>
 
       <!-- Dataset Provenance & Version Stamps Table -->
       <div class="data-grid-card">
-        <table class="gp-blue-grid-table table-fixed">
+        <table class="gp-blue-grid-table table-fixed" id="version-stamps-table" aria-label="Regulatory Dataset Provenance and Version Stamps">
+          <colgroup>
+            <col style="width:18%;" />
+            <col style="width:22%;" />
+            <col style="width:14%;" />
+            <col style="width:14%;" />
+            <col style="width:10%;" />
+            <col style="width:22%;" />
+          </colgroup>
           <thead>
             <tr>
-              <th style="width:18%;">Dataset Source Key</th>
-              <th style="width:22%;">Official Title &amp; Authority</th>
-              <th style="width:14%;">Version Stamp</th>
-              <th style="width:14%;">Effective Window</th>
-              <th style="width:10%;">Cadence</th>
-              <th style="width:22%;">Pipeline &amp; Compliance Notes</th>
+              <th scope="col" style="width:18%;">Dataset Source Key</th>
+              <th scope="col" style="width:22%;">Official Title &amp; Authority</th>
+              <th scope="col" style="width:14%;">Version Stamp</th>
+              <th scope="col" style="width:14%;">Effective Window</th>
+              <th scope="col" style="width:10%;">Cadence</th>
+              <th scope="col" style="width:22%;">Pipeline &amp; Compliance Notes</th>
             </tr>
           </thead>
           <tbody id="version-stamps-tbody"></tbody>
@@ -1356,7 +1547,7 @@
     <!-- ======================================================================
          WORKSPACE 5: CMS PUF + NPPES NPI UROLOGY PEER BENCHMARK ANALYZER
          ====================================================================== -->
-    <section id="workspace-benchmarks" class="workspace-panel" data-testid="workspace-benchmarks">
+    <section id="workspace-benchmarks" class="workspace-panel" role="tabpanel" aria-labelledby="tab-btn-benchmarks" data-testid="workspace-benchmarks">
       <!-- 4-Card CMS PUF & Regional MAC Hero KPI Strip -->
       <div class="hero-kpi-grid">
         <div class="kpi-card highlight-emerald">
@@ -1397,16 +1588,25 @@
           </div>
           <span class="badge badge-blue">Public CMS PUF + NPPES Joined</span>
         </div>
-        <table class="gp-blue-grid-table table-fixed">
+        <table class="gp-blue-grid-table table-fixed" id="benchmarks-table" aria-label="CMS Medicare PUF and NPPES Urology Peer Benchmarks">
+          <colgroup>
+            <col style="width:18%;" />
+            <col style="width:14%;" />
+            <col style="width:11%;" />
+            <col style="width:11%;" />
+            <col style="width:11%;" />
+            <col style="width:11%;" />
+            <col style="width:24%;" />
+          </colgroup>
           <thead>
             <tr>
-              <th style="width:18%;">Urologist &amp; NPI</th>
-              <th style="width:14%;">MAC &amp; State</th>
-              <th style="width:11%;">99214 : 99213 Ratio</th>
-              <th style="width:11%;">Modifier -25 Rate</th>
-              <th style="width:11%;">52356 Stent+Litho</th>
-              <th style="width:11%;">J-Code Buy&amp;Bill</th>
-              <th style="width:24%;">Estimated Unbilled &amp; Outbound Brief</th>
+              <th scope="col" style="width:18%;">Urologist &amp; NPI</th>
+              <th scope="col" style="width:14%;">MAC &amp; State</th>
+              <th scope="col" style="width:11%;">99214 : 99213 Ratio</th>
+              <th scope="col" style="width:11%;">Modifier -25 Rate</th>
+              <th scope="col" style="width:11%;">52356 Stent+Litho</th>
+              <th scope="col" style="width:11%;">J-Code Buy&amp;Bill</th>
+              <th scope="col" style="width:24%;">Estimated Unbilled &amp; Outbound Brief</th>
             </tr>
           </thead>
           <tbody id="benchmarks-tbody"></tbody>
@@ -1422,19 +1622,54 @@
               <span class="badge badge-blue">7 Active Localities</span>
             </h3>
             <p class="section-desc">Deterministic Work, Practice Expense (PE), and Malpractice (MP) GPCI multipliers applied by Node 4 Payment Calculator.</p>
-            <table class="gp-blue-grid-table table-fixed" data-testid="gpci-localities-table">
+            <table class="gp-blue-grid-table table-fixed" id="gpci-localities-table" aria-label="Medicare GPCI Geographic Practice Cost Index Matrix" data-testid="gpci-localities-table" style="margin-bottom: 12px;">
+              <colgroup>
+                <col style="width:14%;" />
+                <col style="width:30%;" />
+                <col style="width:26%;" />
+                <col style="width:10%;" />
+                <col style="width:10%;" />
+                <col style="width:10%;" />
+              </colgroup>
               <thead>
                 <tr>
-                  <th style="width:14%;">Locality</th>
-                  <th style="width:30%;">Region &amp; State</th>
-                  <th style="width:26%;">MAC Contractor</th>
-                  <th style="width:10%;">Work</th>
-                  <th style="width:10%;">PE</th>
-                  <th style="width:10%;">MP</th>
+                  <th scope="col" style="width:14%;">Locality</th>
+                  <th scope="col" style="width:30%;">Region &amp; State</th>
+                  <th scope="col" style="width:26%;">MAC Contractor</th>
+                  <th scope="col" style="width:10%;">Work</th>
+                  <th scope="col" style="width:10%;">PE</th>
+                  <th scope="col" style="width:10%;">MP</th>
                 </tr>
               </thead>
               <tbody id="gpci-localities-tbody"></tbody>
             </table>
+          </div>
+
+          <!-- Node 4 Geographic Payment Formula & MPPR/Bilateral Reference Box (Eliminates Left-Card Bottom Gap) -->
+          <div id="gpci-formula-callout" style="background:#f8fafc; border:1px solid var(--border-light); border-radius:7px; padding:10px 12px; font-size:11.5px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:6px;">
+              <strong style="color:var(--primary-dark);">🧮 Node 4 Deterministic Medicare Allowed Amount &amp; MPPR Formula</strong>
+              <span class="badge badge-emerald">RVU26D Verified</span>
+            </div>
+            <div style="background:#ffffff; border:1px solid var(--border-light); border-radius:6px; padding:7px 10px; font-family:monospace; font-size:11px; color:var(--text-main); margin-bottom:6px;">
+              Allowed = [(Work_RVU × Work_GPCI) + (PE_RVU × PE_GPCI) + (MP_RVU × MP_GPCI)] × CF × Factor
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:5px 12px; color:var(--text-sub); font-size:11px; margin-bottom:6px;">
+              <div><strong>Standard CF (Non-QP):</strong> <code>$33.4009</code></div>
+              <div><strong>Qualifying APM CF (QP):</strong> <code>$33.5675</code></div>
+              <div><strong>Endoscopy MPPR (Base 52000):</strong> <code>100%</code> Primary / <code>50%</code> Addl</div>
+              <div><strong>Bilateral Ind 1 (Mod -50/XS):</strong> <code>150%</code> Allowed Payment</div>
+              <div><strong>Manhattan (01) Peak GPCI:</strong> Work <code>1.058</code> · PE <code>1.205</code></div>
+              <div><strong>Miami (04) High-MP GPCI:</strong> MP <code>2.145</code> · Work <code>1.000</code></div>
+            </div>
+            <div style="padding-top:6px; border-top:1px dashed var(--border-light); font-size:11px; color:var(--text-sub);">
+              <strong>Worked Locality Proof:</strong> <code>52356-RT</code> (100% Primary = <strong>$406.03</strong>) + Contralateral <code>52332-XS-LT</code> (50% MPPR = <strong>$74.92</strong>) in Dallas Locality 11; <code>52598</code> Aquablation (<strong>$943.12</strong>) in Miami Locality 04.
+            </div>
+          </div>
+
+          <div style="margin-top:auto; padding-top:8px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; font-size:11.5px; color:var(--text-muted);">
+            <span>Synchronized with CMS CY 2026 RVU26D &amp; CY 2027 MPFS GPCI Tables</span>
+            <span class="badge badge-blue">7 MAC Jurisdictions Active</span>
           </div>
         </div>
 
@@ -1445,18 +1680,29 @@
               <span class="badge badge-emerald">SQLite coder_feedback_loop</span>
             </h3>
             <p class="section-desc">Live physician/coder sign-offs and clearinghouse X12 835 Electronic Remittance Advice (`CARC-0` Paid in Full) outcomes.</p>
-            <table class="gp-blue-grid-table table-fixed" data-testid="hitl-feedback-table">
+            <table class="gp-blue-grid-table table-fixed" id="hitl-feedback-table" aria-label="Node 6 HITL Sign-Off and X12 835 Remittance Log" data-testid="hitl-feedback-table">
+              <colgroup>
+                <col style="width:18%;" />
+                <col style="width:22%;" />
+                <col style="width:20%;" />
+                <col style="width:26%;" />
+                <col style="width:14%;" />
+              </colgroup>
               <thead>
                 <tr>
-                  <th style="width:18%;">Encounter</th>
-                  <th style="width:22%;">Action &amp; CARC/RARC</th>
-                  <th style="width:20%;">Target Codes</th>
-                  <th style="width:26%;">Auditor Rationale</th>
-                  <th style="width:14%;">+$Δ Verified</th>
+                  <th scope="col" style="width:18%;">Encounter</th>
+                  <th scope="col" style="width:22%;">Action &amp; CARC/RARC</th>
+                  <th scope="col" style="width:20%;">Target Codes</th>
+                  <th scope="col" style="width:26%;">Auditor Rationale</th>
+                  <th scope="col" style="width:14%;">+$Δ Verified</th>
                 </tr>
               </thead>
               <tbody id="hitl-feedback-tbody"></tbody>
             </table>
+          </div>
+          <div style="margin-top:auto; padding-top:8px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; font-size:11.5px; color:var(--text-muted);">
+            <span>Persisted in SQLite <code>coder_feedback_loop</code> with X12 835 CARC/RARC status</span>
+            <span class="badge badge-emerald">0 Denials · 100% CARC-0</span>
           </div>
         </div>
       </div>
@@ -1467,10 +1713,10 @@
   <!-- ========================================================================
        NON-BLOCKING DOCKED RIGHT-SIDE MULTIMODAL DOSSIER & HITL DRAWER (Rule 25F)
        ======================================================================== -->
-  <aside id="multimodal-drawer" class="docked-drawer" aria-label="Multimodal Encounter Dossier Inspector" data-testid="multimodal-drawer">
+  <aside id="multimodal-drawer" class="docked-drawer" role="dialog" aria-modal="false" aria-hidden="true" aria-label="Multimodal Encounter Dossier Inspector" data-testid="multimodal-drawer">
     <div class="drawer-header">
       <div class="min-w-0">
-        <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:4px;">
           <span class="badge badge-blue" id="drw-enc-id">ENC-2026-0101</span>
           <span class="badge badge-amber" id="drw-cpt-ver">CPT 2026</span>
           <span class="badge badge-emerald" id="drw-delta-badge">+$74.92 Recovery</span>
@@ -1478,27 +1724,27 @@
         <h3 style="margin:0; font-size:14.5px; font-weight:800; color:var(--text-main);" id="drw-title">Clinical Encounter Dossier</h3>
         <div style="font-size:12px; color:var(--text-muted); margin-top:2px;" id="drw-meta">Provider · MAC · DOS</div>
       </div>
-      <button type="button" class="btn-secondary" onclick="closeDrawer()" aria-label="Close Inspector Drawer">✕ Close →</button>
+      <button type="button" class="btn-secondary" id="btn-close-drawer" onclick="closeDrawer()" aria-label="Close Inspector Drawer">✕ Close →</button>
     </div>
 
-    <div class="drawer-subtabs">
-      <button type="button" class="drawer-subtab-btn active" id="dtab-btn-multimodal" onclick="switchDrawerTab('multimodal')">1. Multimodal Artifacts (OCR / PDF / DICOM)</button>
-      <button type="button" class="drawer-subtab-btn" id="dtab-btn-reconcile" onclick="switchDrawerTab('reconcile')">2. 3-Way Claim Diff &amp; Citations</button>
-      <button type="button" class="drawer-subtab-btn" id="dtab-btn-langgraph" onclick="switchDrawerTab('langgraph')">3. 6-Node LangGraph &amp; HITL Sign-Off</button>
+    <div class="drawer-subtabs" role="tablist" aria-label="Dossier Inspector Views">
+      <button type="button" role="tab" aria-selected="true" class="drawer-subtab-btn active" id="dtab-btn-multimodal" onclick="switchDrawerTab('multimodal')">1. Multimodal Artifacts (OCR/DICOM)</button>
+      <button type="button" role="tab" aria-selected="false" class="drawer-subtab-btn" id="dtab-btn-reconcile" onclick="switchDrawerTab('reconcile')">2. 3-Way Claim Diff &amp; Citations</button>
+      <button type="button" role="tab" aria-selected="false" class="drawer-subtab-btn" id="dtab-btn-langgraph" onclick="switchDrawerTab('langgraph')">3. 6-Node LangGraph &amp; HITL</button>
     </div>
 
     <div class="drawer-body" id="drawer-body-content"></div>
 
     <div class="drawer-footer">
-      <div style="font-size:12px; color:var(--text-sub);" id="drw-hitl-status">Status: Pending Review</div>
-      <div style="display:flex; gap:8px;">
+      <div style="font-size:12px; color:var(--text-sub); font-weight:600;" id="drw-hitl-status">Status: Pending Review</div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
         <button type="button" class="btn-secondary" onclick="submitHitlFeedback('835_REMITTANCE_LOGGED')">📥 Log X12 835 Paid (CARC-0)</button>
         <button type="button" class="btn-primary" onclick="submitHitlFeedback('ACCEPTED_AI_CLAIM')">✓ Approve AI Claim &amp; Release 837P</button>
       </div>
     </div>
   </aside>
 
-  <div id="toast-banner" class="toast-banner" role="status"></div>
+  <div id="toast-banner" class="toast-banner" role="status" aria-live="polite"></div>
 
   <!-- ========================================================================
        CLIENT APPLICATION CONTROLLER & FALLBACK DATA STORE
@@ -1516,6 +1762,10 @@
       activeDrawerTab: 'multimodal'
     };
 
+    function formatEnumLabel(raw) {
+      return String(raw || '').replace(/_/g, ' ');
+    }
+
     function showToast(msg) {
       const el = document.getElementById('toast-banner');
       el.textContent = msg;
@@ -1525,7 +1775,9 @@
 
     function switchWorkspace(tabKey) {
       document.querySelectorAll('.workspace-tab-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.tab === tabKey);
+        const isActive = btn.dataset.tab === tabKey;
+        btn.classList.toggle('active', isActive);
+        btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
       });
       document.querySelectorAll('.workspace-panel').forEach(panel => {
         panel.classList.toggle('active', panel.id === 'workspace-' + tabKey);
@@ -1647,21 +1899,28 @@
       document.getElementById('drw-cpt-ver').textContent = 'AMA CPT ' + enc.cpt_version_year;
       document.getElementById('drw-delta-badge').textContent = '+' + formatUsd(enc.money_left_on_table_usd) + ' Left on Table';
       document.getElementById('drw-title').textContent = enc.clinical_title;
-      document.getElementById('drw-meta').textContent = `${enc.provider_name} (NPI ${enc.provider_npi}) · ${enc.mac_contractor} · DOS ${enc.date_of_service} · ${enc.facility_type}`;
-      document.getElementById('drw-hitl-status').textContent = `HITL Status: ${enc.hitl_status} · 835: ${enc.remittance_835_status}`;
+      document.getElementById('drw-meta').textContent = `${enc.provider_name} (NPI ${enc.provider_npi}) · ${enc.mac_contractor} · DOS ${enc.date_of_service} · ${formatEnumLabel(enc.facility_type)}`;
+      document.getElementById('drw-hitl-status').textContent = `HITL: ${formatEnumLabel(enc.hitl_status)} · 835: ${formatEnumLabel(enc.remittance_835_status)}`;
 
-      document.getElementById('multimodal-drawer').classList.add('open');
+      const drw = document.getElementById('multimodal-drawer');
+      drw.classList.add('open');
+      drw.setAttribute('aria-hidden', 'false');
       renderDrawerBody(enc);
     }
 
     function closeDrawer() {
-      document.getElementById('multimodal-drawer').classList.remove('open');
+      const drw = document.getElementById('multimodal-drawer');
+      drw.classList.remove('open');
+      drw.setAttribute('aria-hidden', 'true');
     }
 
     function switchDrawerTab(subTab) {
       STATE.activeDrawerTab = subTab;
       ['multimodal', 'reconcile', 'langgraph'].forEach(k => {
-        document.getElementById('dtab-btn-' + k).classList.toggle('active', k === subTab);
+        const btn = document.getElementById('dtab-btn-' + k);
+        const isActive = k === subTab;
+        btn.classList.toggle('active', isActive);
+        btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
       });
       const enc = STATE.encounters.find(e => e.encounter_id === STATE.activeEncounterId) || STATE.encounters[0];
       if (enc) renderDrawerBody(enc);
@@ -1837,7 +2096,7 @@
           ${traceRows}
         </div>
         <div style="background:#eff6ff; border:1px solid var(--primary-border); border-radius:8px; padding:12px;">
-          <div style="font-weight:800; font-size:13px; margin-bottom:6px;">Human-in-the-Loop (HITL) Addendum / Override Note</div>
+          <label for="hitl-custom-note" style="display:block; font-weight:800; font-size:13px; margin-bottom:6px;">Human-in-the-Loop (HITL) Addendum / Override Note</label>
           <input type="text" id="hitl-custom-note" class="input-control" style="width:100%; margin-bottom:8px;" value="Verified multimodal operative, pathology, and DICOM evidence under NCCI Policy Manual Ch. 7." />
           <div style="font-size:11.5px; color:var(--text-muted);">Use the footer action buttons below to sign off or log X12 835 Remittance Advice into SQLite <code>coder_feedback_loop</code>.</div>
         </div>
@@ -1874,7 +2133,7 @@
         enc.hitl_status = 'CODER_VERIFIED';
       }
 
-      document.getElementById('drw-hitl-status').textContent = `HITL Status: ${enc.hitl_status} (Updated Live)`;
+      document.getElementById('drw-hitl-status').textContent = `HITL: ${formatEnumLabel(enc.hitl_status)} (Updated Live)`;
       renderEncounterTable();
       // Refresh feedback loop table in Workspace 5
       try {
@@ -1885,7 +2144,7 @@
           renderGovernanceAndBenchmarks();
         }
       } catch (e) {}
-      showToast(`✅ ${enc.encounter_id}: ${actionTaken} recorded (+${formatUsd(enc.money_left_on_table_usd)} verified)`);
+      showToast(`✅ ${enc.encounter_id}: ${formatEnumLabel(actionTaken)} recorded (+${formatUsd(enc.money_left_on_table_usd)} verified)`);
     }
 
     // ========================================================================
@@ -1909,6 +2168,10 @@
       ensureSelectOption(document.getElementById('ptp-code-b'), codeB);
       document.getElementById('ptp-context').value = context;
       document.getElementById('ptp-year').value = String(yr);
+      document.querySelectorAll('#workspace-ptp .preset-pill-btn').forEach(btn => {
+        const fn = btn.getAttribute('onclick') || '';
+        btn.classList.toggle('active', fn.includes(`'${codeA}'`) && fn.includes(`'${codeB}'`) && fn.includes(`'${context}'`));
+      });
       runPtpEvaluation();
     }
 
@@ -2097,7 +2360,7 @@
         : `<span class="badge badge-blue">No NCCI PTP Conflict (Add-On / Independent Pair)</span>`;
 
       card.innerHTML = `
-        <div style="flex:1; display:flex; flex-direction:column; justify-content:space-between;">
+        <div style="flex:1; display:flex; flex-direction:column; justify-content:space-between; gap:8px;">
           <div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:6px;">
               <strong style="font-size:14px;">Deterministic NCCI Chapter 7 Verdict (${codeA} + ${codeB})</strong>
@@ -2112,8 +2375,17 @@
               <div style="margin-bottom:6px;"><strong>📘 CMS NCCI Policy Manual Chapter 7 Warrant:</strong><br/>${result.ncci_chapter7_citation}</div>
               <div><strong>📗 AMA CPT Assistant Clinical Vignette:</strong><br/>${result.cpt_assistant_citation}</div>
             </div>
+            <div style="background:#f8fafc; border:1px solid var(--border-light); border-radius:7px; padding:9px 11px; margin-top:10px; font-size:11.5px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                <strong style="color:var(--primary-dark);">⚙️ Node 4 MPPR, Bilateral &amp; MUE Audit Gate</strong>
+                <span class="badge badge-emerald">Locality 11 Dallas GPCI</span>
+              </div>
+              <div style="color:var(--text-sub); font-size:11px;">
+                Endoscopic Base <code>52000</code> MPPR (100% Col 1 / 50% Col 2 when unbundled via <code>-XS</code>/<code>-59</code>) · Place of Service: <strong>${formatEnumLabel(facility)}</strong> · Qualifying APM CF: <code>$33.5675</code>.
+              </div>
+            </div>
           </div>
-          <div style="margin-top:12px; padding-top:10px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center;">
+          <div style="padding-top:10px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center;">
             <span style="font-size:12px; font-weight:700; color:var(--text-sub);">Total Verified Medicare Allowed Amount:</span>
             <span style="font-size:18px; font-weight:800; color:#047857;">${formatUsd(result.total_allowed_usd)}</span>
           </div>
@@ -2216,6 +2488,25 @@
       }
     }
 
+    function formatCompactFileFormatBadge(fmt) {
+      const raw = String(fmt || '');
+      if (raw === 'PDF_DOCUMENT') return 'PDF DOC';
+      if (raw === 'PNG_HANDWRITTEN_IMAGE') return 'PNG OCR';
+      if (raw === 'JPEG_HANDWRITTEN_IMAGE') return 'JPEG OCR';
+      if (raw === 'DICOM_IMAGING_STUDY') return 'DICOM';
+      if (raw === 'X12_837P_EDI_CLAIM') return '837P EDI';
+      return raw.replace(/_/g, ' ').slice(0, 10);
+    }
+
+    function formatShortFilename(fname) {
+      const s = String(fname || '');
+      if (s.startsWith('handwritten_note_')) return s.replace('handwritten_', '');
+      if (s.startsWith('handwritten_superbill_')) return s.replace('handwritten_', '');
+      if (s.startsWith('operative_and_pathology_')) return s.replace('operative_and_pathology_', 'op_path_');
+      if (s.startsWith('billing_dept_scrubbed_')) return s.replace('billing_dept_scrubbed_', 'billing_837p_');
+      return s;
+    }
+
     function renderUploadDiscrepancyAnalysis(result, silentBootstrap = false) {
       if (!result || !result.ok) return;
       const parsedFiles = result.parsed_files || [];
@@ -2232,11 +2523,14 @@
           else if (f.detected_format === 'DICOM_IMAGING_STUDY') fmtBadge = 'badge-emerald';
           else if (f.detected_format === 'X12_837P_EDI_CLAIM') fmtBadge = 'badge-rose';
 
+          const compactBadgeLabel = formatCompactFileFormatBadge(f.detected_format);
+          const shortFilename = formatShortFilename(f.filename);
+
           let modalityStripHtml = '';
           if (f.preview_data_uri) {
             modalityStripHtml = `
               <div style="display:flex; align-items:center; gap:8px; background:#fffdf5; border:1px solid #fde68a; border-radius:6px; padding:5px 7px; min-height:44px;">
-                <img src="${f.preview_data_uri}" alt="${f.filename}" style="width:68px; height:30px; object-fit:cover; border-radius:4px; border:1px solid #cbd5e1; flex-shrink:0;" />
+                <img src="${f.preview_data_uri}" alt="Handwritten clinical scan ${f.filename}" style="width:68px; height:30px; object-fit:cover; border-radius:4px; border:1px solid #cbd5e1; flex-shrink:0;" />
                 <span class="leading-tight break-words" style="font-size:10.5px; color:#92400e; font-weight:700;">Vision OCR: ${((f.ocr_confidence || 0.96) * 100).toFixed(1)}% (${f.dimensions || '220x70px'})</span>
               </div>`;
           } else if (f.detected_format === 'PDF_DOCUMENT') {
@@ -2264,18 +2558,18 @@
             <div class="extracted-file-card" data-testid="extracted-file-card">
               <div>
                 <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; margin-bottom:3px;">
-                  <span class="truncate" style="font-weight:800; font-size:12px; color:var(--text-main);">${f.filename}</span>
-                  <span class="badge ${fmtBadge}">${f.detected_format}</span>
+                  <span class="truncate" title="${f.filename}" style="font-weight:800; font-size:12px; color:var(--text-main);">${shortFilename}</span>
+                  <span class="badge ${fmtBadge}" title="${f.detected_format}">${compactBadgeLabel}</span>
                 </div>
                 <div style="font-size:10.5px; color:var(--text-muted); margin-bottom:3px;">
                   <strong>Magic:</strong> <code>${f.magic_signature}</code> · <strong>${f.size_bytes} B</strong> · <strong>PHI:</strong> ${f.phi_redactions || 0}
                 </div>
-                <div class="truncate" style="font-size:10.5px; color:var(--primary-dark); font-weight:700; margin-bottom:4px;">
+                <div class="truncate" title="${f.parser_engine}" style="font-size:10.5px; color:var(--primary-dark); font-weight:700; margin-bottom:4px;">
                   ⚙️ ${f.parser_engine}
                 </div>
                 ${modalityStripHtml}
               </div>
-              <div class="leading-tight break-words" style="flex:1; font-size:11px; color:var(--text-sub); background:#ffffff; border:1px solid var(--border-light); border-radius:6px; padding:6px 8px; max-height:86px; overflow-y:auto; font-family:monospace;">
+              <div class="file-preview-snippet">
                 ${(f.clean_text_preview || '').replace(/</g, '&lt;')}
               </div>
             </div>
@@ -2295,7 +2589,7 @@
             <tr>
               <td>
                 <div style="font-weight:800; color:var(--text-main);">${d.discrepancy_id}</div>
-                <span class="badge ${d.severity === 'CRITICAL_DENIAL_PREVENTION' ? 'badge-rose' : 'badge-amber'}">${d.category}</span>
+                <span class="badge ${d.severity === 'CRITICAL_DENIAL_PREVENTION' ? 'badge-rose' : 'badge-amber'}">${formatEnumLabel(d.category)}</span>
               </td>
               <td class="leading-tight break-words" style="font-size:11.5px; font-weight:700; color:var(--primary-dark);">
                 ${d.source_modality}
@@ -2324,7 +2618,7 @@
                 ✅ Multimodal Packet Reconciled: ${parsedFiles.length} Binary Files Ingested · ${discrepancies.length} Coding &amp; Revenue Discrepancies Detected
               </strong>
               <div style="font-size:11.5px; color:var(--text-sub);">
-                Temporal Router: <strong>${audit.version_stamp || 'AMA_CPT_2027'}</strong> · HIPAA Safe Harbor Scrubbed: <strong>${result.total_phi_redactions || 0} PHI Identifiers</strong> · Extracted ICD-10-CM: <strong>${(audit.extracted_icd10 || []).join(', ')}</strong>
+                Temporal Router: <strong>${formatEnumLabel(audit.version_stamp || 'AMA_CPT_2027')}</strong> · HIPAA Safe Harbor Scrubbed: <strong>${result.total_phi_redactions || 0} PHI Identifiers</strong> · Extracted ICD-10-CM: <strong>${(audit.extracted_icd10 || []).join(', ')}</strong>
               </div>
             </div>
             <div style="text-align:right;">
@@ -2334,15 +2628,23 @@
           </div>
 
           <div class="data-grid-card">
-            <table class="gp-blue-grid-table table-fixed" data-testid="upload-discrepancy-table">
+            <table class="gp-blue-grid-table table-fixed" aria-label="Multimodal Uploaded Packet Line-by-Line Discrepancy Reconciliation Matrix" data-testid="upload-discrepancy-table">
+              <colgroup>
+                <col style="width:15%;" />
+                <col style="width:16%;" />
+                <col style="width:22%;" />
+                <col style="width:16%;" />
+                <col style="width:21%;" />
+                <col style="width:10%;" />
+              </colgroup>
               <thead>
                 <tr>
-                  <th style="width:15%;">Discrepancy &amp; Type</th>
-                  <th style="width:16%;">Source File &amp; Modality</th>
-                  <th style="width:22%;">What Uploaded Docs Prove</th>
-                  <th style="width:16%;">What Billing 837P Coded</th>
-                  <th style="width:21%;">AI-Verified Fix &amp; Warrant</th>
-                  <th style="width:10%;">+$Δ Impact</th>
+                  <th scope="col" style="width:15%;">Discrepancy &amp; Type</th>
+                  <th scope="col" style="width:16%;">Source File &amp; Modality</th>
+                  <th scope="col" style="width:22%;">What Uploaded Docs Prove</th>
+                  <th scope="col" style="width:16%;">What Billing 837P Coded</th>
+                  <th scope="col" style="width:21%;">AI-Verified Fix &amp; Warrant</th>
+                  <th scope="col" style="width:10%;">+$Δ Impact</th>
                 </tr>
               </thead>
               <tbody>${rowsHtml}</tbody>
@@ -2418,6 +2720,9 @@
 
     function loadSimScenario(key) {
       const p = SIM_PRESETS[key] || SIM_PRESETS.AQUA_2027;
+      document.querySelectorAll('#sim-preset-pills .preset-pill-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.simKey === key);
+      });
       document.getElementById('sim-dos').value = p.dos;
       document.getElementById('sim-facility').value = p.facility;
       document.getElementById('sim-locality').value = p.locality;
@@ -2430,6 +2735,11 @@
 
     function renderSimulatorAuditCard(data) {
       if (!data) return;
+      const verBadge = document.getElementById('sim-telemetry-version-badge');
+      if (verBadge && data.version_stamp) {
+        verBadge.textContent = formatEnumLabel(data.version_stamp) + ' Active';
+      }
+
       const outCard = document.getElementById('sim-output-card');
       const vLines = (data.verified_lines || []).map(l => `
         <div style="padding:8px 10px; background:#f0fdf4; border:1px solid var(--emerald-border); border-radius:7px; margin-bottom:7px;">
@@ -2449,11 +2759,11 @@
       `).join('');
 
       outCard.innerHTML = `
-        <div style="flex:1; display:flex; flex-direction:column; justify-content:space-between;">
+        <div style="flex:1; display:flex; flex-direction:column; justify-content:space-between; gap:8px;">
           <div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:6px;">
               <strong style="font-size:14px;">6-Node LangGraph Live Audit Result</strong>
-              <span class="badge badge-amber">${data.version_stamp}</span>
+              <span class="badge badge-amber">${formatEnumLabel(data.version_stamp)}</span>
             </div>
             <div style="background:#f8fafc; border:1px solid var(--border-light); border-radius:7px; padding:8px 11px; margin-bottom:10px; font-size:12px;">
               <strong>🛡️ Node 1 HIPAA Safe Harbor PHI Gate (${data.phi_redaction?.redactions_applied || 0} Identifiers Scrubbed):</strong><br/>
@@ -2463,7 +2773,7 @@
             ${vLines}
             ${findingsHtml}
           </div>
-          <div style="margin-top:10px; padding-top:10px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center;">
+          <div style="padding-top:10px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center;">
             <span style="font-size:12.5px; font-weight:700;">Net Money Left on the Table Recovered:</span>
             <span style="font-size:20px; font-weight:800; color:#047857;">+${formatUsd(data.money_left_on_table_usd)}</span>
           </div>
@@ -2520,8 +2830,8 @@
           ...lifecycle.map(c => `
             <tr>
               <td><span class="code-chip">${c.code}</span></td>
-              <td><span class="badge ${c.status_2026 === 'ACTIVE' ? 'badge-emerald' : 'badge-rose'}">${c.status_2026}</span></td>
-              <td><span class="badge ${c.status_2027 === 'ACTIVE' ? 'badge-emerald' : 'badge-rose'}">${c.status_2027}</span></td>
+              <td><span class="badge ${c.status_2026 === 'ACTIVE' ? 'badge-emerald' : 'badge-rose'}">${formatEnumLabel(c.status_2026)}</span></td>
+              <td><span class="badge ${c.status_2027 === 'ACTIVE' ? 'badge-emerald' : 'badge-rose'}">${formatEnumLabel(c.status_2027)}</span></td>
               <td style="font-variant-numeric:tabular-nums; font-weight:700;">${c.work_rvu_2026} → ${c.work_rvu_2027}</td>
               <td class="leading-tight break-words" style="font-size:11.5px;">${c.version_change_note}</td>
             </tr>
@@ -2538,19 +2848,24 @@
         ].join('');
         document.getElementById('version-diff-tbody').innerHTML = diffRows;
 
-        // Populate Regional MAC LCD Coverage Guardrails in Left Column of Workspace 4
+        // Populate Full-Width 5-Card Regional MAC LCD Coverage Guardrails in Workspace 4
         const lcdEl = document.getElementById('mac-lcd-guardrails-list');
         if (lcdEl) {
           const lcds = STATE.versionDiff.mac_lcd_articles || [];
           lcdEl.innerHTML = lcds.map(l => `
-            <div style="padding:8px 10px; background:#f8fafc; border:1px solid var(--border-light); border-radius:7px; margin-bottom:7px;">
-              <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; margin-bottom:2px;">
-                <span class="badge badge-amber">${l.lcd_id} / ${l.article_id}</span>
-                <span style="font-size:11px; font-weight:700; color:var(--primary-dark);">${l.mac_contractor} (${(l.states_covered || []).join(', ')})</span>
+            <div style="padding:10px 11px; background:#f8fafc; border:1px solid var(--border-light); border-radius:8px; display:flex; flex-direction:column; justify-content:space-between; gap:6px;">
+              <div>
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; margin-bottom:4px;">
+                  <span class="badge badge-amber">${l.lcd_id} / ${l.article_id}</span>
+                  <span class="badge badge-blue">${(l.states_covered || []).join(', ')}</span>
+                </div>
+                <div style="font-size:11px; font-weight:700; color:var(--primary-dark); margin-bottom:2px;">${l.mac_contractor}</div>
+                <div style="font-weight:800; font-size:12px; color:var(--text-main); line-height:1.3;">${l.title}</div>
               </div>
-              <div style="font-weight:800; font-size:12px; color:var(--text-main);">${l.title}</div>
-              <div class="leading-tight break-words" style="font-size:11px; color:var(--text-sub); margin-top:2px;">
-                <strong>Target CPT:</strong> ${(l.target_cpt_hcpcs || []).join(', ')} · <strong>Covered ICD-10:</strong> ${(l.covered_icd10_codes || []).join(', ')} — ${l.frequency_rule}
+              <div class="leading-tight break-words" style="font-size:11px; color:var(--text-sub); padding-top:6px; border-top:1px dashed var(--border-light);">
+                <div><strong>CPT:</strong> ${(l.target_cpt_hcpcs || []).join(', ')}</div>
+                <div><strong>ICD-10:</strong> ${(l.covered_icd10_codes || []).join(', ')}</div>
+                <div style="margin-top:2px; color:var(--text-muted);">${l.frequency_rule}</div>
               </div>
             </div>
           `).join('');
@@ -2559,7 +2874,7 @@
         const guidanceHtml = (STATE.versionDiff.interpretive_guidance || []).map(g => `
           <div style="padding:9px 11px; background:#f8fafc; border:1px solid var(--border-light); border-radius:7px; margin-bottom:8px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
-              <span class="badge badge-blue">${g.pillar_type}</span>
+              <span class="badge badge-blue">${formatEnumLabel(g.pillar_type)}</span>
               <span style="font-size:11px; font-weight:700; color:var(--text-muted);">${g.citation_ref}</span>
             </div>
             <div style="font-weight:800; font-size:12.5px; color:var(--text-main);">${g.title}</div>
@@ -2570,7 +2885,7 @@
 
         const stampsHtml = (STATE.versionDiff.version_stamps || []).map(s => `
           <tr>
-            <td><span class="code-chip">${s.source_key}</span></td>
+            <td><span class="code-chip">${formatEnumLabel(s.source_key)}</span></td>
             <td class="leading-tight break-words"><strong>${s.display_name}</strong><br/><span style="font-size:11px; color:var(--text-muted);">${s.authority_owner}</span></td>
             <td><span class="badge badge-emerald">${s.version_tag}</span></td>
             <td style="font-size:11.5px; font-variant-numeric:tabular-nums;">${s.effective_start} → ${s.effective_end}</td>
@@ -2670,7 +2985,7 @@
               <div style="font-size:10.5px; color:var(--text-muted);">${fb.reviewer_role}</div>
             </td>
             <td>
-              <span class="badge ${fb.action_taken.includes('ACCEPTED') || fb.action_taken.includes('835') ? 'badge-emerald' : 'badge-blue'}">${fb.action_taken}</span>
+              <span class="badge ${fb.action_taken.includes('ACCEPTED') || fb.action_taken.includes('835') ? 'badge-emerald' : 'badge-blue'}">${formatEnumLabel(fb.action_taken)}</span>
               <div class="leading-tight break-words" style="font-size:10.5px; color:var(--text-sub); margin-top:2px; font-weight:600;">${fb.carc_rarc_code}</div>
             </td>
             <td class="leading-tight break-words" style="font-size:11px; font-family:monospace; font-weight:700;">${fb.target_code}</td>

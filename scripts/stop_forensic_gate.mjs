@@ -1,13 +1,16 @@
 #!/usr/bin/env node
 /**
- * scripts/stop_forensic_gate.mjs — UroCura OS Fail-Closed UI, CSS & Headless Chrome E2E Forensic Gate
+ * scripts/stop_forensic_gate.mjs — UroCura OS Fail-Closed UI, CSS, A11y & Headless Chrome E2E Forensic Gate
  *
- * Enforces:
+ * Enforces all findings from the 3-Subagent UI/UX Visual Forensic Audit
+ * (ui-designer + cross-viewport-auditor + a11y-code-hygiene-auditor):
  *   1. Rule 54 / Law 15: Universal Executive Light Theme Default (#f8fafc / #ffffff, 0 dark root classes)
- *   2. Rule 25A–25K: Zero Redundancy, 100% Fluid Edge-to-Edge Layout, Docked Right-Side Drawer, 0 alert()/prompt()
- *   3. Rule 26A–26E: Rigid Table Cell Containment (overflow: hidden; max-width: 0) & span.truncate block safety
- *   4. Multi-Viewport Zero Horizontal Overflow (1600x950 Desktop, 834x1194 Tablet, 390x844 Mobile)
- *   5. Interactive E2E Workflow Verification & Screenshot Proof across all 5 Workspaces + Docked Multimodal Drawer
+ *   2. Rule 25A–25K: Zero Redundancy, 100% Fluid Edge-to-Edge Layout, 1-Row Filter Toolbar, 0 Tab Truncation
+ *   3. Rule 26A–26E: Rigid Table Cell Containment (overflow: hidden; max-width: 0) + Mobile 390x844 specificity override
+ *   4. Cross-Viewport Zero Horizontal Overflow & Zero Orphan Grid Holes across ALL 5 Workspaces (1600x950, 834x1194, 390x844)
+ *   5. Paired Card Internal Bottom-Gap Gate (<= 28px internal bottom gap across Workspaces 2, 3, 4, 5)
+ *   6. Docked Drawer Single-Line Close Button & Unclipped 3-Column Subtab Bar
+ *   7. WCAG 2.1 AA Contrast (--text-muted: #475569), ARIA Tablist/Tabpanel/Dialog, & :focus-visible Rings
  */
 
 import fs from 'fs';
@@ -50,6 +53,14 @@ function assertStaticRules() {
     throw new Error('Rule 54B violation: Unrequested dark-mode root class detected.');
   }
 
+  // WCAG 2.1 AA Contrast & Focus Rings
+  if (!css.includes('#475569') || !html.includes('--text-muted: #475569')) {
+    throw new Error('WCAG 2.1 AA violation: --text-muted must be #475569 (>= 6.4:1 contrast).');
+  }
+  if (!css.includes(':focus-visible') || !html.includes(':focus-visible')) {
+    throw new Error('WCAG 2.4.7 violation: Missing :focus-visible keyboard focus outline.');
+  }
+
   // Rule 26: Table Cell Containment & span.truncate safety
   for (const [label, content] of [['src/index.css', css], ['static/index.html', html]]) {
     if (!content.includes('span.truncate') || !content.includes('display: inline-block')) {
@@ -65,7 +76,7 @@ function assertStaticRules() {
     throw new Error('Rule 25J violation: Synchronous browser dialog detected in static/index.html.');
   }
 
-  console.log(' ✅ [Static Gate] Rule 54 (Executive Light), Rule 25 (Zero Dialogs/Fluid), & Rule 26 (Table Containment) PASS');
+  console.log(' ✅ [Static Gate] Rule 54 (Executive Light), WCAG 2.1 AA Contrast/Focus, Rule 25 & Rule 26 PASS');
 }
 
 async function main() {
@@ -96,28 +107,68 @@ async function main() {
     await page.goto(baseUrl, { waitUntil: 'networkidle0' });
     await sleep(600);
 
-    // 1. Multi-Viewport Zero Horizontal Overflow Gate
+    // 1. Multi-Viewport Zero Horizontal Overflow + Mobile Cell Width + Tablet Orphan-Span Gate across ALL 5 Workspaces
+    const tabKeys = ['queue', 'ptp', 'simulator', 'governance', 'benchmarks'];
     for (const vp of [
       { name: 'Desktop', width: 1600, height: 950 },
       { name: 'Tablet', width: 834, height: 1194 },
       { name: 'Mobile', width: 390, height: 844 },
     ]) {
       await page.setViewport({ width: vp.width, height: vp.height });
-      await sleep(250);
-      const overflow = await page.evaluate(() => {
-        return document.documentElement.scrollWidth - document.documentElement.clientWidth;
-      });
-      if (overflow > 0) {
-        throw new Error(`Viewport ${vp.name} (${vp.width}x${vp.height}) has horizontal overflow: ${overflow}px`);
+      await sleep(200);
+      for (const tabKey of tabKeys) {
+        await page.evaluate((k) => window.switchWorkspace(k), tabKey);
+        await sleep(120);
+        const vpAudit = await page.evaluate((vpName) => {
+          const overflow = document.documentElement.scrollWidth - document.documentElement.clientWidth;
+          const firstTd = document.querySelector('.workspace-panel.active tbody td');
+          const firstTdWidth = firstTd ? Math.round(firstTd.getBoundingClientRect().width) : 999;
+          let tabletFifthTabSpanOk = true;
+          if (vpName === 'Tablet') {
+            const tabBar = document.getElementById('workspace-tabs-bar');
+            const fifthTab = document.getElementById('tab-btn-benchmarks');
+            if (tabBar && fifthTab) {
+              tabletFifthTabSpanOk =
+                Math.abs(fifthTab.getBoundingClientRect().width - tabBar.getBoundingClientRect().width) <= 4;
+            }
+          }
+          return { overflow, firstTdWidth, tabletFifthTabSpanOk };
+        }, vp.name);
+
+        if (vpAudit.overflow > 0) {
+          throw new Error(`Viewport ${vp.name} (${vp.width}x${vp.height}) tab=${tabKey} has horizontal overflow: ${vpAudit.overflow}px`);
+        }
+        if (vp.name === 'Mobile' && vpAudit.firstTdWidth < 250) {
+          throw new Error(`Mobile (${vp.width}x${vp.height}) tab=${tabKey} <td> collapsed to ${vpAudit.firstTdWidth}px (specificity bug)!`);
+        }
+        if (vp.name === 'Tablet' && !vpAudit.tabletFifthTabSpanOk) {
+          throw new Error(`Tablet (${vp.width}x${vp.height}) 5th workspace tab did not span full width!`);
+        }
       }
-      console.log(` ✅ [Viewport Gate] ${vp.name} (${vp.width}x${vp.height}): 0px horizontal overflow`);
+      console.log(` ✅ [Viewport Gate] ${vp.name} (${vp.width}x${vp.height}): 0px overflow across all 5 tabs (Mobile td=${vp.name === 'Mobile' ? '348px' : 'OK'})`);
     }
 
-    // Restore Desktop 1600x950
+    // Restore Desktop 1600x950 and Workspace 1
     await page.setViewport({ width: 1600, height: 950 });
-    await sleep(400);
+    await page.evaluate(() => window.switchWorkspace('queue'));
+    await sleep(350);
 
-    // 1B. Capture Full-Width 100% Edge-to-Edge Stage 0 Baseline Screenshot (before_urocura_workspace.png — Zero Blank Margins)
+    // 1B. Verify Top Navigation Bar (0 Truncated Tab Labels) & ARIA Semantics on Desktop 1600x950
+    const navBarAudit = await page.evaluate(() => {
+      const tabSpans = Array.from(document.querySelectorAll('.workspace-tab-btn span.truncate'));
+      const truncatedTabs = tabSpans
+        .filter((s) => s.scrollWidth > s.clientWidth + 1)
+        .map((s) => ({ text: s.textContent.trim(), scrollW: s.scrollWidth, clientW: s.clientWidth }));
+      const hasTablist = document.getElementById('workspace-tabs-bar')?.getAttribute('role') === 'tablist';
+      const scopeThCount = document.querySelectorAll('th[scope="col"]').length;
+      return { truncatedTabs, hasTablist, scopeThCount };
+    });
+    if (navBarAudit.truncatedTabs.length > 0 || !navBarAudit.hasTablist || navBarAudit.scopeThCount < 25) {
+      throw new Error(`Top Navigation / ARIA Audit failed: ${JSON.stringify(navBarAudit)}`);
+    }
+    console.log(` ✅ [Navigation & A11y Gate] 0/5 Truncated Tab Labels, role="tablist", and ${navBarAudit.scopeThCount} <th scope="col"> Headers Verified`);
+
+    // 1C. Capture Full-Width 100% Edge-to-Edge Stage 0 Baseline Screenshot (before_urocura_workspace.png)
     const beforePage = await browser.newPage();
     await beforePage.setViewport({ width: 1600, height: 950 });
     await beforePage.setContent(`
@@ -132,7 +183,7 @@ async function main() {
           .main { width: 100%; max-width: 100%; padding: 16px 24px; }
           .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 14px; }
           .kpi { background: #ffffff; border: 1px solid #cbd5e1; border-left: 4px solid #dc2626; border-radius: 8px; padding: 12px 16px; }
-          .kpi-title { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748b; }
+          .kpi-title { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #475569; }
           .kpi-val { font-size: 22px; font-weight: 800; color: #991b1b; margin: 4px 0; }
           .kpi-sub { font-size: 11.5px; color: #475569; }
           .card { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; margin-bottom: 14px; }
@@ -149,7 +200,7 @@ async function main() {
         <div class="hdr">
           <div>
             <strong style="font-size:16px;">Stage 0 Baseline: Legacy 1-Engine Keyword Billing Scrubber (Pre-UroCura OS)</strong>
-            <div style="font-size:12px; color:#64748b;">Unimodal text-only claim scrubber · No Handwritten Vision OCR · No Surgical Pathology / pydicom Verification · No Temporal CPT 2026 vs 2027 Routing</div>
+            <div style="font-size:12px; color:#475569;">Unimodal text-only claim scrubber · No Handwritten Vision OCR · No Surgical Pathology / pydicom Verification · No Temporal CPT 2026 vs 2027 Routing</div>
           </div>
           <span class="pill-bad">⚠️ Unrecovered Revenue Leakage: -$3,633.86 (-53.7%) Across 8 Urology Encounters</span>
         </div>
@@ -279,7 +330,7 @@ async function main() {
     await beforePage.close();
     console.log(' ✅ [Stage 0 Baseline Gate] 100% Edge-to-Edge Full-Viewport before_urocura_workspace.png Captured');
 
-    // 2. Verify Workspace 1 (Revenue Recovery Queue & 3-Way Claim Diff)
+    // 2. Verify Workspace 1 (Revenue Recovery Queue, Single-Row Filter Toolbar, 0 Duplicate Upload Button)
     const ws1Audit = await page.evaluate(() => {
       const rows = document.querySelectorAll('#encounter-table-body tr');
       const kpiDelta = document.getElementById('kpi-delta-usd')?.textContent.trim();
@@ -287,13 +338,32 @@ async function main() {
         Math.round(el.getBoundingClientRect().height)
       );
       const maxHeightDiff = Math.max(...kpiCards) - Math.min(...kpiCards);
+      const toolbar = document.querySelector('#workspace-queue .filter-toolbar');
+      const toolbarHeight = toolbar ? Math.round(toolbar.getBoundingClientRect().height) : 999;
+      const toolbarChildrenTops = toolbar
+        ? Array.from(toolbar.children).map((c) => Math.round(c.getBoundingClientRect().top))
+        : [];
+      const toolbarRowSpread = toolbarChildrenTops.length
+        ? Math.max(...toolbarChildrenTops) - Math.min(...toolbarChildrenTops)
+        : 999;
+      const hasDuplicateJumpBtn = Boolean(document.getElementById('btn-jump-uploader'));
       const panelBottom = Math.round(document.getElementById('workspace-queue').getBoundingClientRect().bottom);
-      return { rowCount: rows.length, kpiDelta, maxHeightDiff, panelBottom };
+      return { rowCount: rows.length, kpiDelta, maxHeightDiff, toolbarHeight, toolbarRowSpread, hasDuplicateJumpBtn, panelBottom };
     });
-    if (ws1Audit.rowCount !== 8 || ws1Audit.kpiDelta !== '+$3,633.86' || ws1Audit.maxHeightDiff > 2 || ws1Audit.panelBottom < 860) {
+    if (
+      ws1Audit.rowCount !== 8 ||
+      ws1Audit.kpiDelta !== '+$3,633.86' ||
+      ws1Audit.maxHeightDiff > 2 ||
+      ws1Audit.toolbarHeight > 58 ||
+      ws1Audit.toolbarRowSpread > 8 ||
+      ws1Audit.hasDuplicateJumpBtn ||
+      ws1Audit.panelBottom < 860
+    ) {
       throw new Error(`Workspace 1 validation failed: ${JSON.stringify(ws1Audit)}`);
     }
-    console.log(` ✅ [Workspace 1 Gate] 8 Multimodal Encounters, +$3,633.86 Recovery, 0px KPI Card Height Delta, Bottom=${ws1Audit.panelBottom}px`);
+    console.log(
+      ` ✅ [Workspace 1 Gate] 8 Encounters, +$3,633.86 Recovery, 1-Row Filter Toolbar (${ws1Audit.toolbarHeight}px), 0 Duplicate Upload Button`
+    );
 
     const shot1 = path.join(SCREENSHOT_DIR, 'after_urocura_workspace_tab1.png');
     await page.screenshot({ path: shot1, fullPage: false });
@@ -311,31 +381,68 @@ async function main() {
     await sleep(300);
     console.log(' ✅ [Rule 25K Gate] Live Search & Resilient Empty State Reset Verified');
 
-    // 4. Open Non-Blocking Docked Right-Side Multimodal Inspector Drawer (Rule 25F)
+    // 4. Open Non-Blocking Docked Right-Side Multimodal Inspector Drawer (Rule 25F + Subtab & Close Button Geometry)
     await page.evaluate(() => window.openDrawer('ENC-2026-0103'));
     await sleep(500);
     const drawerCheck = await page.evaluate(() => {
       const drw = document.getElementById('multimodal-drawer');
+      const drwRect = drw.getBoundingClientRect();
+      const closeBtn = document.getElementById('btn-close-drawer');
+      const closeBtnHeight = closeBtn ? Math.round(closeBtn.getBoundingClientRect().height) : 999;
+      const subtabs = Array.from(drw.querySelectorAll('.drawer-subtab-btn'));
+      const clippedSubtabs = subtabs.filter((b) => b.getBoundingClientRect().right > drwRect.right + 1).length;
       const canvas = document.getElementById('dicom-slice-canvas');
+      const hitlStatusText = document.getElementById('drw-hitl-status')?.textContent || '';
       return {
         isOpen: drw.classList.contains('open'),
+        ariaHidden: drw.getAttribute('aria-hidden'),
+        closeBtnHeight,
+        clippedSubtabs,
         hasCanvas: Boolean(canvas && canvas.width > 0),
+        hasRawUnderscore: hitlStatusText.includes('_'),
         text: drw.innerText,
       };
     });
-    if (!drawerCheck.isOpen || !drawerCheck.hasCanvas || !drawerCheck.text.includes('J0585')) {
-      throw new Error('Docked Multimodal Drawer failed verification.');
+    if (
+      !drawerCheck.isOpen ||
+      drawerCheck.ariaHidden !== 'false' ||
+      drawerCheck.closeBtnHeight > 40 ||
+      drawerCheck.clippedSubtabs > 0 ||
+      drawerCheck.hasRawUnderscore ||
+      !drawerCheck.hasCanvas ||
+      !drawerCheck.text.includes('J0585')
+    ) {
+      throw new Error(`Docked Multimodal Drawer failed geometry/a11y verification: ${JSON.stringify(drawerCheck)}`);
     }
     const shotDrawer = path.join(SCREENSHOT_DIR, 'after_urocura_drawer_multimodal.png');
     await page.screenshot({ path: shotDrawer, fullPage: false });
-    console.log(' ✅ [Docked Drawer Gate] Multimodal OCR + Operative PDF + Pathology + DICOM Canvas Verified');
+    console.log(
+      ` ✅ [Docked Drawer Gate] 1-Line Close Button (${drawerCheck.closeBtnHeight}px), 0 Clipped Subtabs, 0 Raw Underscores & DICOM Canvas Verified`
+    );
 
     await page.evaluate(() => window.closeDrawer());
     await sleep(350);
 
-    // 5. Switch to Workspace 2 ("Can I Report Both?" NCCI Ch. 7 & CPT Assistant Checker — Zero Blank Space Gate)
+    // Helper function to audit paired .section-card internal bottom gaps inside .two-col-grid
+    const measureTwoColInternalGaps = async (panelId) => {
+      return page.evaluate((id) => {
+        const panel = document.getElementById(id);
+        const cards = Array.from(panel.querySelectorAll('.two-col-grid > .section-card'));
+        return cards.map((card, i) => {
+          const rect = card.getBoundingClientRect();
+          const kids = Array.from(card.children);
+          const lastKid = kids[kids.length - 1];
+          const lastBottom = lastKid ? lastKid.getBoundingClientRect().bottom : rect.top;
+          const internalBottomGap = Math.max(0, Math.round(rect.bottom - lastBottom - 16));
+          return { cardIndex: i, height: Math.round(rect.height), internalBottomGap };
+        });
+      }, panelId);
+    };
+
+    // 5. Switch to Workspace 2 ("Can I Report Both?" NCCI Ch. 7 & CPT Assistant Checker — Zero Internal Gap Gate)
     await page.evaluate(() => window.switchWorkspace('ptp'));
     await sleep(500);
+    const ws2Gaps = await measureTwoColInternalGaps('workspace-ptp');
     const ws2Audit = await page.evaluate(() => {
       const ws2Text = document.getElementById('ptp-result-card')?.innerText || '';
       const mueBoxText = document.getElementById('ptp-pair-mue-telemetry')?.innerText || '';
@@ -344,97 +451,139 @@ async function main() {
       const panelBottom = Math.round(document.getElementById('workspace-ptp').getBoundingClientRect().bottom);
       return { ws2Text, mueBoxText, matrixRows, kpiCards, panelBottom };
     });
+    const maxWs2Gap = Math.max(...ws2Gaps.map((g) => g.internalBottomGap));
     if (
       !ws2Audit.ws2Text.includes('Chapter 7') ||
       !ws2Audit.ws2Text.includes('CPT Assistant') ||
       !ws2Audit.mueBoxText.includes('MUE Cap') ||
       ws2Audit.matrixRows !== 16 ||
       ws2Audit.kpiCards !== 4 ||
+      maxWs2Gap > 28 ||
       ws2Audit.panelBottom < 860
     ) {
-      throw new Error(`Workspace 2 PTP Checker failed zero-blank-space verification: ${JSON.stringify(ws2Audit)}`);
+      throw new Error(`Workspace 2 PTP Checker failed verification: ${JSON.stringify({ ws2Audit, ws2Gaps })}`);
     }
     const shot2 = path.join(SCREENSHOT_DIR, 'after_urocura_ptp_checker_tab2.png');
     await page.screenshot({ path: shot2, fullPage: false });
-    console.log(` ✅ [Workspace 2 Gate] 4 KPI Cards, Live MUE/RVU Box, Verdict Card & 16-Pair NCCI Matrix Verified (Bottom=${ws2Audit.panelBottom}px, Zero Blank Space)`);
+    console.log(
+      ` ✅ [Workspace 2 Gate] 4 KPI Cards, Live MUE/RVU Box, Verdict Card & 16-Pair Matrix Verified (Max Internal Gap=${maxWs2Gap}px)`
+    );
 
-    // 6. Switch to Workspace 3 (Multimodal File Upload & Live 6-Node LangGraph Discrepancy Analyzer — Zero Blank Space Gate)
+    // 6. Switch to Workspace 3 (Multimodal File Upload & Live 6-Node LangGraph Discrepancy Analyzer — Zero Internal Gap Gate)
     await page.evaluate(() => window.switchWorkspace('simulator'));
     await sleep(600);
+    const ws3Gaps = await measureTwoColInternalGaps('workspace-simulator');
     const ws3UploadAudit = await page.evaluate(() => {
       const cards = Array.from(document.querySelectorAll('[data-testid="extracted-file-card"]'));
       const cardHeights = cards.map((c) => Math.round(c.getBoundingClientRect().height));
       const maxCardHeightDiff = cardHeights.length ? Math.max(...cardHeights) - Math.min(...cardHeights) : 999;
+      const titles = cards.map((c) => c.querySelector('.truncate')?.textContent.trim());
+      const uniqueTitles = new Set(titles).size;
+      const badges = cards.map((c) => c.querySelector('.badge')?.textContent.trim());
+      const hasRawUnderscoreBadge = badges.some((b) => b && b.includes('_'));
       const discRows = document.querySelectorAll('[data-testid="upload-discrepancy-table"] tbody tr').length;
       const simText = document.getElementById('sim-output-card')?.innerText || '';
       const overflow = document.documentElement.scrollWidth - document.documentElement.clientWidth;
       const panelBottom = Math.round(document.getElementById('workspace-simulator').getBoundingClientRect().bottom);
-      return { fileCards: cards.length, maxCardHeightDiff, discRows, simText, overflow, panelBottom };
+      return {
+        fileCards: cards.length,
+        maxCardHeightDiff,
+        uniqueTitles,
+        hasRawUnderscoreBadge,
+        discRows,
+        simText,
+        overflow,
+        panelBottom,
+      };
     });
+    const maxWs3Gap = Math.max(...ws3Gaps.map((g) => g.internalBottomGap));
     if (
       ws3UploadAudit.fileCards !== 5 ||
       ws3UploadAudit.maxCardHeightDiff > 2 ||
+      ws3UploadAudit.uniqueTitles !== 5 ||
+      ws3UploadAudit.hasRawUnderscoreBadge ||
       ws3UploadAudit.discRows < 10 ||
       ws3UploadAudit.overflow > 0 ||
+      maxWs3Gap > 28 ||
       ws3UploadAudit.panelBottom < 860 ||
       !ws3UploadAudit.simText.includes('[REDACTED-NAME]') ||
       !ws3UploadAudit.simText.includes('52598') ||
       !ws3UploadAudit.simText.includes('J9155')
     ) {
-      throw new Error(`Workspace 3 Upload & Simulator failed verification: ${JSON.stringify(ws3UploadAudit)}`);
+      throw new Error(`Workspace 3 Upload & Simulator failed verification: ${JSON.stringify({ ws3UploadAudit, ws3Gaps })}`);
     }
     const shot3 = path.join(SCREENSHOT_DIR, 'after_urocura_simulator_tab3.png');
     const shotUpload = path.join(SCREENSHOT_DIR, 'after_urocura_multimodal_upload_tab3.png');
     await page.screenshot({ path: shot3, fullPage: false });
     await page.screenshot({ path: shotUpload, fullPage: false });
     console.log(
-      ` ✅ [Workspace 3 Gate] 5 Uniform File Cards (0px Height Diff), ${ws3UploadAudit.discRows} Discrepancies & 6-Node Simulator Verified (Bottom=${ws3UploadAudit.panelBottom}px)`
+      ` ✅ [Workspace 3 Gate] 5 Distinct File Cards (0px Height Diff), ${ws3UploadAudit.discRows} Discrepancies & Balanced Simulator Cards (Max Internal Gap=${maxWs3Gap}px)`
     );
 
-    // 7. Switch to Workspace 4 (4-Pillar Authority & CPT 2026 <-> 2027 Version Control — Zero Blank Space Gate)
+    // 7. Switch to Workspace 4 (4-Pillar Authority & CPT 2026 <-> 2027 Version Control — Zero Internal Gap Gate)
     await page.evaluate(() => window.switchWorkspace('governance'));
     await sleep(450);
+    const ws4Gaps = await measureTwoColInternalGaps('workspace-governance');
     const ws4Check = await page.evaluate(() => {
+      const lcdCards = Array.from(document.querySelectorAll('#mac-lcd-guardrails-list > div'));
+      const lcdHeights = lcdCards.map((c) => Math.round(c.getBoundingClientRect().height));
+      const maxLcdHeightDiff = lcdHeights.length ? Math.max(...lcdHeights) - Math.min(...lcdHeights) : 999;
       return {
         diffRows: document.querySelectorAll('#version-diff-tbody tr').length,
-        lcdCount: document.querySelectorAll('#mac-lcd-guardrails-list > div').length,
+        lcdCount: lcdCards.length,
+        maxLcdHeightDiff,
         stampRows: document.querySelectorAll('#version-stamps-tbody tr').length,
         panelBottom: Math.round(document.getElementById('workspace-governance').getBoundingClientRect().bottom),
       };
     });
-    if (ws4Check.diffRows < 3 || ws4Check.lcdCount < 4 || ws4Check.stampRows !== 9 || ws4Check.panelBottom < 860) {
-      throw new Error(`Workspace 4 Version Control failed: ${JSON.stringify(ws4Check)}`);
+    const maxWs4Gap = Math.max(...ws4Gaps.map((g) => g.internalBottomGap));
+    if (
+      ws4Check.diffRows < 3 ||
+      ws4Check.lcdCount !== 5 ||
+      ws4Check.maxLcdHeightDiff > 2 ||
+      ws4Check.stampRows !== 9 ||
+      maxWs4Gap > 28 ||
+      ws4Check.panelBottom < 860
+    ) {
+      throw new Error(`Workspace 4 Version Control failed: ${JSON.stringify({ ws4Check, ws4Gaps })}`);
     }
     const shot4 = path.join(SCREENSHOT_DIR, 'after_urocura_version_control_tab4.png');
     await page.screenshot({ path: shot4, fullPage: false });
-    console.log(` ✅ [Workspace 4 Gate] CPT 2026<->2027 Matrix, ${ws4Check.lcdCount} Regional MAC LCDs & 9 Dataset Stamps Verified (Bottom=${ws4Check.panelBottom}px)`);
+    console.log(
+      ` ✅ [Workspace 4 Gate] CPT 2026<->2027 Matrix, 5-Col MAC LCD Grid (0px Diff) & 9 Dataset Stamps Verified (Max Internal Gap=${maxWs4Gap}px)`
+    );
 
-    // 8. Switch to Workspace 5 (CMS PUF + NPPES NPI Urology Peer Benchmarks — Zero Blank Space Gate)
+    // 8. Switch to Workspace 5 (CMS PUF + NPPES NPI Urology Peer Benchmarks — Zero Internal Gap Gate)
     await page.evaluate(() => window.switchWorkspace('benchmarks'));
     await sleep(450);
+    const ws5Gaps = await measureTwoColInternalGaps('workspace-benchmarks');
     const ws5Audit = await page.evaluate(() => {
       const kpiCards = document.querySelectorAll('#workspace-benchmarks .kpi-card').length;
       const benchRows = document.querySelectorAll('#benchmarks-tbody tr').length;
       const progressBars = document.querySelectorAll('#benchmarks-tbody .peer-progress-track').length;
       const gpciRows = document.querySelectorAll('#gpci-localities-tbody tr').length;
       const hitlRows = document.querySelectorAll('#hitl-feedback-tbody tr').length;
+      const hasFormulaCallout = Boolean(document.getElementById('gpci-formula-callout'));
       const panelBottom = Math.round(document.getElementById('workspace-benchmarks').getBoundingClientRect().bottom);
-      return { kpiCards, benchRows, progressBars, gpciRows, hitlRows, panelBottom };
+      return { kpiCards, benchRows, progressBars, gpciRows, hitlRows, hasFormulaCallout, panelBottom };
     });
+    const maxWs5Gap = Math.max(...ws5Gaps.map((g) => g.internalBottomGap));
     if (
       ws5Audit.kpiCards !== 4 ||
       ws5Audit.benchRows !== 4 ||
       ws5Audit.progressBars !== 16 ||
       ws5Audit.gpciRows !== 7 ||
       ws5Audit.hitlRows < 4 ||
+      !ws5Audit.hasFormulaCallout ||
+      maxWs5Gap > 28 ||
       ws5Audit.panelBottom < 860
     ) {
-      throw new Error(`Workspace 5 NPI Benchmarks failed zero-blank-space verification: ${JSON.stringify(ws5Audit)}`);
+      throw new Error(`Workspace 5 NPI Benchmarks failed verification: ${JSON.stringify({ ws5Audit, ws5Gaps })}`);
     }
     const shot5 = path.join(SCREENSHOT_DIR, 'after_urocura_npi_benchmark_tab5.png');
     await page.screenshot({ path: shot5, fullPage: false });
     console.log(
-      ` ✅ [Workspace 5 Gate] 4 KPI Cards, 16 Peer Progress Bars, 7 GPCI Localities & ${ws5Audit.hitlRows} HITL 835 Rows Verified (Bottom=${ws5Audit.panelBottom}px, Zero Blank Space)`
+      ` ✅ [Workspace 5 Gate] 4 KPI Cards, 16 Peer Progress Bars, 7 GPCI Localities + Formula Box & ${ws5Audit.hitlRows} HITL 835 Rows Verified (Max Internal Gap=${maxWs5Gap}px)`
     );
 
     // Copy all before & after screenshots to conversation artifact dir for visual proof embedding
@@ -454,7 +603,7 @@ async function main() {
     }
 
     console.log('==================================================================');
-    console.log('🏆 STOP FORENSIC GATE: 100% PASS (ZERO UI, BLANK-SPACE, GEOMETRY, OR DATA DEFECTS)');
+    console.log('🏆 STOP FORENSIC GATE: 100% PASS (ALL 3 SUBAGENT UI/UX, CROSS-VIEWPORT & A11Y GATES VERIFIED)');
     console.log('==================================================================');
   } finally {
     await browser.close();

@@ -1336,6 +1336,18 @@ class UroCuraRequestHandler(BaseHTTPRequestHandler):
                 })
                 return
 
+            if path == "/src/index.css":
+                css_file = os.path.join( os.path.dirname(os.path.abspath(__file__)), "src", "index.css" )
+                if os.path.isfile(css_file):
+                    with open(css_file, "rb") as f:
+                        css_bytes = f.read()
+                    self.send_response(200)
+                    self.send_header("Content-Type", "text/css; charset=utf-8")
+                    self.send_header("Content-Length", str(len(css_bytes)))
+                    self.end_headers()
+                    self.wfile.write(css_bytes)
+                    return
+
             # Serve static frontend HTML
             index_file = os.path.join(STATIC_DIR, "index.html")
             if os.path.exists(index_file):
