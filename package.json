@@ -10,6 +10,8 @@
     "test:backend": "python3 tests/test_e2e_forensic.py",
     "test:ui": "node scripts/stop_forensic_gate.mjs",
     "quality-gate": "python3 seed_urology.py && python3 cms_ingest.py --verify-local-seed && python3 tests/test_e2e_forensic.py && node scripts/stop_forensic_gate.mjs",
-    "test": "npm run quality-gate"
+    "test": "npm run quality-gate",
+    "deploy:cloudrun": "bash scripts/deploy_urocura_cloudrun.sh",
+    "verify:cloudrun": "VERIFY_ONLY=1 bash scripts/deploy_urocura_cloudrun.sh"
   }
 }

@@ -1,0 +1,16 @@
+{
+  "serviceName": "billing",
+  "beyondCorpUrl": "https://billing-248990048888.cr.gclb.goog",
+  "cloudRunUrl": "https://billing-mi7l4h536a-uw.a.run.app",
+  "buildProject": "nitina-ggarwal-sandbox-647724",
+  "runProject": "ramp-portal-dev",
+  "region": "us-west1",
+  "latestReadyRevisionName": "billing-00001-nq6",
+  "latestCreatedRevisionName": "billing-00001-nq6",
+  "readyStatus": "True",
+  "trafficPercent": 100,
+  "image": "us-central1-docker.pkg.dev/nitina-ggarwal-sandbox-647724/cloud-run-source-deploy/billing:v20261020-014248",
+  "publicDemoMode": true,
+  "startupProbeLog": "Default STARTUP TCP probe succeeded after 1 attempt for container 'billing-1' on port 8080.",
+  "verifiedAt": "2026-10-20T05:43:50Z"
+}

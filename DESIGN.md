@@ -213,7 +213,7 @@ The end user uploads clinical files via the HTML5 Multi-File Drag-and-Drop & Fil
 | `clinician` (Physician / admin) | **anonymous visitors** | `comfortable` — nothing below 12px (`--fs-*` tokens: 12 / 12.5 / 13 / 13.5 / 14 / 14.5 / 15 / 15.5px) | `plain` | summary rows; `▸ Details` opens one row inline |
 | `coder` | opt-in (first-run strip or header **View** selector) | `compact` — original scale (10.5–15px) | `expert` | every details row open, toggles hidden |
 
-- `setPersona()` sets the three `<html data-*>` attributes, rewrites every `[data-plain][data-expert]` element (KPI copy, table heads, filter options, pills, upload copy), swaps the search placeholder, and re-renders the queue. `initPersona()` runs synchronously at script end so there is no flash of the wrong mode.
+- `setPersona()` sets the three `<html data-*>` attributes, rewrites every `[data-plain][data-expert]` element across all 5 workspaces (KPI copy, section headings/descriptions, table heads, filter options, pills, upload copy), swaps the search placeholder, and re-renders the Work Queue, Code Pair Matrix (`renderPtpFullMatrixTable()`), and Rules/Benchmarks tables (`renderGovernanceAndBenchmarks()`) with `expandJargon()` tooltips. `initPersona()` runs synchronously at script end so there is no flash of the wrong mode.
 - **Plain-language layer**: `expandJargon()` wraps 25 acronyms in `<abbr title>` (both modes) and, in plain mode, rewrites the highest-frequency billing jargon (`DOS` → *Service date*, `HITL` → *review*, `837P` → *billing claim*, `NCCI Ch. 7` → *Medicare bundling rules*). `whyLine()` maps each leakage category to a ≤ 6-word plain reason. Clinical acronyms (TURBT, TRUS, URS) are kept — physicians own them.
 - **First-run orientation strip** (`#start-here`, `localStorage['urocura.startHereDismissed']`): one sentence of what the product does, three entry actions (`See the 8 recovered cases` · `Try a 5-file sample packet` · `Check two codes`), persona choice, dismiss. Choosing a persona applies it and dismisses the strip. Never shown again once dismissed.
 - **Progressive-disclosure Work Queue**: 5 columns — *Encounter* · *What happened* (title with code parentheticals stripped in plain mode + one-line why) · *Billed → supported* (coloured monospace text, not chips) · *Recovered* (`+$` and `billed → supported` totals) · *Status* (one badge, `Inspect dossier`, `Details`). The details row (`tr.enc-details-row`, 4 blocks, `align-items: start`) carries the physician draft + **handwritten shorthand → decoded English**, billing paragraph, verified citation, provenance and the `Check pair →` handoff.
@@ -228,7 +228,7 @@ The end user uploads clinical files via the HTML5 Multi-File Drag-and-Drop & Fil
 
 ---
 
-## 7. Quick Start & Verification Commands
+## 7. Quick Start, Verification & Rule 56 Cloud Run Deployment
 
 ```bash
 # 1. Seed the verified Urology SQLite database & generate 5 real binary sample files
@@ -244,5 +244,9 @@ python3 app.py
 # 4. Run the Full 8-Gate E2E & Headless Chrome Forensic Test Suite
 python3 tests/test_e2e_forensic.py
 node scripts/stop_forensic_gate.mjs
+
+# 5. Synchronous 2-Project Cloud Run Deployment (Rule 56: nitina-ggarwal-sandbox-647724 -> ramp-portal-dev us-west1)
+bash scripts/deploy_urocura_cloudrun.sh
 ```
+
 

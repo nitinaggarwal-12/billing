@@ -32,7 +32,9 @@
 | [`static/index.html`](file:///Users/nitinagga/Documents/billing/static/index.html) | 100% Fluid Edge-to-Edge, Zero-Blank-Space (`Rule 25H`) Executive Light Web Application with 5 high-density workspaces, 0 truncated top tabs, a single-row 5-column filter toolbar (`56px`), a Multi-File Binary Drag-and-Drop Discrepancy Studio (`#multimodal-dropzone`) with 5 distinct file cards & real `360x140px` handwritten JPEG preview, 0px internal bottom gaps across all paired cards, and a non-blocking Docked Right-Side Multimodal Inspector Drawer. |
 | [`src/index.css`](file:///Users/nitinagga/Documents/billing/src/index.css) | Global stylesheet enforcing Rule 54 Executive Light Theme, WCAG 2.1 AA contrast (`--text-muted: #475569`, `:focus-visible` rings), Rule 25G 100% fluid layout, Rule 25H zero internal card/viewport blank space, and Rule 26 rigid table cell containment with Mobile (`390x844`) specificity override. |
 | [`tests/test_e2e_forensic.py`](file:///Users/nitinagga/Documents/billing/tests/test_e2e_forensic.py) | 8-Gate automated backend, binary upload, and clinical math E2E verification suite. |
-| [`scripts/stop_forensic_gate.mjs`](file:///Users/nitinagga/Documents/billing/scripts/stop_forensic_gate.mjs) | Automated Headless Chrome 3-Subagent UI/UX Visual Forensic Gate (`ui-designer` + `cross-viewport-auditor` + `a11y-code-hygiene-auditor`) verifying `1600x950`/`834x1194`/`390x844` viewports across all 5 tabs, 0 tab truncation, 1-row filter toolbar, `0px` paired-card internal bottom gaps, 1-line drawer close button, and WCAG 2.1 AA / ARIA compliance. |
+| [`scripts/stop_forensic_gate.mjs`](file:///Users/nitinagga/Documents/billing/scripts/stop_forensic_gate.mjs) | Automated Headless Chrome 3-Subagent UI/UX Visual Forensic Gate (`ui-designer` + `cross-viewport-auditor` + `a11y-code-hygiene-auditor`) verifying `1600x950`/`834x1194`/`390x844` viewports across all 5 tabs, 0 tab truncation, 1-row filter toolbar, `0px` paired-card internal bottom gaps, 1-line drawer close button, Public First-Impression Gate, and WCAG 2.1 AA / ARIA compliance. |
+| [`Dockerfile`](file:///Users/nitinagga/Documents/billing/Dockerfile) | Production Python 3.12 container image (`PORT=8080`, `UROCURA_PUBLIC_DEMO=1`) with pre-seeded `urology_coding.db` and `sample_uploads/`. |
+| [`scripts/deploy_urocura_cloudrun.sh`](file:///Users/nitinagga/Documents/billing/scripts/deploy_urocura_cloudrun.sh) | Rule 56 synchronous 2-project Cloud Run deployment pipeline (builds image in `nitina-ggarwal-sandbox-647724`, deploys to `ramp-portal-dev` in `us-west1` with `--ingress=internal-and-cloud-load-balancing`, verifies all 4 readiness gates, and writes `data/cloudrun_deploy_receipt.json`). |
 | [`AGENTS.md`](file:///Users/nitinagga/Documents/billing/AGENTS.md) | Normative workspace governance constitution and quality gate invariants. |
 
 ---
@@ -55,7 +57,7 @@
 
 ---
 
-## 4. Quick Start & Verification
+## 4. Quick Start, Verification & Cloud Run Deployment
 
 ```bash
 # 1. Seed the verified Urology SQLite database & generate 5 real binary sample files
@@ -76,4 +78,7 @@ node scripts/stop_forensic_gate.mjs
 #    UROCURA_PUBLIC_DEMO=1 python3 app.py
 #    Private deployments (flag unset) allow uploads after the in-page no-PHI/BAA acknowledgement.
 python3 app.py
+
+# 6. Synchronous 2-Project Cloud Run Deployment (Rule 56)
+npm run deploy:cloudrun
 ```

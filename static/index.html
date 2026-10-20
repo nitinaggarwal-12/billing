@@ -1676,31 +1676,31 @@
       <div class="hero-kpi-grid">
         <div class="kpi-card highlight-blue">
           <div>
-            <div class="kpi-label">1. NCCI Chapter 7 PTP Edits Indexed</div>
+            <div class="kpi-label" data-plain="Code pairs checked" data-expert="1. NCCI Chapter 7 PTP Edits Indexed">Code pairs checked</div>
             <div class="kpi-value">16 Active Pairs</div>
           </div>
-          <div class="kpi-foot">Urinary &amp; Male Genital Surgery (CPT 50000–58999 · CY2026 &amp; CY2027)</div>
+          <div class="kpi-foot" data-plain="Urology surgery &amp; procedures (2026 &amp; 2027)" data-expert="Urinary &amp; Male Genital Surgery (CPT 50000–58999 · CY2026 &amp; CY2027)">Urology surgery &amp; procedures (2026 &amp; 2027)</div>
         </div>
         <div class="kpi-card highlight-emerald">
           <div>
-            <div class="kpi-label">2. Modifier Indicator = 1 (Unbundle Allowed)</div>
+            <div class="kpi-label" data-plain="Can be billed together (with modifier)" data-expert="2. Modifier Indicator = 1 (Unbundle Allowed)">Can be billed together (with modifier)</div>
             <div class="kpi-value emerald">10 Clinical Pairs</div>
           </div>
-          <div class="kpi-foot">Bypass allowed w/ -XS, -59, -25, -RT/-LT when contralateral or distinct</div>
+          <div class="kpi-foot" data-plain="Allowed when opposite side or separate site/visit" data-expert="Bypass allowed w/ -XS, -59, -25, -RT/-LT when contralateral or distinct">Allowed when opposite side or separate site/visit</div>
         </div>
         <div class="kpi-card highlight-amber">
           <div>
-            <div class="kpi-label">3. Modifier Indicator = 0 (Hard Audit Lock)</div>
+            <div class="kpi-label" data-plain="Never billed together (hard lock)" data-expert="3. Modifier Indicator = 0 (Hard Audit Lock)">Never billed together (hard lock)</div>
             <div class="kpi-value">6 Locked Pairs</div>
           </div>
-          <div class="kpi-foot">Never unbundle (52235+52234 multifocal TURBT, 51729+51798 PVR, 52648+52601)</div>
+          <div class="kpi-foot" data-plain="Always bundled by Medicare (e.g., two bladder tumor sizes)" data-expert="Never unbundle (52235+52234 multifocal TURBT, 51729+51798 PVR, 52648+52601)">Always bundled by Medicare (e.g., two bladder tumor sizes)</div>
         </div>
         <div class="kpi-card highlight-blue">
           <div>
-            <div class="kpi-label">4. CMS Medically Unlikely Edits (MUE)</div>
+            <div class="kpi-label" data-plain="Daily unit limits" data-expert="4. CMS Medically Unlikely Edits (MUE)">Daily unit limits</div>
             <div class="kpi-value">22 Daily Unit Caps</div>
           </div>
-          <div class="kpi-foot">MAI 1/2/3 daily claim/line unit guardrails + MPPR 50% secondary discount</div>
+          <div class="kpi-foot" data-plain="Maximum units per day + 50% second-procedure discount" data-expert="MAI 1/2/3 daily claim/line unit guardrails + MPPR 50% secondary discount">Maximum units per day + 50% second-procedure discount</div>
         </div>
       </div>
 
@@ -1708,12 +1708,12 @@
         <div class="section-card">
           <div>
             <h2 class="section-title">
-              <span>"I Performed X and Y. Can I Report Both?" — NCCI Ch. 7 Evaluator</span>
-              <span class="badge badge-blue">Deterministic PTP + MUE + MPPR</span>
+              <span data-plain="&quot;I performed X and Y — can I bill both?&quot; Code pair checker" data-expert="&quot;I Performed X and Y. Can I Report Both?&quot; — NCCI Ch. 7 Evaluator">"I performed X and Y — can I bill both?" Code pair checker</span>
+              <span class="badge badge-blue" data-plain="Medicare bundling rules" data-expert="Deterministic PTP + MUE + MPPR">Medicare bundling rules</span>
             </h2>
-            <p class="section-desc">Evaluates any pair of Urology CPT/HCPCS codes against CMS NCCI Procedure-to-Procedure (PTP) edits, Modifier Indicators (0 vs 1), NCCI Policy Manual Chapter 7, and AMA CPT Assistant clinical vignettes.</p>
+            <p class="section-desc" data-plain="Pick any two urology procedure codes and the clinical situation to see whether Medicare pays both, which modifier is required, and the exact rule citation." data-expert="Evaluates any pair of Urology CPT/HCPCS codes against CMS NCCI Procedure-to-Procedure (PTP) edits, Modifier Indicators (0 vs 1), NCCI Policy Manual Chapter 7, and AMA CPT Assistant clinical vignettes.">Pick any two urology procedure codes and the clinical situation to see whether Medicare pays both, which modifier is required, and the exact rule citation.</p>
 
-            <div style="font-size: var(--fs-sm); font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase;">1-Click Urology Clinical Presets:</div>
+            <div style="font-size: var(--fs-sm); font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase;" data-plain="Common urology scenarios:" data-expert="1-Click Urology Clinical Presets:">Common urology scenarios:</div>
             <div class="preset-pills" id="ptp-preset-pills">
               <button type="button" class="preset-pill-btn active" onclick="loadPtpPreset('52356','52332','contralateral',2026,this)">52356 + 52332 (Contralateral Stent -XS)</button>
               <button type="button" class="preset-pill-btn" onclick="loadPtpPreset('52353','52332','same_side',2026,this)">52353 + 52332 (Same Ureter Trap → 52356)</button>
@@ -1797,7 +1797,7 @@
       <div class="data-grid-card" data-testid="ptp-full-matrix-card">
         <div style="padding: 12px 16px; border-bottom: 1px solid var(--border-light); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
           <div>
-            <h3 style="margin:0; font-size:var(--fs-xl-plus); font-weight:800;">Complete CMS NCCI Chapter 7 Urology Procedure-to-Procedure (PTP) Bundling &amp; Modifier Indicator Matrix</h3>
+            <h3 style="margin:0; font-size:var(--fs-xl-plus); font-weight:800;" data-plain="All 16 urology code-pair bundling rules" data-expert="Complete CMS NCCI Chapter 7 Urology Procedure-to-Procedure (PTP) Bundling &amp; Modifier Indicator Matrix">All 16 urology code-pair bundling rules</h3>
             <p style="margin:2px 0 0 0; font-size:var(--fs-md); color:var(--text-muted);">Click any pair below to load its Column 1 + Column 2 codes directly into the interactive evaluator above.</p>
           </div>
           <span class="badge badge-emerald">16 Deterministic Urology PTP Rules Active</span>
@@ -1813,11 +1813,11 @@
           </colgroup>
           <thead>
             <tr>
-              <th scope="col" style="width:13%;">Col 1 (Primary)</th>
-              <th scope="col" style="width:13%;">Col 2 (Bundled)</th>
-              <th scope="col" style="width:15%;">Modifier Indicator</th>
-              <th scope="col" style="width:15%;">Allowed Modifiers</th>
-              <th scope="col" style="width:32%;">Clinical Bundling Rationale &amp; NCCI Ch. 7 / CPT Assistant Citation</th>
+              <th scope="col" style="width:13%;" data-plain="Primary code" data-expert="Col 1 (Primary)">Primary code</th>
+              <th scope="col" style="width:13%;" data-plain="Second code" data-expert="Col 2 (Bundled)">Second code</th>
+              <th scope="col" style="width:15%;" data-plain="Can both be billed?" data-expert="Modifier Indicator">Can both be billed?</th>
+              <th scope="col" style="width:15%;" data-plain="Allowed modifiers" data-expert="Allowed Modifiers">Allowed modifiers</th>
+              <th scope="col" style="width:32%;" data-plain="When allowed &amp; rule citation" data-expert="Clinical Bundling Rationale &amp; NCCI Ch. 7 / CPT Assistant Citation">When allowed &amp; rule citation</th>
               <th scope="col" style="width:12%;">Action</th>
             </tr>
           </thead>
@@ -1997,24 +1997,24 @@
     <section id="workspace-governance" class="workspace-panel" role="tabpanel" aria-labelledby="tab-btn-governance" data-testid="workspace-governance">
       <div class="hero-kpi-grid">
         <div class="kpi-card highlight-blue">
-          <div class="kpi-label">Pillar 1: AMA CPT Version Control</div>
+          <div class="kpi-label" data-plain="Code versions by service date" data-expert="Pillar 1: AMA CPT Version Control">Code versions by service date</div>
           <div class="kpi-value">CPT 2026 ↔ 2027</div>
-          <div class="kpi-foot">DOS-routed descriptors, 0421T→52598 Jan 1 2027 migration &amp; 53853 deleted block</div>
+          <div class="kpi-foot" data-plain="Routes 2026 vs 2027 rules by service date (0421T → 52598)" data-expert="DOS-routed descriptors, 0421T→52598 Jan 1 2027 migration &amp; 53853 deleted block">Routes 2026 vs 2027 rules by service date (0421T → 52598)</div>
         </div>
         <div class="kpi-card highlight-blue">
-          <div class="kpi-label">Pillar 2: AMA CPT Assistant RAG</div>
+          <div class="kpi-label" data-plain="Official clinical examples" data-expert="Pillar 2: AMA CPT Assistant RAG">Official clinical examples</div>
           <div class="kpi-value">Vol. 1–36 Indexed</div>
-          <div class="kpi-foot">Clinical vignettes for contralateral 52332-XS, dual TRUS 76872+76942 &amp; Mod -25</div>
+          <div class="kpi-foot" data-plain="Published guidance for opposite-side stents, ultrasound &amp; visits" data-expert="Clinical vignettes for contralateral 52332-XS, dual TRUS 76872+76942 &amp; Mod -25">Published guidance for opposite-side stents, ultrasound &amp; visits</div>
         </div>
         <div class="kpi-card highlight-emerald">
-          <div class="kpi-label">Pillar 3: CMS NCCI Policy Manual Ch. 7</div>
+          <div class="kpi-label" data-plain="Medicare bundling &amp; unit rules" data-expert="Pillar 3: CMS NCCI Policy Manual Ch. 7">Medicare bundling &amp; unit rules</div>
           <div class="kpi-value">Q4 2026 PTP + MUE</div>
-          <div class="kpi-foot">Urinary, Male &amp; Female Genital (50000–58999) + RVU26D -2.5% Efficiency Adj</div>
+          <div class="kpi-foot" data-plain="Urology bundling pairs, daily unit limits &amp; 2026 fee schedule" data-expert="Urinary, Male &amp; Female Genital (50000–58999) + RVU26D -2.5% Efficiency Adj">Urology bundling pairs, daily unit limits &amp; 2026 fee schedule</div>
         </div>
         <div class="kpi-card highlight-amber">
-          <div class="kpi-label">Pillar 4: Urology Specialty &amp; MAC LCDs</div>
+          <div class="kpi-label" data-plain="Urology &amp; regional payer policies" data-expert="Pillar 4: Urology Specialty &amp; MAC LCDs">Urology &amp; regional payer policies</div>
           <div class="kpi-value">Rules URO-01..07</div>
-          <div class="kpi-foot">AUA CodingPlus-aligned clean-room heuristics + NGS → Wellpoint Federal MAC alias</div>
+          <div class="kpi-foot" data-plain="Specialty urology checks &amp; regional medical-necessity rules" data-expert="AUA CodingPlus-aligned clean-room heuristics + NGS → Wellpoint Federal MAC alias">Specialty urology checks &amp; regional medical-necessity rules</div>
         </div>
       </div>
 
@@ -2022,10 +2022,10 @@
         <div class="section-card">
           <div>
             <h2 class="section-title">
-              <span>AMA CPT 2026 ↔ CPT 2027 Temporal Version Control Matrix</span>
+              <span data-plain="2026 → 2027 code changes routed by service date" data-expert="AMA CPT 2026 ↔ CPT 2027 Temporal Version Control Matrix">2026 → 2027 code changes routed by service date</span>
               <span class="badge badge-amber">Effective Jan 1, 2027</span>
             </h2>
-            <p class="section-desc">Prevents retrospective audit failure and clearinghouse rejections by routing every claim strictly by Date of Service (DOS).</p>
+            <p class="section-desc" data-plain="Prevents claim rejections at the January 1 cutover by picking the 2026 or 2027 code that was active on the service date." data-expert="Prevents retrospective audit failure and clearinghouse rejections by routing every claim strictly by Date of Service (DOS).">Prevents claim rejections at the January 1 cutover by picking the 2026 or 2027 code that was active on the service date.</p>
             <table class="gp-blue-grid-table table-fixed" id="version-diff-table" aria-label="AMA CPT 2026 to CPT 2027 Temporal Version Control Matrix" style="margin-bottom: 12px;">
               <colgroup>
                 <col style="width:14%;" />
@@ -2039,8 +2039,8 @@
                   <th scope="col" style="width:14%;">Code</th>
                   <th scope="col" style="width:18%;">2026 Status</th>
                   <th scope="col" style="width:18%;">2027 Status</th>
-                  <th scope="col" style="width:18%;">RVU 26 → 27</th>
-                  <th scope="col" style="width:32%;">Temporal Rule &amp; Migration Action</th>
+                  <th scope="col" style="width:18%;" data-plain="Work weight 26 → 27" data-expert="RVU 26 → 27">Work weight 26 → 27</th>
+                  <th scope="col" style="width:32%;" data-plain="What changes on Jan 1, 2027" data-expert="Temporal Rule &amp; Migration Action">What changes on Jan 1, 2027</th>
                 </tr>
               </thead>
               <tbody id="version-diff-tbody"></tbody>
@@ -2055,10 +2055,10 @@
         <div class="section-card">
           <div>
             <h2 class="section-title">
-              <span>4-Pillar Interpretive Authority &amp; Specialty Urology Rules</span>
+              <span data-plain="Published coding rules &amp; clinical examples behind each change" data-expert="4-Pillar Interpretive Authority &amp; Specialty Urology Rules">Published coding rules &amp; clinical examples behind each change</span>
               <span class="badge badge-emerald">Audit-Defense Warrants</span>
             </h2>
-            <p class="section-desc">Structured clinical vignettes from AMA CPT Assistant, CMS NCCI Policy Manual Chapter 7, and Specialty Urology heuristics.</p>
+            <p class="section-desc" data-plain="Every recommended code change links to a published Medicare or AMA clinical rule." data-expert="Structured clinical vignettes from AMA CPT Assistant, CMS NCCI Policy Manual Chapter 7, and Specialty Urology heuristics.">Every recommended code change links to a published Medicare or AMA clinical rule.</p>
             <div id="interpretive-guidance-list"></div>
 
             <!-- CY 2026 vs CY 2027 MPFS Conversion Factor & Efficiency Adjustment (-2.5%) Reference Box -->
@@ -2088,9 +2088,9 @@
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
             <div>
               <h3 class="section-title" style="margin-bottom:2px;">
-                <span>Regional MAC Local Coverage Determinations (LCDs) &amp; Medical Necessity Guardrails</span>
+                <span data-plain="Regional Medicare coverage policies &amp; required diagnoses" data-expert="Regional MAC Local Coverage Determinations (LCDs) &amp; Medical Necessity Guardrails">Regional Medicare coverage policies &amp; required diagnoses</span>
               </h3>
-              <p class="section-desc" style="margin-bottom:0;">Jurisdiction-specific ICD-10-CM and clinical threshold checks enforced before X12 837P claim release (including NGS → Wellpoint Federal MAC transition).</p>
+              <p class="section-desc" style="margin-bottom:0;" data-plain="Regional diagnosis and frequency checks verified before a claim is released." data-expert="Jurisdiction-specific ICD-10-CM and clinical threshold checks enforced before X12 837P claim release (including NGS → Wellpoint Federal MAC transition).">Regional diagnosis and frequency checks verified before a claim is released.</p>
             </div>
             <span class="badge badge-blue">5 Active MAC LCDs</span>
           </div>
@@ -2111,12 +2111,12 @@
           </colgroup>
           <thead>
             <tr>
-              <th scope="col" style="width:18%;">Dataset Source Key</th>
-              <th scope="col" style="width:22%;">Official Title &amp; Authority</th>
-              <th scope="col" style="width:14%;">Version Stamp</th>
-              <th scope="col" style="width:14%;">Effective Window</th>
-              <th scope="col" style="width:10%;">Cadence</th>
-              <th scope="col" style="width:22%;">Pipeline &amp; Compliance Notes</th>
+              <th scope="col" style="width:18%;" data-plain="Rule source" data-expert="Dataset Source Key">Rule source</th>
+              <th scope="col" style="width:22%;" data-plain="Official publication" data-expert="Official Title &amp; Authority">Official publication</th>
+              <th scope="col" style="width:14%;" data-plain="Edition loaded" data-expert="Version Stamp">Edition loaded</th>
+              <th scope="col" style="width:14%;" data-plain="Effective dates" data-expert="Effective Window">Effective dates</th>
+              <th scope="col" style="width:10%;" data-plain="Updated" data-expert="Cadence">Updated</th>
+              <th scope="col" style="width:22%;" data-plain="How it is used" data-expert="Pipeline &amp; Compliance Notes">How it is used</th>
             </tr>
           </thead>
           <tbody id="version-stamps-tbody"></tbody>
@@ -2132,39 +2132,39 @@
       <div class="hero-kpi-grid">
         <div class="kpi-card highlight-emerald">
           <div>
-            <div class="kpi-label">1. Cohort Annual Unbilled Recovery</div>
+            <div class="kpi-label" data-plain="Estimated annual unbilled across 4 urologists" data-expert="1. Cohort Annual Unbilled Recovery">Estimated annual unbilled across 4 urologists</div>
             <div class="kpi-value emerald">+$457,150.00 / yr</div>
           </div>
-          <div class="kpi-foot">Identified across 4 audited Urology NPIs via public CMS Medicare PUF + NPPES join</div>
+          <div class="kpi-foot" data-plain="From public Medicare physician utilization data (no patient data)" data-expert="Identified across 4 audited Urology NPIs via public CMS Medicare PUF + NPPES join">From public Medicare physician utilization data (no patient data)</div>
         </div>
         <div class="kpi-card highlight-blue">
           <div>
-            <div class="kpi-label">2. Cohort 99214 : 99213 Complexity Ratio</div>
+            <div class="kpi-label" data-plain="Office visit complexity vs state peers" data-expert="2. Cohort 99214 : 99213 Complexity Ratio">Office visit complexity vs state peers</div>
             <div class="kpi-value">1.85x vs 2.64x Peer</div>
           </div>
-          <div class="kpi-foot">-29.9% E/M complexity down-coding gap relative to state urology peer medians</div>
+          <div class="kpi-foot" data-plain="29.9% more complex visits coded as lower-level 99213 than peers" data-expert="-29.9% E/M complexity down-coding gap relative to state urology peer medians">29.9% more complex visits coded as lower-level 99213 than peers</div>
         </div>
         <div class="kpi-card highlight-amber">
           <div>
-            <div class="kpi-label">3. Same-Day Modifier -25 &amp; 52356 Capture</div>
+            <div class="kpi-label" data-plain="Same-day visit &amp; stone-stent capture" data-expert="3. Same-Day Modifier -25 &amp; 52356 Capture">Same-day visit &amp; stone-stent capture</div>
             <div class="kpi-value">21.2% Mod-25 · 43.0% 52356</div>
           </div>
-          <div class="kpi-foot">State peers average 31.7% Mod-25 &amp; 63.3% 52356 (contralateral -XS &amp; E/M leakage)</div>
+          <div class="kpi-foot" data-plain="State peers average 31.7% same-day visits &amp; 63.3% combined stone+stent" data-expert="State peers average 31.7% Mod-25 &amp; 63.3% 52356 (contralateral -XS &amp; E/M leakage)">State peers average 31.7% same-day visits &amp; 63.3% combined stone+stent</div>
         </div>
         <div class="kpi-card highlight-blue">
           <div>
-            <div class="kpi-label">4. Regional GPCI Localities &amp; HITL Loop</div>
+            <div class="kpi-label" data-plain="Regional Medicare rates &amp; paid claims" data-expert="4. Regional GPCI Localities &amp; HITL Loop">Regional Medicare rates &amp; paid claims</div>
             <div class="kpi-value">7 Localities · 100% CARC-0</div>
           </div>
-          <div class="kpi-foot">Live Geographic Work/PE/MP GPCI multipliers + X12 835 Remittance continuous learning</div>
+          <div class="kpi-foot" data-plain="Local Medicare multipliers across 7 cities + verified paid claims" data-expert="Live Geographic Work/PE/MP GPCI multipliers + X12 835 Remittance continuous learning">Local Medicare multipliers across 7 cities + verified paid claims</div>
         </div>
       </div>
 
       <div class="data-grid-card" style="margin-bottom: 16px;">
         <div style="padding: 12px 16px; border-bottom: 1px solid var(--border-light); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
           <div>
-            <h2 style="margin:0; font-size:var(--fs-2xl); font-weight:800;">CMS Medicare Physician &amp; Other Practitioners PUF + NPPES Urology Peer Benchmarks</h2>
-            <p style="margin:2px 0 0 0; font-size:var(--fs-md); color:var(--text-muted);">Zero-PHI Cold-Outreach Intelligence: Benchmarks each urologist's 99214:99213 ratio, Modifier -25 rate, 52356 capture, and Buy-and-Bill J-codes against state peers.</p>
+            <h2 style="margin:0; font-size:var(--fs-2xl); font-weight:800;" data-plain="How each urologist compares with state peers (public Medicare data)" data-expert="CMS Medicare Physician &amp; Other Practitioners PUF + NPPES Urology Peer Benchmarks">How each urologist compares with state peers (public Medicare data)</h2>
+            <p style="margin:2px 0 0 0; font-size:var(--fs-md); color:var(--text-muted);" data-plain="Compares each physician's visit complexity, same-day office visits, stone+stent billing, and office drug billing against state urology peers." data-expert="Zero-PHI Cold-Outreach Intelligence: Benchmarks each urologist's 99214:99213 ratio, Modifier -25 rate, 52356 capture, and Buy-and-Bill J-codes against state peers.">Compares each physician's visit complexity, same-day office visits, stone+stent billing, and office drug billing against state urology peers.</p>
           </div>
           <span class="badge badge-blue">Public CMS PUF + NPPES Joined</span>
         </div>
@@ -2180,13 +2180,13 @@
           </colgroup>
           <thead>
             <tr>
-              <th scope="col" style="width:18%;">Urologist &amp; NPI</th>
-              <th scope="col" style="width:14%;">MAC &amp; State</th>
-              <th scope="col" style="width:11%;">99214 : 99213 Ratio</th>
-              <th scope="col" style="width:11%;">Modifier -25 Rate</th>
-              <th scope="col" style="width:11%;">52356 Stent+Litho</th>
-              <th scope="col" style="width:11%;">J-Code Buy&amp;Bill</th>
-              <th scope="col" style="width:24%;">Estimated Unbilled &amp; Outbound Brief</th>
+              <th scope="col" style="width:18%;" data-plain="Physician" data-expert="Urologist &amp; NPI">Physician</th>
+              <th scope="col" style="width:14%;" data-plain="Payer &amp; state" data-expert="MAC &amp; State">Payer &amp; state</th>
+              <th scope="col" style="width:11%;" data-plain="Visit complexity (99214:99213)" data-expert="99214 : 99213 Ratio">Visit complexity (99214:99213)</th>
+              <th scope="col" style="width:11%;" data-plain="Same-day visit (-25)" data-expert="Modifier -25 Rate">Same-day visit (-25)</th>
+              <th scope="col" style="width:11%;" data-plain="Stone + stent (52356)" data-expert="52356 Stent+Litho">Stone + stent (52356)</th>
+              <th scope="col" style="width:11%;" data-plain="Office drugs (J-codes)" data-expert="J-Code Buy&amp;Bill">Office drugs (J-codes)</th>
+              <th scope="col" style="width:24%;" data-plain="Estimated annual unbilled &amp; why" data-expert="Estimated Unbilled &amp; Outbound Brief">Estimated annual unbilled &amp; why</th>
             </tr>
           </thead>
           <tbody id="benchmarks-tbody"></tbody>
@@ -2198,10 +2198,10 @@
         <div class="section-card">
           <div>
             <h3 class="section-title">
-              <span>Medicare GPCI Geographic Practice Cost Index &amp; MAC Jurisdiction Matrix</span>
+              <span data-plain="Local Medicare payment multipliers by city" data-expert="Medicare GPCI Geographic Practice Cost Index &amp; MAC Jurisdiction Matrix">Local Medicare payment multipliers by city</span>
               <span class="badge badge-blue">7 Active Localities</span>
             </h3>
-            <p class="section-desc">Deterministic Work, Practice Expense (PE), and Malpractice (MP) GPCI multipliers applied by Node 4 Payment Calculator.</p>
+            <p class="section-desc" data-plain="Local physician work, office practice expense, and malpractice multipliers used to calculate exact Medicare allowed amounts." data-expert="Deterministic Work, Practice Expense (PE), and Malpractice (MP) GPCI multipliers applied by Node 4 Payment Calculator.">Local physician work, office practice expense, and malpractice multipliers used to calculate exact Medicare allowed amounts.</p>
             <table class="gp-blue-grid-table table-fixed" id="gpci-localities-table" aria-label="Medicare GPCI Geographic Practice Cost Index Matrix" data-testid="gpci-localities-table" style="margin-bottom: 12px;">
               <colgroup>
                 <col style="width:14%;" />
@@ -2215,7 +2215,7 @@
                 <tr>
                   <th scope="col" style="width:14%;">Locality</th>
                   <th scope="col" style="width:30%;">Region &amp; State</th>
-                  <th scope="col" style="width:26%;">MAC Contractor</th>
+                  <th scope="col" style="width:26%;" data-plain="Medicare payer" data-expert="MAC Contractor">Medicare payer</th>
                   <th scope="col" style="width:10%;">Work</th>
                   <th scope="col" style="width:10%;">PE</th>
                   <th scope="col" style="width:10%;">MP</th>
@@ -2255,10 +2255,10 @@
         <div class="section-card">
           <div>
             <h3 class="section-title">
-              <span>Node 6 Continuous Learning HITL Sign-Off &amp; X12 835 Remittance (CARC/RARC) Log</span>
+              <span data-plain="Recent sign-offs &amp; verified payer payments" data-expert="Node 6 Continuous Learning HITL Sign-Off &amp; X12 835 Remittance (CARC/RARC) Log">Recent sign-offs &amp; verified payer payments</span>
               <span class="badge badge-emerald">SQLite coder_feedback_loop</span>
             </h3>
-            <p class="section-desc">Live physician/coder sign-offs and clearinghouse X12 835 Electronic Remittance Advice (`CARC-0` Paid in Full) outcomes.</p>
+            <p class="section-desc" data-plain="Physician and coder approvals alongside confirmed payer remittance outcomes (paid in full)." data-expert="Live physician/coder sign-offs and clearinghouse X12 835 Electronic Remittance Advice (`CARC-0` Paid in Full) outcomes.">Physician and coder approvals alongside confirmed payer remittance outcomes (paid in full).</p>
             <table class="gp-blue-grid-table table-fixed" id="hitl-feedback-table" aria-label="Node 6 HITL Sign-Off and X12 835 Remittance Log" data-testid="hitl-feedback-table">
               <colgroup>
                 <col style="width:18%;" />
@@ -2270,10 +2270,10 @@
               <thead>
                 <tr>
                   <th scope="col" style="width:18%;">Encounter</th>
-                  <th scope="col" style="width:22%;">Action &amp; CARC/RARC</th>
-                  <th scope="col" style="width:20%;">Target Codes</th>
-                  <th scope="col" style="width:26%;">Auditor Rationale</th>
-                  <th scope="col" style="width:14%;">+$Δ Verified</th>
+                  <th scope="col" style="width:22%;" data-plain="Sign-off &amp; payment" data-expert="Action &amp; CARC/RARC">Sign-off &amp; payment</th>
+                  <th scope="col" style="width:20%;" data-plain="Codes" data-expert="Target Codes">Codes</th>
+                  <th scope="col" style="width:26%;" data-plain="Reviewer note" data-expert="Auditor Rationale">Reviewer note</th>
+                  <th scope="col" style="width:14%;" data-plain="Recovered" data-expert="+$Δ Verified">Recovered</th>
                 </tr>
               </thead>
               <tbody id="hitl-feedback-tbody"></tbody>
@@ -2639,6 +2639,12 @@
       if (STATE.encounters.length) {
         renderEncounterTable();
         updateHeaderHitlPills();
+      }
+      if (STATE.ptpPairs && STATE.ptpPairs.length) {
+        renderPtpFullMatrixTable();
+      }
+      if (STATE.versionDiff || (STATE.benchmarks && STATE.benchmarks.length)) {
+        renderGovernanceAndBenchmarks();
       }
       if (opts.source === 'start-here') {
         dismissStartHere({ silent: true });
@@ -3297,18 +3303,19 @@
       if (!tbody) return;
       const pairs = STATE.ptpPairs || [];
       if (!pairs.length) return;
+      const plain = isPlainLanguage();
 
       tbody.innerHTML = pairs.map(p => {
         const cat1 = (STATE.codesCatalog || []).find(c => c.code === p.col1_code);
         const cat2 = (STATE.codesCatalog || []).find(c => c.code === p.col2_code);
         const isAllowed = Number(p.modifier_indicator) === 1;
         const modIndBadge = isAllowed
-          ? '<span class="badge badge-emerald">Ind 1 — Unbundle Allowed</span>'
-          : '<span class="badge badge-rose">Ind 0 — Never Unbundle</span>';
+          ? `<span class="badge badge-emerald">${plain ? 'Yes — with modifier' : 'Ind 1 — Unbundle Allowed'}</span>`
+          : `<span class="badge badge-rose">${plain ? 'No — always bundled' : 'Ind 0 — Never Unbundle'}</span>`;
 
         const modsList = (p.allowed_modifiers && p.allowed_modifiers.length)
           ? p.allowed_modifiers.map(m => `<span class="code-chip recovered">-${m}</span>`).join(' ')
-          : '<span class="badge badge-rose">NONE (Hard Lock)</span>';
+          : `<span class="badge badge-rose">${plain ? 'None (locked)' : 'NONE (Hard Lock)'}</span>`;
 
         let defaultContext = 'same_side';
         if (p.col1_code === '52356' && p.col2_code === '52332') defaultContext = 'contralateral';
@@ -3322,28 +3329,27 @@
             <td>
               <span class="code-chip">${p.col1_code}</span>
               <div class="leading-tight break-words" style="font-size:var(--fs-xs); color:var(--text-sub); margin-top:2px; font-weight:600;">
-                ${cat1 ? cat1.short_descriptor : 'Primary Procedure'}
+                ${cat1 ? expandJargon(cat1.short_descriptor) : 'Primary Procedure'}
               </div>
             </td>
             <td>
               <span class="code-chip">${p.col2_code}</span>
               <div class="leading-tight break-words" style="font-size:var(--fs-xs); color:var(--text-sub); margin-top:2px; font-weight:600;">
-                ${cat2 ? cat2.short_descriptor : 'Component Procedure'}
+                ${cat2 ? expandJargon(cat2.short_descriptor) : 'Component Procedure'}
               </div>
             </td>
             <td>
               ${modIndBadge}
-              <div style="font-size:var(--fs-xs); color:var(--text-muted); margin-top:3px;">Effective CY${p.effective_year}</div>
+              <div style="font-size:var(--fs-xs); color:var(--text-muted); margin-top:3px;">${plain ? `${p.effective_year} rules` : `Effective CY${p.effective_year}`}</div>
             </td>
             <td>${modsList}</td>
             <td class="leading-tight break-words" style="font-size:var(--fs-sm);">
-              <div style="font-weight:700; color:var(--text-main); margin-bottom:2px;">${p.ptp_rationale}</div>
-              <div style="font-size:var(--fs-xs); color:var(--primary-dark);"><strong>NCCI:</strong> ${p.ncci_manual_citation}</div>
-              <div style="font-size:var(--fs-xs); color:var(--emerald-text);"><strong>CPT Asst:</strong> ${p.cpt_assistant_citation}</div>
+              <div style="font-weight:700; color:var(--text-main); margin-bottom:2px;">${expandJargon(p.ptp_rationale)}</div>
+              <div style="font-size:var(--fs-xs); color:var(--primary-dark);"><strong>NCCI:</strong> ${escapeHtml(p.ncci_manual_citation)}</div>
+              <div style="font-size:var(--fs-xs); color:var(--emerald-text);"><strong>CPT Asst:</strong> ${escapeHtml(p.cpt_assistant_citation)}</div>
             </td>
             <td>
-              <button type="button" class="btn-secondary" style="width:100%; justify-content:center;" onclick="loadPtpPreset('${p.col1_code}','${p.col2_code}','${defaultContext}',${p.effective_year})"> Evaluate Pair
-              </button>
+              <button type="button" class="btn-secondary" style="width:100%; justify-content:center;" onclick="loadPtpPreset('${p.col1_code}','${p.col2_code}','${defaultContext}',${p.effective_year})">${plain ? 'Check pair' : 'Evaluate Pair'}</button>
             </td>
           </tr>
         `;
@@ -4031,7 +4037,7 @@
               <td><span class="badge ${c.status_2026 === 'ACTIVE' ? 'badge-emerald' : 'badge-rose'}">${formatEnumLabel(c.status_2026)}</span></td>
               <td><span class="badge ${c.status_2027 === 'ACTIVE' ? 'badge-emerald' : 'badge-rose'}">${formatEnumLabel(c.status_2027)}</span></td>
               <td style="font-variant-numeric:tabular-nums; font-weight:700;">${c.work_rvu_2026} → ${c.work_rvu_2027}</td>
-              <td class="leading-tight break-words" style="font-size:var(--fs-sm);">${c.version_change_note}</td>
+              <td class="leading-tight break-words" style="font-size:var(--fs-sm);">${expandJargon(c.version_change_note)}</td>
             </tr>
           `),
           ...revisions.filter(r => !lifecycle.some(l => l.code === r.code)).map(r => `
@@ -4040,7 +4046,7 @@
               <td><span class="badge badge-blue">ACTIVE</span></td>
               <td><span class="badge badge-amber">REVISED 2027</span></td>
               <td style="font-variant-numeric:tabular-nums; font-weight:700;">Descriptor + RVU</td>
-              <td class="leading-tight break-words" style="font-size:var(--fs-sm);">${r.version_change_note}</td>
+              <td class="leading-tight break-words" style="font-size:var(--fs-sm);">${expandJargon(r.version_change_note)}</td>
             </tr>
           `)
         ].join('');
@@ -4063,7 +4069,7 @@
               <div class="leading-tight break-words" style="font-size:var(--fs-xs); color:var(--text-sub); padding-top:6px; border-top:1px dashed var(--border-light);">
                 <div><strong>CPT:</strong> ${(l.target_cpt_hcpcs || []).join(', ')}</div>
                 <div><strong>ICD-10:</strong> ${(l.covered_icd10_codes || []).join(', ')}</div>
-                <div style="margin-top:2px; color:var(--text-muted);">${l.frequency_rule}</div>
+                <div style="margin-top:2px; color:var(--text-muted);">${expandJargon(l.frequency_rule)}</div>
               </div>
             </div>
           `).join('');
@@ -4075,8 +4081,8 @@
               <span class="badge badge-blue">${formatEnumLabel(g.pillar_type)}</span>
               <span style="font-size:var(--fs-xs); font-weight:700; color:var(--text-muted);">${g.citation_ref}</span>
             </div>
-            <div style="font-weight:800; font-size:var(--fs-md-plus); color:var(--text-main);">${g.title}</div>
-            <div style="font-size:var(--fs-sm); color:var(--text-sub); margin-top:2px;">${g.deterministic_rule}</div>
+            <div style="font-weight:800; font-size:var(--fs-md-plus); color:var(--text-main);">${expandJargon(g.title)}</div>
+            <div style="font-size:var(--fs-sm); color:var(--text-sub); margin-top:2px;">${expandJargon(g.deterministic_rule)}</div>
           </div>
         `).join('');
         document.getElementById('interpretive-guidance-list').innerHTML = guidanceHtml;
@@ -4088,7 +4094,7 @@
             <td><span class="badge badge-emerald">${s.version_tag}</span></td>
             <td style="font-size:var(--fs-sm); font-variant-numeric:tabular-nums;">${s.effective_start} → ${s.effective_end}</td>
             <td><span class="badge badge-blue">${s.update_cadence}</span></td>
-            <td class="leading-tight break-words" style="font-size:var(--fs-sm);">${s.notes}</td>
+            <td class="leading-tight break-words" style="font-size:var(--fs-sm);">${expandJargon(s.notes)}</td>
           </tr>
         `).join('');
         document.getElementById('version-stamps-tbody').innerHTML = stampsHtml;
@@ -4151,7 +4157,7 @@
                   <span style="font-size:var(--fs-2xl); font-weight:800; color:var(--emerald-strong);">+${formatUsd(b.estimated_annual_unbilled_usd)} / yr</span>
                   <span class="badge ${b.peer_percentile_rank < 30 ? 'badge-amber' : 'badge-emerald'}">${b.peer_percentile_rank < 30 ? 'High Recovery' : 'Benchmark Peer'}</span>
                 </div>
-                <div class="leading-tight break-words" style="font-size:var(--fs-xs); color:var(--text-sub);">${b.cold_open_insight}</div>
+                <div class="leading-tight break-words" style="font-size:var(--fs-xs); color:var(--text-sub);">${expandJargon(b.cold_open_insight)}</div>
               </td>
             </tr>
           `;
@@ -4187,7 +4193,7 @@
               <div class="leading-tight break-words" style="font-size:var(--fs-2xs); color:var(--text-sub); margin-top:2px; font-weight:600;">${fb.carc_rarc_code}</div>
             </td>
             <td class="leading-tight break-words" style="font-size:var(--fs-xs); font-family:monospace; font-weight:700;">${fb.target_code}</td>
-            <td class="leading-tight break-words" style="font-size:var(--fs-xs); color:var(--text-sub);">${fb.rationale_note}</td>
+            <td class="leading-tight break-words" style="font-size:var(--fs-xs); color:var(--text-sub);">${expandJargon(fb.rationale_note)}</td>
             <td style="font-variant-numeric:tabular-nums; font-weight:800; color:var(--emerald-strong);">+${formatUsd(fb.revenue_delta_usd)}</td>
           </tr>
         `).join('');
