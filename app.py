@@ -1106,6 +1106,61 @@ def execute_multimodal_upload_discrepancy_analysis(
     }
 
 
+def is_public_demo_mode() -> bool:
+    """
+    Public deployments must run in sample-only mode (UROCURA_PUBLIC_DEMO=1): anonymous visitors
+    may analyze only the bundled synthetic sample files, never their own clinical documents.
+    Unset (local/private deployments) allows real uploads behind the client no-PHI/BAA acknowledgement.
+    """
+    return os.environ.get("UROCURA_PUBLIC_DEMO", "0").strip().lower() in ("1", "true", "yes", "on")
+
+
+def sample_file_sha256_allowlist() -> Dict[str, str]:
+    """SHA-256 -> filename for every bundled synthetic sample file (content-based, not filename-based)."""
+    import hashlib
+
+    allow: Dict[str, str] = {}
+    if not os.path.exists(SAMPLE_UPLOADS_DIR):
+        return allow
+    for fname in sorted(os.listdir(SAMPLE_UPLOADS_DIR)):
+        fpath = os.path.join(SAMPLE_UPLOADS_DIR, fname)
+        if os.path.isfile(fpath):
+            with open(fpath, "rb") as f:
+                allow[hashlib.sha256(f.read()).hexdigest()] = fname
+    return allow
+
+
+def reject_non_sample_uploads(payload: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    """
+    In public demo mode, return an error payload if any uploaded file is not one of the bundled
+    synthetic samples (compared by SHA-256 of the decoded bytes). Returns None when the request is allowed.
+    """
+    import hashlib
+
+    if not is_public_demo_mode():
+        return None
+    allow = sample_file_sha256_allowlist()
+    rejected: List[str] = []
+    for f in payload.get("files", []) or []:
+        try:
+            raw = base64.b64decode(str(f.get("content_base64", "")), validate=False)
+        except Exception:
+            raw = b""
+        if hashlib.sha256(raw).hexdigest() not in allow:
+            rejected.append(str(f.get("filename", "unnamed")))
+    if rejected:
+        return {
+            "ok": False,
+            "error": "public_demo_sample_only",
+            "message": (
+                "This public demo analyzes the bundled synthetic sample files only. "
+                "Analyzing your own clinical documents requires an authenticated deployment with a BAA."
+            ),
+            "rejected_files": rejected,
+        }
+    return None
+
+
 def list_sample_upload_files() -> List[Dict[str, Any]]:
     """
     Returns metadata + base64 payloads for the 5 authentic binary clinical sample files in sample_uploads/.
@@ -1197,6 +1252,16 @@ class UroCuraRequestHandler(BaseHTTPRequestHandler):
             if path == "/api/sample-files":
                 samples = list_sample_upload_files()
                 self._send_json({"ok": True, "count": len(samples), "sample_files": samples})
+                return
+
+            if path == "/api/config":
+                self._send_json({
+                    "ok": True,
+                    "public_demo_mode": is_public_demo_mode(),
+                    "uploads": "sample_only" if is_public_demo_mode() else "acknowledged_private",
+                    "sample_file_count": len(sample_file_sha256_allowlist()),
+                    "data_provenance": "synthetic_demo_dataset",
+                })
                 return
 
             if path.startswith("/api/sample-files/"):
@@ -1390,6 +1455,10 @@ class UroCuraRequestHandler(BaseHTTPRequestHandler):
                 return
 
             if path == "/api/upload-analyze":
+                blocked = reject_non_sample_uploads(payload)
+                if blocked:
+                    self._send_json(blocked, 403)
+                    return
                 res = execute_multimodal_upload_discrepancy_analysis(conn, payload)
                 self._send_json(res, 200)
                 return

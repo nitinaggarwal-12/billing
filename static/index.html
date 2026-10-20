@@ -48,10 +48,39 @@
       --motion-micro: 120ms;
       --motion-ui: 200ms;
       --motion-panel: 320ms;
+      /* Type scale — Comfortable (default for public visitors): nothing renders below 12px */
+      --fs-2xs: 12px;
+      --fs-xs: 12px;
+      --fs-sm: 12.5px;
+      --fs-md: 13px;
+      --fs-md-plus: 13.5px;
+      --fs-lg: 14px;
+      --fs-base: 14px;
+      --fs-xl: 14.5px;
+      --fs-xl-plus: 15px;
+      --fs-2xl: 15.5px;
+    }
+
+    /* Compact density (opt-in for coders): the original high-density scale */
+    html[data-density="compact"] {
+      --fs-2xs: 10.5px;
+      --fs-xs: 11px;
+      --fs-sm: 11.5px;
+      --fs-md: 12px;
+      --fs-md-plus: 12.5px;
+      --fs-lg: 13px;
+      --fs-base: 13.5px;
+      --fs-xl: 14px;
+      --fs-xl-plus: 14.5px;
+      --fs-2xl: 15px;
     }
 
     * {
       box-sizing: border-box;
+    }
+
+    [hidden] {
+      display: none !important;
     }
 
     html, body {
@@ -62,7 +91,7 @@
       background-color: var(--bg-canvas);
       color: var(--text-main);
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      font-size: 13.5px;
+      font-size: var(--fs-base);
       line-height: 1.45;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
@@ -147,13 +176,13 @@
       align-items: center;
       justify-content: center;
       font-weight: 800;
-      font-size: 13px;
+      font-size: var(--fs-lg);
       letter-spacing: -0.5px;
       flex-shrink: 0;
     }
 
     .brand-title {
-      font-size: 15px;
+      font-size: var(--fs-2xl);
       font-weight: 800;
       color: var(--text-main);
       letter-spacing: -0.3px;
@@ -165,7 +194,7 @@
     }
 
     .brand-context {
-      font-size: 12px;
+      font-size: var(--fs-md);
       font-weight: 600;
       color: var(--text-muted);
       letter-spacing: 0;
@@ -187,7 +216,7 @@
       gap: 6px;
       padding: 4px 10px;
       border-radius: 6px;
-      font-size: 12px;
+      font-size: var(--fs-md);
       font-weight: 600;
       border: 1px solid var(--border-light);
       background: var(--bg-canvas);
@@ -237,7 +266,7 @@
       color: var(--text-sub);
       padding: 6px 10px;
       border-radius: 7px;
-      font-size: 12px;
+      font-size: var(--fs-md);
       font-weight: 700;
       cursor: pointer;
       display: flex;
@@ -266,7 +295,7 @@
     .tab-badge {
       padding: 1px 6px;
       border-radius: 99px;
-      font-size: 10.5px;
+      font-size: var(--fs-2xs);
       font-weight: 700;
       background: rgba(15, 23, 42, 0.08);
       color: inherit;
@@ -283,7 +312,7 @@
       min-width: 16px;
       padding: 0 4px;
       border-radius: 4px;
-      font-size: 10px;
+      font-size: var(--fs-2xs);
       font-weight: 700;
       line-height: 16px;
       text-align: center;
@@ -307,6 +336,318 @@
       clip: rect(0, 0, 0, 0);
       white-space: nowrap;
       border: 0;
+    }
+
+    /* Header utilities: view-mode selector + public demo pill */
+    .view-mode-select {
+      appearance: none;
+      -webkit-appearance: none;
+      background: var(--bg-card) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' fill='none' stroke='%23334155' stroke-width='1.5'/></svg>") no-repeat right 8px center;
+      border: 1px solid var(--border-strong);
+      color: var(--text-main);
+      border-radius: 6px;
+      padding: 4px 24px 4px 9px;
+      font-size: var(--fs-md);
+      font-weight: 600;
+      cursor: pointer;
+      max-width: 190px;
+      flex-shrink: 0;
+    }
+
+    .demo-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: var(--fs-md);
+      font-weight: 700;
+      background: var(--amber-bg);
+      color: var(--amber-text);
+      border: 1px solid var(--amber-border);
+      white-space: nowrap;
+    }
+
+    /* First-run orientation strip (dismissible, persisted). Functional, not promotional. */
+    .start-here {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) auto auto auto;
+      align-items: center;
+      gap: 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--primary-border);
+      border-left: 4px solid var(--primary);
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+    }
+
+    .start-here[hidden] {
+      display: none;
+    }
+
+    .start-here-copy {
+      min-width: 0;
+      font-size: var(--fs-lg);
+      color: var(--text-main);
+      line-height: 1.4;
+    }
+
+    .start-here-copy strong {
+      font-weight: 800;
+    }
+
+    .start-here-actions,
+    .start-here-persona {
+      display: flex;
+      gap: 6px;
+      flex-wrap: nowrap;
+      align-items: center;
+    }
+
+    .start-here-persona-label {
+      font-size: var(--fs-md);
+      color: var(--text-muted);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .persona-btn {
+      appearance: none;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-strong);
+      color: var(--text-main);
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: var(--fs-md);
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .persona-btn[aria-pressed="true"] {
+      background: var(--primary-bg);
+      border-color: var(--primary);
+      color: var(--primary-dark);
+    }
+
+    .start-here-dismiss {
+      appearance: none;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: var(--fs-md);
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .start-here-dismiss:hover {
+      background: var(--bg-subtle);
+      color: var(--text-main);
+    }
+
+    /* Progressive disclosure: Work Queue summary rows + expandable details rows */
+    .enc-row td {
+      vertical-align: top;
+    }
+
+    .row-codes {
+      font-family: 'SFMono-Regular', Consolas, monospace;
+      font-size: var(--fs-md);
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .row-codes .codes-billed {
+      color: var(--rose-text);
+      font-weight: 700;
+    }
+
+    .row-codes .codes-verified {
+      color: var(--emerald-text);
+      font-weight: 700;
+    }
+
+    .row-codes .codes-arrow {
+      color: var(--text-muted);
+      padding: 0 4px;
+    }
+
+    .details-toggle {
+      appearance: none;
+      background: transparent;
+      border: 1px solid var(--border-strong);
+      color: var(--text-sub);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: var(--fs-md);
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 6px;
+      text-align: center;
+    }
+
+    .details-toggle::before {
+      content: '▸ ';
+    }
+
+    .details-toggle[aria-expanded="true"]::before {
+      content: '▾ ';
+    }
+
+    .btn-arrow::after {
+      content: ' →';
+    }
+
+    .badge-check::before {
+      content: '✓ ';
+    }
+
+    .details-toggle[aria-expanded="true"] {
+      background: var(--bg-subtle);
+      color: var(--text-main);
+    }
+
+    .enc-details-row {
+      display: none;
+      background: var(--bg-canvas);
+    }
+
+    .enc-details-row.open,
+    html[data-density="compact"] .enc-details-row {
+      display: table-row;
+    }
+
+    /* Compact (coder) density keeps every details row open, so the per-row toggle is redundant */
+    html[data-density="compact"] .details-toggle {
+      display: none;
+    }
+
+    .enc-details-row > td {
+      padding: 10px 14px 14px !important;
+      max-width: none !important;
+    }
+
+    .enc-details-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      align-items: start;
+    }
+
+    .enc-details-block {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      padding: 9px 11px;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .enc-details-title {
+      font-size: var(--fs-xs);
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .enc-details-text {
+      font-size: var(--fs-md);
+      color: var(--text-sub);
+      line-height: 1.45;
+    }
+
+    .shorthand-pair {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      align-items: flex-start;
+      font-size: var(--fs-md);
+      line-height: 1.4;
+      min-width: 0;
+    }
+
+    .shorthand-raw {
+      font-family: 'SFMono-Regular', Consolas, monospace;
+      background: var(--paper-bg);
+      border: 1px solid var(--amber-border);
+      border-radius: 4px;
+      padding: 0 5px;
+      overflow-wrap: anywhere;
+      color: var(--text-main);
+      max-width: 100%;
+    }
+
+    .shorthand-plain {
+      color: var(--emerald-text);
+      font-weight: 600;
+      overflow-wrap: anywhere;
+    }
+
+    .shorthand-plain::before {
+      content: '→ ';
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    /* Plain-language tooltips */
+    abbr[title] {
+      text-decoration: underline dotted;
+      text-underline-offset: 2px;
+      cursor: help;
+    }
+
+    /* Upload acknowledgement gate (private deployments) and sample-only notice (public demo) */
+    .ack-gate {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: var(--amber-bg);
+      border: 1px solid var(--amber-border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+      font-size: var(--fs-md);
+      color: var(--amber-text);
+    }
+
+    .ack-gate input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .upload-dropzone.is-disabled,
+    .upload-dropzone.is-disabled:hover {
+      cursor: not-allowed;
+      opacity: 0.7;
+      border-style: solid;
+      border-color: var(--border-strong);
+      background: var(--bg-subtle);
+    }
+
+    @media (max-width: 1540px) {
+      #hdr-version-pill { display: none; }
+    }
+
+    @media (max-width: 1280px) {
+      .brand-context { display: none; }
+    }
+
+    @media (max-width: 1100px) {
+      .start-here {
+        grid-template-columns: 1fr;
+      }
+      .enc-details-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
     /* Main Fluid Edge-to-Edge Container (Rule 25G / Rule 50A) */
@@ -362,7 +703,7 @@
     }
 
     .kpi-label {
-      font-size: 11.5px;
+      font-size: var(--fs-sm);
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.4px;
@@ -379,11 +720,11 @@
     }
 
     .kpi-value.emerald {
-      color: #047857;
+      color: var(--emerald-text);
     }
 
     .kpi-foot {
-      font-size: 11.5px;
+      font-size: var(--fs-sm);
       color: var(--text-sub);
       margin-top: 5px;
     }
@@ -409,7 +750,7 @@
       border: 1px solid var(--border-strong);
       background: #ffffff;
       color: var(--text-main);
-      font-size: 12.5px;
+      font-size: var(--fs-md-plus);
       font-family: inherit;
       width: 100%;
       min-width: 0;
@@ -433,7 +774,7 @@
     .gp-blue-grid-table thead th {
       background: var(--bg-subtle);
       color: var(--text-main);
-      font-size: 11.5px;
+      font-size: var(--fs-sm);
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.35px;
@@ -482,7 +823,7 @@
       gap: 4px;
       padding: 2px 7px;
       border-radius: 5px;
-      font-size: 11px;
+      font-size: var(--fs-xs);
       font-weight: 700;
       border: 1px solid transparent;
       white-space: nowrap;
@@ -525,7 +866,7 @@
     .code-chip {
       display: inline-block;
       font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-      font-size: 11.5px;
+      font-size: var(--fs-sm);
       font-weight: 700;
       padding: 2px 6px;
       border-radius: 4px;
@@ -554,7 +895,7 @@
       border: 1px solid var(--primary-dark);
       padding: 6px 12px;
       border-radius: 6px;
-      font-size: 12px;
+      font-size: var(--fs-md);
       font-weight: 600;
       cursor: pointer;
       display: inline-flex;
@@ -576,7 +917,7 @@
       border: 1px solid var(--border-strong);
       padding: 6px 11px;
       border-radius: 6px;
-      font-size: 12px;
+      font-size: var(--fs-md);
       font-weight: 600;
       cursor: pointer;
       display: inline-flex;
@@ -597,7 +938,7 @@
       border: 1px solid #047857;
       padding: 6px 12px;
       border-radius: 6px;
-      font-size: 12px;
+      font-size: var(--fs-md);
       font-weight: 700;
       cursor: pointer;
       display: inline-flex;
@@ -662,7 +1003,7 @@
     }
 
     .state-box .state-title {
-      font-size: 13.5px;
+      font-size: var(--fs-base);
       font-weight: 800;
       color: var(--text-main);
       margin-bottom: 4px;
@@ -673,7 +1014,7 @@
     }
 
     .state-box .state-hint {
-      font-size: 12px;
+      font-size: var(--fs-md);
       color: var(--text-muted);
       margin-bottom: 10px;
       max-width: 520px;
@@ -781,7 +1122,7 @@
       color: var(--primary-dark);
       border-radius: 6px;
       padding: 8px 6px;
-      font-size: 11.5px;
+      font-size: var(--fs-sm);
       font-weight: 700;
       cursor: pointer;
       display: flex;
@@ -792,7 +1133,7 @@
     }
 
     .drawer-expand-arrow {
-      font-size: 11px;
+      font-size: var(--fs-xs);
       line-height: 1;
     }
 
@@ -833,7 +1174,7 @@
       color: var(--text-sub);
       padding: 6px 8px;
       border-radius: 6px;
-      font-size: 11.5px;
+      font-size: var(--fs-sm);
       font-weight: 700;
       cursor: pointer;
       white-space: nowrap;
@@ -920,7 +1261,7 @@
     }
 
     .section-title {
-      font-size: 14.5px;
+      font-size: var(--fs-xl-plus);
       font-weight: 800;
       color: var(--text-main);
       margin: 0 0 4px 0;
@@ -931,7 +1272,7 @@
     }
 
     .section-desc {
-      font-size: 12px;
+      font-size: var(--fs-md);
       color: var(--text-muted);
       margin: 0 0 10px 0;
     }
@@ -950,7 +1291,7 @@
       color: var(--text-main);
       padding: 5px 10px;
       border-radius: 6px;
-      font-size: 11.5px;
+      font-size: var(--fs-sm);
       font-weight: 600;
       cursor: pointer;
       transition: background-color var(--motion-micro) ease-out, border-color var(--motion-micro) ease-out, color var(--motion-micro) ease-out;
@@ -971,7 +1312,7 @@
       font-family: 'Georgia', serif;
       font-style: italic;
       color: #1e293b;
-      font-size: 13px;
+      font-size: var(--fs-lg);
       margin-bottom: 10px;
     }
 
@@ -981,7 +1322,7 @@
       border-radius: 7px;
       padding: 11px 13px;
       font-family: 'SFMono-Regular', Consolas, monospace;
-      font-size: 12px;
+      font-size: var(--fs-md);
       color: #1e293b;
       white-space: pre-wrap;
       margin-bottom: 10px;
@@ -995,7 +1336,7 @@
       color: #ffffff;
       padding: 11px 16px;
       border-radius: 8px;
-      font-size: 12.5px;
+      font-size: var(--fs-md-plus);
       font-weight: 600;
       box-shadow: 0 6px 20px rgba(15, 23, 42, 0.2);
       z-index: 80;
@@ -1041,7 +1382,7 @@
 
     .file-preview-snippet {
       flex: 1;
-      font-size: 11px;
+      font-size: var(--fs-xs);
       line-height: 15px;
       height: 74px;
       max-height: 74px;
@@ -1167,10 +1508,15 @@
 
       <!-- Global-only telemetry (Rule 25A: never repeats values owned by a workspace KPI card) -->
       <div class="telemetry-pills-bar" data-testid="header-telemetry-bar">
-        <span class="telemetry-pill pill-blue" id="hdr-version-pill">CPT 2026 · 2027 routing by DOS</span>
-        <span class="telemetry-pill pill-amber" id="hdr-phi-pill"><span class="pill-dot" aria-hidden="true"></span>PHI Safe Harbor gate on</span>
+        <span class="telemetry-pill pill-blue" id="hdr-version-pill" data-plain="2026/2027 rules by date" data-expert="CPT 2026/2027 by DOS">2026/2027 rules by date</span>
+        <span class="telemetry-pill pill-amber" id="hdr-phi-pill"><span class="pill-dot" aria-hidden="true"></span><span data-plain="Patient identifiers removed" data-expert="PHI Safe Harbor gate on">Patient identifiers removed</span></span>
         <span class="telemetry-pill" id="hdr-pending-pill">Pending HITL: —</span>
         <span class="telemetry-pill pill-emerald" id="hdr-verified-pill">Coder verified: —</span>
+        <span class="demo-pill" id="hdr-demo-pill" hidden title="Public demo: all data is synthetic; only bundled sample files can be analyzed">Synthetic demo data</span>
+        <select id="view-mode-select" class="view-mode-select" aria-label="View mode" onchange="setPersona(this.value, { source: 'header' })">
+          <option value="clinician">Physician / admin view</option>
+          <option value="coder">Coder view</option>
+        </select>
       </div>
     </div>
 
@@ -1185,7 +1531,7 @@
       </button>
       <button type="button" role="tab" aria-selected="false" tabindex="-1" aria-controls="workspace-simulator" class="workspace-tab-btn" data-tab="simulator" id="tab-btn-simulator" onclick="switchWorkspace('simulator')" title="Alt+3">
         <span class="truncate"><span class="tab-kbd" aria-hidden="true">3</span> Upload &amp; Analyze</span>
-        <span class="tab-badge">PDF · PNG · DCM</span>
+        <span class="tab-badge">PDF·PNG·DCM</span>
       </button>
       <button type="button" role="tab" aria-selected="false" tabindex="-1" aria-controls="workspace-governance" class="workspace-tab-btn" data-tab="governance" id="tab-btn-governance" onclick="switchWorkspace('governance')" title="Alt+4">
         <span class="truncate"><span class="tab-kbd" aria-hidden="true">4</span> Rules &amp; Versions</span>
@@ -1203,6 +1549,24 @@
        ======================================================================== -->
   <main class="fluid-main">
 
+    <!-- First-run orientation (dismissible, persisted in localStorage; absent for returning visitors) -->
+    <section id="start-here" class="start-here" role="region" aria-label="Start here" data-first-run hidden>
+      <p class="start-here-copy">
+        <strong>UroCura</strong> compares what the doctor documented with what billing submitted, and shows the money and compliance risk in between.
+      </p>
+      <div class="start-here-actions" aria-label="Where to start">
+        <button type="button" class="btn-primary" onclick="startHereGo('queue')">See the 8 recovered cases</button>
+        <button type="button" class="btn-secondary" onclick="startHereGo('simulator')">Try a 5-file sample packet</button>
+        <button type="button" class="btn-secondary" onclick="startHereGo('ptp')">Check two codes</button>
+      </div>
+      <div class="start-here-persona" role="group" aria-label="Choose your view">
+        <span class="start-here-persona-label">I'm a…</span>
+        <button type="button" class="persona-btn" data-persona="clinician" aria-pressed="true" onclick="setPersona('clinician', { source: 'start-here' })">Physician or admin</button>
+        <button type="button" class="persona-btn" data-persona="coder" aria-pressed="false" onclick="setPersona('coder', { source: 'start-here' })">Coder</button>
+      </div>
+      <button type="button" class="start-here-dismiss" onclick="dismissStartHere()" aria-label="Dismiss this introduction">✕ Dismiss</button>
+    </section>
+
     <!-- ======================================================================
          WORKSPACE 1: REVENUE RECOVERY QUEUE & 3-WAY CLAIM RECONCILIATION
          ====================================================================== -->
@@ -1210,31 +1574,31 @@
       <div class="hero-kpi-grid">
         <div class="kpi-card highlight-blue">
           <div>
-            <div class="kpi-label">1. Billing Dept Submitted (X12 837P)</div>
+            <div class="kpi-label" data-plain="What billing submitted" data-expert="1. Billing Dept Submitted (X12 837P)">What billing submitted</div>
             <div class="kpi-value" id="kpi-billed-usd">$3,137.16</div>
           </div>
-          <div class="kpi-foot">After billing dept down-coding &amp; modifier stripping across 8 encounters</div>
+          <div class="kpi-foot" data-plain="Across 8 encounters, after down-coding" data-expert="After billing dept down-coding &amp; modifier stripping across 8 encounters">Across 8 encounters, after down-coding</div>
         </div>
         <div class="kpi-card highlight-blue">
           <div>
-            <div class="kpi-label">2. AI-Verified Compliant Claim Total</div>
+            <div class="kpi-label" data-plain="What the documentation supports" data-expert="2. AI-Verified Compliant Claim Total">What the documentation supports</div>
             <div class="kpi-value" id="kpi-verified-usd">$6,771.02</div>
           </div>
-          <div class="kpi-foot">Grounded in Handwritten OCR, Operative PDF, Pathology &amp; DICOM slices</div>
+          <div class="kpi-foot" data-plain="Verified against notes, reports and imaging" data-expert="Grounded in Handwritten OCR, Operative PDF, Pathology &amp; DICOM slices">Verified against notes, reports and imaging</div>
         </div>
         <div class="kpi-card highlight-emerald">
           <div>
-            <div class="kpi-label">3. Money Left on the Table (Net Recovery)</div>
-            <div class="kpi-value emerald" id="kpi-delta-usd">+$3,633.86</div>
+            <div class="kpi-label" data-plain="Money left on the table" data-expert="3. Money Left on the Table (Net Recovery)">Money left on the table</div>
+            <div class="kpi-value emerald" id="kpi-delta-usd" data-target="3633.86">+$3,633.86</div>
           </div>
-          <div class="kpi-foot">+115.8% legitimate Medicare allowed recovery with explicit NCCI Ch. 7 citations</div>
+          <div class="kpi-foot" data-plain="+115.8%, each line cited" data-expert="+115.8% legitimate Medicare allowed recovery with explicit NCCI Ch. 7 citations">+115.8%, each line cited</div>
         </div>
         <div class="kpi-card highlight-amber">
           <div>
-            <div class="kpi-label">4. Compliance &amp; Version Guardrails</div>
-            <div class="kpi-value">3 Prevented Denials</div>
+            <div class="kpi-label" data-plain="Denials prevented" data-expert="4. Compliance &amp; Version Guardrails">Denials prevented</div>
+            <div class="kpi-value" data-plain="3" data-expert="3 Prevented Denials">3</div>
           </div>
-          <div class="kpi-foot">Blocked 52235+52234 Ind-0, blocked 51798 PVR, &amp; migrated 2027 0421T → 52598</div>
+          <div class="kpi-foot" data-plain="2 bundling errors, 1 retired code" data-expert="Blocked 52235+52234 Ind-0, blocked 51798 PVR, &amp; migrated 2027 0421T → 52598">2 bundling errors, 1 retired code</div>
         </div>
       </div>
 
@@ -1244,53 +1608,53 @@
           type="text"
           id="search-input"
           class="input-control"
-          placeholder="Search CPT/HCPCS (52356, 52235, J0585, 52598), physician, or finding..."
+          placeholder="Search a code, physician, or finding…"
+          data-plain-placeholder="Search a code, physician, or finding…"
+          data-expert-placeholder="Search CPT/HCPCS (52356, 52235, J0585, 52598), physician, or finding..."
           aria-label="Search clinical encounters"
           oninput="renderEncounterTable()"
         />
         <select id="filter-version" class="select-control" aria-label="Filter by CPT Version Year" onchange="renderEncounterTable()">
-          <option value="ALL">All CPT Version Years (2026 &amp; 2027)</option>
-          <option value="2026">CPT 2026 Encounters (CY2026 DOS)</option>
-          <option value="2027">CPT 2027 Encounters (CY2027 DOS)</option>
+          <option value="ALL" data-plain="All years (2026 &amp; 2027)" data-expert="All CPT Version Years (2026 &amp; 2027)">All years (2026 &amp; 2027)</option>
+          <option value="2026" data-plain="2026 rules" data-expert="CPT 2026 Encounters (CY2026 DOS)">2026 rules</option>
+          <option value="2027" data-plain="2027 rules" data-expert="CPT 2027 Encounters (CY2027 DOS)">2027 rules</option>
         </select>
         <select id="filter-category" class="select-control" aria-label="Filter by Leakage Category" onchange="renderEncounterTable()">
-          <option value="ALL">All Revenue Leakage Categories</option>
-          <option value="Contralateral">Contralateral Stent Unbundling (-XS)</option>
-          <option value="TURBT">TURBT Tumor Size &amp; Pathology Upgrade</option>
-          <option value="Buy-and-Bill">Buy-and-Bill J-Code &amp; -JW Wastage</option>
-          <option value="TRUS">Prostate Biopsy Dual TRUS (76872+76942)</option>
-          <option value="Urodynamics">Multichannel Urodynamics (+51797 / 51729)</option>
-          <option value="Bilateral">Bilateral Modifier -50 (150% Math)</option>
-          <option value="Modifier -25">Same-Day E/M Modifier -25</option>
-          <option value="CPT 2026→2027">CPT 2026 → 2027 Version Sunset Migration</option>
+          <option value="ALL" data-plain="All problem types" data-expert="All Revenue Leakage Categories">All problem types</option>
+          <option value="Contralateral" data-plain="Second-side stent dropped" data-expert="Contralateral Stent Unbundling (-XS)">Second-side stent dropped</option>
+          <option value="TURBT" data-plain="Bladder tumor size under-coded" data-expert="TURBT Tumor Size &amp; Pathology Upgrade">Bladder tumor size under-coded</option>
+          <option value="Buy-and-Bill" data-plain="Drug units &amp; wastage missed" data-expert="Buy-and-Bill J-Code &amp; -JW Wastage">Drug units &amp; wastage missed</option>
+          <option value="TRUS" data-plain="Prostate biopsy ultrasound dropped" data-expert="Prostate Biopsy Dual TRUS (76872+76942)">Prostate biopsy ultrasound dropped</option>
+          <option value="Urodynamics" data-plain="Urodynamics add-on missed" data-expert="Multichannel Urodynamics (+51797 / 51729)">Urodynamics add-on missed</option>
+          <option value="Bilateral" data-plain="Both-sides procedure under-paid" data-expert="Bilateral Modifier -50 (150% Math)">Both-sides procedure under-paid</option>
+          <option value="Modifier -25" data-plain="Same-day office visit dropped" data-expert="Same-Day E/M Modifier -25">Same-day office visit dropped</option>
+          <option value="CPT 2026→2027" data-plain="Retired code not updated" data-expert="CPT 2026 → 2027 Version Sunset Migration">Retired code not updated</option>
         </select>
-        <select id="filter-status" class="select-control" aria-label="Filter by HITL Status" onchange="renderEncounterTable()">
-          <option value="ALL">All HITL Review Statuses</option>
-          <option value="PENDING_PHYSICIAN_REVIEW">Pending Physician / Coder Sign-Off</option>
-          <option value="CODER_VERIFIED">Coder Verified &amp; Released</option>
+        <select id="filter-status" class="select-control" aria-label="Filter by review status" onchange="renderEncounterTable()">
+          <option value="ALL" data-plain="Any review status" data-expert="All HITL Review Statuses">Any review status</option>
+          <option value="PENDING_PHYSICIAN_REVIEW" data-plain="Waiting for sign-off" data-expert="Pending Physician / Coder Sign-Off">Waiting for sign-off</option>
+          <option value="CODER_VERIFIED" data-plain="Signed off &amp; released" data-expert="Coder Verified &amp; Released">Signed off &amp; released</option>
         </select>
         <button type="button" class="btn-secondary" onclick="resetQueueFilters()">↺ Reset Filters</button>
       </div>
 
-      <!-- 3-Way Reconciliation Table (Rule 26C Rigid Table Cell Containment) -->
+      <!-- Work Queue (Rule 26C Rigid Table Cell Containment; progressive disclosure: summary row + ▸ Details row) -->
       <div class="data-grid-card">
-        <table class="gp-blue-grid-table table-fixed" aria-label="3-Way Clinical Claim Reconciliation Queue" data-testid="reconciliation-table">
+        <table class="gp-blue-grid-table table-fixed" aria-label="Revenue recovery work queue" data-testid="reconciliation-table">
           <colgroup>
-            <col style="width: 14%;" />
-            <col style="width: 21%;" />
+            <col style="width: 15%;" />
+            <col style="width: 33%;" />
+            <col style="width: 24%;" />
             <col style="width: 13%;" />
-            <col style="width: 17%;" />
-            <col style="width: 22%;" />
-            <col style="width: 13%;" />
+            <col style="width: 15%;" />
           </colgroup>
           <thead>
             <tr>
-              <th scope="col" style="width: 14%;">Encounter &amp; Version</th>
-              <th scope="col" style="width: 21%;">Multimodal Clinical Evidence</th>
-              <th scope="col" style="width: 13%;">1. Doctor Wrote</th>
-              <th scope="col" style="width: 17%;">2. Billing Dept 837P (Scrubbed)</th>
-              <th scope="col" style="width: 22%;">3. AI Verified Claim &amp; Warrant</th>
-              <th scope="col" style="width: 13%;">Money Left on Table</th>
+              <th scope="col" style="width: 15%;" data-plain="Encounter" data-expert="Encounter &amp; Version">Encounter</th>
+              <th scope="col" style="width: 33%;" data-plain="What happened" data-expert="Clinical Evidence &amp; Leakage">What happened</th>
+              <th scope="col" style="width: 24%;" data-plain="Billed → supported" data-expert="Billed 837P → AI Verified">Billed → supported</th>
+              <th scope="col" style="width: 13%;" data-plain="Recovered" data-expert="Money Left on Table">Recovered</th>
+              <th scope="col" style="width: 15%;" data-plain="Status" data-expert="HITL Status">Status</th>
             </tr>
           </thead>
           <tbody id="encounter-table-body"></tbody>
@@ -1298,8 +1662,8 @@
 
         <!-- Resilient Empty State (Rule 25K) -->
         <div id="no-matching-cards" class="empty-state-box">
-          <div style="font-size: 15px; font-weight: 700; margin-bottom: 6px;">No clinical encounters match your active filter criteria</div>
-          <div style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px;">Reset filters to view all 8 multimodal urology revenue recovery dossiers.</div>
+          <div style="font-size: var(--fs-2xl); font-weight: 700; margin-bottom: 6px;">No clinical encounters match your active filter criteria</div>
+          <div style="font-size: var(--fs-md-plus); color: var(--text-muted); margin-bottom: 12px;">Reset filters to view all 8 multimodal urology revenue recovery dossiers.</div>
           <button type="button" class="btn-primary" onclick="resetQueueFilters()">↺ Reset All Filters</button>
         </div>
       </div>
@@ -1349,7 +1713,7 @@
             </h2>
             <p class="section-desc">Evaluates any pair of Urology CPT/HCPCS codes against CMS NCCI Procedure-to-Procedure (PTP) edits, Modifier Indicators (0 vs 1), NCCI Policy Manual Chapter 7, and AMA CPT Assistant clinical vignettes.</p>
 
-            <div style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase;">1-Click Urology Clinical Presets:</div>
+            <div style="font-size: var(--fs-sm); font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase;">1-Click Urology Clinical Presets:</div>
             <div class="preset-pills" id="ptp-preset-pills">
               <button type="button" class="preset-pill-btn active" onclick="loadPtpPreset('52356','52332','contralateral',2026,this)">52356 + 52332 (Contralateral Stent -XS)</button>
               <button type="button" class="preset-pill-btn" onclick="loadPtpPreset('52353','52332','same_side',2026,this)">52353 + 52332 (Same Ureter Trap → 52356)</button>
@@ -1363,7 +1727,7 @@
 
             <div class="form-grid-2">
               <div>
-                <label for="ptp-code-a" style="display:block; font-size:11.5px; font-weight:700; margin-bottom:4px;">Primary Procedure (Code X)</label>
+                <label for="ptp-code-a" style="display:block; font-size:var(--fs-sm); font-weight:700; margin-bottom:4px;">Primary Procedure (Code X)</label>
                 <select id="ptp-code-a" class="select-control" onchange="runPtpEvaluation()">
                   <option value="52356">52356 — URS w/ lithotripsy &amp; indwelling stent</option>
                   <option value="52353">52353 — URS w/ lithotripsy (no stent)</option>
@@ -1378,7 +1742,7 @@
                 </select>
               </div>
               <div>
-                <label for="ptp-code-b" style="display:block; font-size:11.5px; font-weight:700; margin-bottom:4px;">Secondary Procedure (Code Y)</label>
+                <label for="ptp-code-b" style="display:block; font-size:var(--fs-sm); font-weight:700; margin-bottom:4px;">Secondary Procedure (Code Y)</label>
                 <select id="ptp-code-b" class="select-control" onchange="runPtpEvaluation()">
                   <option value="52332">52332 — Cystoscopy w/ indwelling ureteral stent</option>
                   <option value="52234">52234 — TURBT Small (0.5–2.0 cm)</option>
@@ -1395,7 +1759,7 @@
 
             <div class="form-grid-ptp-3">
               <div>
-                <label for="ptp-context" style="display:block; font-size:11.5px; font-weight:700; margin-bottom:4px;">Anatomic / Documentation Context</label>
+                <label for="ptp-context" style="display:block; font-size:var(--fs-sm); font-weight:700; margin-bottom:4px;">Anatomic / Documentation Context</label>
                 <select id="ptp-context" class="select-control" onchange="runPtpEvaluation()">
                   <option value="contralateral">Contralateral Paired Organ (Left vs. Right Ureter)</option>
                   <option value="same_side">Ipsilateral / Same Anatomic Site &amp; Session</option>
@@ -1405,14 +1769,14 @@
                 </select>
               </div>
               <div>
-                <label for="ptp-year" style="display:block; font-size:11.5px; font-weight:700; margin-bottom:4px;">CPT Version Year</label>
+                <label for="ptp-year" style="display:block; font-size:var(--fs-sm); font-weight:700; margin-bottom:4px;">CPT Version Year</label>
                 <select id="ptp-year" class="select-control" onchange="runPtpEvaluation()">
                   <option value="2026">CPT 2026</option>
                   <option value="2027">CPT 2027</option>
                 </select>
               </div>
               <div>
-                <label for="ptp-facility" style="display:block; font-size:11.5px; font-weight:700; margin-bottom:4px;">Place of Service</label>
+                <label for="ptp-facility" style="display:block; font-size:var(--fs-sm); font-weight:700; margin-bottom:4px;">Place of Service</label>
                 <select id="ptp-facility" class="select-control" onchange="runPtpEvaluation()">
                   <option value="FACILITY">Facility (HOPD/ASC)</option>
                   <option value="NON_FACILITY">Non-Facility (Office)</option>
@@ -1433,8 +1797,8 @@
       <div class="data-grid-card" data-testid="ptp-full-matrix-card">
         <div style="padding: 12px 16px; border-bottom: 1px solid var(--border-light); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
           <div>
-            <h3 style="margin:0; font-size:14.5px; font-weight:800;">Complete CMS NCCI Chapter 7 Urology Procedure-to-Procedure (PTP) Bundling &amp; Modifier Indicator Matrix</h3>
-            <p style="margin:2px 0 0 0; font-size:12px; color:var(--text-muted);">Click any pair below to load its Column 1 + Column 2 codes directly into the interactive evaluator above.</p>
+            <h3 style="margin:0; font-size:var(--fs-xl-plus); font-weight:800;">Complete CMS NCCI Chapter 7 Urology Procedure-to-Procedure (PTP) Bundling &amp; Modifier Indicator Matrix</h3>
+            <p style="margin:2px 0 0 0; font-size:var(--fs-md); color:var(--text-muted);">Click any pair below to load its Column 1 + Column 2 codes directly into the interactive evaluator above.</p>
           </div>
           <span class="badge badge-emerald">16 Deterministic Urology PTP Rules Active</span>
         </div>
@@ -1472,18 +1836,28 @@
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
             <div>
               <h2 class="section-title" style="margin-bottom:2px;">
-                <span>Multimodal Clinical Packet Upload &amp; Line-by-Line Discrepancy Analyzer (.PDF · .PNG · .JPG/.JPEG · .DCM DICOM · .837P EDI)</span>
+                <span data-plain="Upload a clinical packet and find billing discrepancies" data-expert="Multimodal Clinical Packet Upload &amp; Line-by-Line Discrepancy Analyzer (.PDF · .PNG · .JPG/.JPEG · .DCM DICOM · .837P EDI)">Upload a clinical packet and find billing discrepancies</span>
               </h2>
-              <p class="section-desc" style="margin-bottom:0;"> Drop or select multiple clinical files from your computer. Node 0 inspects binary magic headers (<code>%PDF-1.4</code>, <code>89 50 4E 47</code> PNG, <code>FF D8 FF E0</code> JPEG, <code>DICM</code> Part-10 DICOM, <code>ANSI X12 837P</code>), Node 1 scrubs 18 HIPAA Safe Harbor PHI identifiers, Node 2 extracts text/OCR/tags, and Nodes 3–5 reconcile every clinical fact against the Billing Dept's 837P claim.
+              <p class="section-desc" style="margin-bottom:0;" data-plain="Drop a packet of clinical files. The app reads each file, removes patient identifiers, and lists every place the billing claim disagrees with the documentation." data-expert="Drop or select multiple clinical files. Node 0 inspects binary magic headers (%PDF-1.4, PNG, JPEG, DICM Part-10, ANSI X12 837P), Node 1 scrubs 18 HIPAA Safe Harbor PHI identifiers, Node 2 extracts text/OCR/tags, and Nodes 3–5 reconcile every clinical fact against the Billing Dept's 837P claim."> Drop a packet of clinical files. The app reads each file, removes patient identifiers, and lists every place the billing claim disagrees with the documentation.
               </p>
             </div>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
-              <button type="button" class="btn-emerald" id="btn-load-binary-samples" onclick="loadAndAnalyzeSampleBinaryPacket()"> Load &amp; Analyze 5 Real Binary Sample Files (.PDF + .PNG + .JPG + .DCM + .837P)
-              </button>
-              <button type="button" class="btn-secondary" onclick="document.getElementById('file-upload-input').click()"> Browse Local Files...
-              </button>
+              <button type="button" class="btn-emerald" id="btn-load-binary-samples" onclick="loadAndAnalyzeSampleBinaryPacket()" data-plain="Analyze the 5 sample files" data-expert="Load &amp; Analyze 5 Binary Sample Files (.PDF + .PNG + .JPG + .DCM + .837P)">Analyze the 5 sample files</button>
+              <button type="button" class="btn-secondary" id="btn-browse-local" onclick="requestUploadAccess('browse')">Browse my files…</button>
             </div>
           </div>
+
+          <!-- Public demo: sample-only notice (server-enforced). Private deployments: no-PHI / BAA acknowledgement. -->
+          <div id="upload-sample-only-notice" class="ack-gate" hidden role="note">
+            <span aria-hidden="true">●</span>
+            <div>
+              <strong>Sample mode.</strong> This public demo analyzes the bundled synthetic sample files only — your own documents cannot be uploaded here. Analyzing real clinical records requires an authenticated deployment with a BAA; the server rejects anything else.
+            </div>
+          </div>
+          <label id="upload-ack-gate" class="ack-gate" hidden>
+            <input type="checkbox" id="upload-ack-checkbox" onchange="applyUploadAccessState()" />
+            <span><strong>Before uploading:</strong> I confirm these files contain no protected health information, or my organization has a Business Associate Agreement covering this deployment.</span>
+          </label>
 
           <!-- HTML5 Drag-and-Drop + File Input Zone -->
           <div
@@ -1491,10 +1865,10 @@
             class="upload-dropzone"
             role="button"
             tabindex="0"
-            aria-label="Drag and drop multimodal clinical files or press Enter to browse files"
+            aria-label="Drag and drop clinical files or press Enter to browse files"
             data-testid="multimodal-dropzone"
-            onclick="document.getElementById('file-upload-input').click()"
-            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('file-upload-input').click();}"
+            onclick="requestUploadAccess('dropzone')"
+            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();requestUploadAccess('dropzone');}"
             ondragover="handleDragOver(event)"
             ondragleave="handleDragLeave(event)"
             ondrop="handleFileDrop(event)"
@@ -1502,18 +1876,18 @@
             <input
               type="file"
               id="file-upload-input"
-              aria-label="Upload multimodal clinical files (.PDF, .PNG, .JPG, .DCM, .837P)"
+              aria-label="Upload clinical files (.PDF, .PNG, .JPG, .DCM, .837P)"
               multiple
               accept=".pdf,.png,.jpg,.jpeg,.dcm,.txt,.csv,.837p"
               style="display:none;"
               onchange="handleFileSelect(event)"
             />
-            <div style="font-size:15px; font-weight:800; color:var(--primary-dark); margin-bottom:4px;"> Drag &amp; Drop PDF Operative/Pathology Reports, PNG/JPEG Handwritten Superbills, DICOM (.dcm) Imaging &amp; X12 837P Claims Here
+            <div id="dropzone-title" style="font-size:var(--fs-2xl); font-weight:800; color:var(--primary-dark); margin-bottom:4px;" data-plain="Drop operative reports, handwritten notes, imaging (.dcm) and the billing claim here" data-expert="Drag &amp; Drop PDF Operative/Pathology Reports, PNG/JPEG Handwritten Superbills, DICOM (.dcm) Imaging &amp; X12 837P Claims Here">Drop operative reports, handwritten notes, imaging (.dcm) and the billing claim here
             </div>
-            <div style="font-size:12px; color:var(--text-sub);"> Or click anywhere in this box to select files from disk · Raw binary streams are classified via Magic-Byte Gate &amp; HIPAA Safe Harbor PHI Redactor before analysis
+            <div id="dropzone-subtitle" style="font-size:var(--fs-md); color:var(--text-sub);" data-plain="Or click to choose files · patient identifiers are removed before anything is analyzed" data-expert="Or click anywhere in this box to select files from disk · Raw binary streams are classified via Magic-Byte Gate &amp; HIPAA Safe Harbor PHI Redactor before analysis">Or click to choose files · patient identifiers are removed before anything is analyzed
             </div>
-            <div style="margin-top:8px; display:flex; justify-content:center; gap:8px; flex-wrap:wrap; font-size:11.5px;" onclick="event.stopPropagation();">
-              <span style="color:var(--text-muted); font-weight:700;">Download Real Sample Files to Test Local Drag-and-Drop:</span>
+            <div style="margin-top:8px; display:flex; justify-content:center; gap:8px; flex-wrap:wrap; font-size:var(--fs-sm);" onclick="event.stopPropagation();">
+              <span style="color:var(--text-muted); font-weight:700;" data-plain="Sample files (synthetic) — download to inspect:" data-expert="Download Sample Files to Test Local Drag-and-Drop:">Sample files (synthetic) — download to inspect:</span>
               <a href="/api/sample-files/operative_and_pathology_report_turbt.pdf" download style="color:var(--primary-dark); font-weight:700;">operative_and_pathology_report_turbt.pdf</a>
               <a href="/api/sample-files/handwritten_superbill_botox_52287.png" download style="color:var(--primary-dark); font-weight:700;">handwritten_superbill_botox_52287.png</a>
               <a href="/api/sample-files/handwritten_note_contralateral_urs.jpg" download style="color:var(--primary-dark); font-weight:700;">handwritten_note_contralateral_urs.jpg</a>
@@ -1549,18 +1923,18 @@
 
             <div class="form-grid-3">
               <div>
-                <label for="sim-dos" style="display:block; font-size:11.5px; font-weight:700; margin-bottom:3px;">Date of Service (Routes CPT Year)</label>
+                <label for="sim-dos" style="display:block; font-size:var(--fs-sm); font-weight:700; margin-bottom:3px;">Date of Service (Routes CPT Year)</label>
                 <input type="date" id="sim-dos" class="input-control" style="width:100%;" value="2027-01-14" />
               </div>
               <div>
-                <label for="sim-facility" style="display:block; font-size:11.5px; font-weight:700; margin-bottom:3px;">Place of Service</label>
+                <label for="sim-facility" style="display:block; font-size:var(--fs-sm); font-weight:700; margin-bottom:3px;">Place of Service</label>
                 <select id="sim-facility" class="select-control" style="width:100%;">
                   <option value="FACILITY">Facility (HOPD / ASC)</option>
                   <option value="NON_FACILITY">Non-Facility (In-Office)</option>
                 </select>
               </div>
               <div>
-                <label for="sim-locality" style="display:block; font-size:11.5px; font-weight:700; margin-bottom:3px;">MAC Locality</label>
+                <label for="sim-locality" style="display:block; font-size:var(--fs-sm); font-weight:700; margin-bottom:3px;">MAC Locality</label>
                 <select id="sim-locality" class="select-control" style="width:100%;">
                   <option value="04">04 — Miami / First Coast (FL)</option>
                   <option value="01">01 — Manhattan / Wellpoint NGS (NY)</option>
@@ -1571,33 +1945,33 @@
             </div>
 
             <div style="margin-bottom:8px;">
-              <label for="sim-note" style="display:block; font-size:11.5px; font-weight:700; margin-bottom:3px;">Handwritten Physician Note &amp; Operative Report (Raw PHI Automatically Redacted)</label>
+              <label for="sim-note" style="display:block; font-size:var(--fs-sm); font-weight:700; margin-bottom:3px;">Handwritten Physician Note &amp; Operative Report (Raw PHI Automatically Redacted)</label>
               <textarea id="sim-note" rows="4" class="input-control" style="width:100%; height:auto; padding:8px;"></textarea>
             </div>
 
             <div class="form-grid-2">
               <div>
-                <label for="sim-path" style="display:block; font-size:11.5px; font-weight:700; margin-bottom:3px;">Surgical Pathology Report</label>
+                <label for="sim-path" style="display:block; font-size:var(--fs-sm); font-weight:700; margin-bottom:3px;">Surgical Pathology Report</label>
                 <textarea id="sim-path" rows="2" class="input-control" style="width:100%; height:auto; padding:8px;"></textarea>
               </div>
               <div>
-                <label for="sim-dicom" style="display:block; font-size:11.5px; font-weight:700; margin-bottom:3px;">pydicom / Ultrasound / UDS Metrics</label>
+                <label for="sim-dicom" style="display:block; font-size:var(--fs-sm); font-weight:700; margin-bottom:3px;">pydicom / Ultrasound / UDS Metrics</label>
                 <textarea id="sim-dicom" rows="2" class="input-control" style="width:100%; height:auto; padding:8px;"></textarea>
               </div>
             </div>
 
             <div style="margin-bottom:10px;">
-              <label for="sim-billed" style="display:block; font-size:11.5px; font-weight:700; margin-bottom:3px;">What Billing Dept Coded on X12 837P (JSON or Code:Units list)</label>
+              <label for="sim-billed" style="display:block; font-size:var(--fs-sm); font-weight:700; margin-bottom:3px;">What Billing Dept Coded on X12 837P (JSON or Code:Units list)</label>
               <input type="text" id="sim-billed" class="input-control" style="width:100%;" value="0421T:1, 96402:1, J9155:1" />
             </div>
 
             <!-- Active Node 0-3 Pipeline & Locality GPCI Telemetry Strip (Balances Left/Right Simulator Cards) -->
-            <div id="sim-left-telemetry-strip" style="background:var(--bg-canvas); border:1px solid var(--border-light); border-radius:7px; padding:8px 10px; margin-bottom:8px; font-size:11.5px;">
+            <div id="sim-left-telemetry-strip" style="background:var(--bg-canvas); border:1px solid var(--border-light); border-radius:7px; padding:8px 10px; margin-bottom:8px; font-size:var(--fs-sm);">
               <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:4px;">
                 <strong style="color:var(--primary-dark);">Active 6-Node Stateful Graph &amp; Locality GPCI Guardrails</strong>
                 <span class="badge badge-blue" id="sim-telemetry-version-badge">CPT 2027 Router Active</span>
               </div>
-              <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:4px 10px; color:var(--text-sub); font-size:11px;">
+              <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:4px 10px; color:var(--text-sub); font-size:var(--fs-xs);">
                 <div><strong>Node 0–1:</strong> Magic-Byte + 18 Safe Harbor Regexes</div>
                 <div><strong>Node 2:</strong> Docling PDF + Vision OCR + pydicom</div>
                 <div><strong>Node 3:</strong> Temporal DOS Router + 4-Pillar RAG</div>
@@ -1608,7 +1982,7 @@
 
           <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; padding-top:8px; border-top:1px solid var(--border-light);">
             <button type="button" class="btn-primary" id="btn-run-sim" onclick="runLiveSimulator()">Run 6-Node LangGraph &amp; Deterministic NCCI Audit</button>
-            <span style="font-size:11.5px; color:var(--text-muted); font-weight:600;">Nodes 1–6 Stateful Execution · Zero Unconstrained LLM Guessing</span>
+            <span style="font-size:var(--fs-sm); color:var(--text-muted); font-weight:600;">Nodes 1–6 Stateful Execution · Zero Unconstrained LLM Guessing</span>
           </div>
         </div>
 
@@ -1672,7 +2046,7 @@
               <tbody id="version-diff-tbody"></tbody>
             </table>
           </div>
-          <div style="margin-top:auto; padding-top:8px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; font-size:11.5px; color:var(--text-muted);">
+          <div style="margin-top:auto; padding-top:8px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; font-size:var(--fs-sm); color:var(--text-muted);">
             <span>Temporal Cutover: <code>DOS &lt; 2027-01-01</code> → AMA CPT 2026 · <code>DOS ≥ 2027-01-01</code> → AMA CPT 2027</span>
             <span class="badge badge-amber">11 Lifecycle &amp; Descriptor Rules</span>
           </div>
@@ -1688,7 +2062,7 @@
             <div id="interpretive-guidance-list"></div>
 
             <!-- CY 2026 vs CY 2027 MPFS Conversion Factor & Efficiency Adjustment (-2.5%) Reference Box -->
-            <div style="background:var(--bg-canvas); border:1px solid var(--border-light); border-radius:7px; padding:10px 12px; font-size:11.5px; margin-top:8px;">
+            <div style="background:var(--bg-canvas); border:1px solid var(--border-light); border-radius:7px; padding:10px 12px; font-size:var(--fs-sm); margin-top:8px;">
               <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:5px;">
                 <strong style="color:var(--primary-dark);">CY 2026 RVU26D vs. CY 2027 MPFS Conversion Factors &amp; -2.5% Efficiency Adjustment</strong>
                 <span class="badge badge-blue">Deterministic Node 3 &amp; 4 Router</span>
@@ -1701,7 +2075,7 @@
               </div>
             </div>
           </div>
-          <div style="margin-top:auto; padding-top:8px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; font-size:11.5px; color:var(--text-muted);">
+          <div style="margin-top:auto; padding-top:8px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; font-size:var(--fs-sm); color:var(--text-muted);">
             <span>Every AI claim mutation requires an explicit 4-Pillar Regulatory Warrant</span>
             <span class="badge badge-emerald">100% Citation Grounded</span>
           </div>
@@ -1789,8 +2163,8 @@
       <div class="data-grid-card" style="margin-bottom: 16px;">
         <div style="padding: 12px 16px; border-bottom: 1px solid var(--border-light); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
           <div>
-            <h2 style="margin:0; font-size:15px; font-weight:800;">CMS Medicare Physician &amp; Other Practitioners PUF + NPPES Urology Peer Benchmarks</h2>
-            <p style="margin:2px 0 0 0; font-size:12px; color:var(--text-muted);">Zero-PHI Cold-Outreach Intelligence: Benchmarks each urologist's 99214:99213 ratio, Modifier -25 rate, 52356 capture, and Buy-and-Bill J-codes against state peers.</p>
+            <h2 style="margin:0; font-size:var(--fs-2xl); font-weight:800;">CMS Medicare Physician &amp; Other Practitioners PUF + NPPES Urology Peer Benchmarks</h2>
+            <p style="margin:2px 0 0 0; font-size:var(--fs-md); color:var(--text-muted);">Zero-PHI Cold-Outreach Intelligence: Benchmarks each urologist's 99214:99213 ratio, Modifier -25 rate, 52356 capture, and Buy-and-Bill J-codes against state peers.</p>
           </div>
           <span class="badge badge-blue">Public CMS PUF + NPPES Joined</span>
         </div>
@@ -1852,14 +2226,14 @@
           </div>
 
           <!-- Node 4 Geographic Payment Formula & MPPR/Bilateral Reference Box (Eliminates Left-Card Bottom Gap) -->
-          <div id="gpci-formula-callout" style="background:var(--bg-canvas); border:1px solid var(--border-light); border-radius:7px; padding:10px 12px; font-size:11.5px;">
+          <div id="gpci-formula-callout" style="background:var(--bg-canvas); border:1px solid var(--border-light); border-radius:7px; padding:10px 12px; font-size:var(--fs-sm);">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:6px;">
               <strong style="color:var(--primary-dark);">Node 4 Deterministic Medicare Allowed Amount &amp; MPPR Formula</strong>
               <span class="badge badge-emerald">RVU26D Verified</span>
             </div>
-            <div style="background:var(--bg-card); border:1px solid var(--border-light); border-radius:6px; padding:7px 10px; font-family:monospace; font-size:11px; color:var(--text-main); margin-bottom:6px;"> Allowed = [(Work_RVU × Work_GPCI) + (PE_RVU × PE_GPCI) + (MP_RVU × MP_GPCI)] × CF × Factor
+            <div style="background:var(--bg-card); border:1px solid var(--border-light); border-radius:6px; padding:7px 10px; font-family:monospace; font-size:var(--fs-xs); color:var(--text-main); margin-bottom:6px;"> Allowed = [(Work_RVU × Work_GPCI) + (PE_RVU × PE_GPCI) + (MP_RVU × MP_GPCI)] × CF × Factor
             </div>
-            <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:5px 12px; color:var(--text-sub); font-size:11px; margin-bottom:6px;">
+            <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:5px 12px; color:var(--text-sub); font-size:var(--fs-xs); margin-bottom:6px;">
               <div><strong>Standard CF (Non-QP):</strong> <code>$33.4009</code></div>
               <div><strong>Qualifying APM CF (QP):</strong> <code>$33.5675</code></div>
               <div><strong>Endoscopy MPPR (Base 52000):</strong> <code>100%</code> Primary / <code>50%</code> Addl</div>
@@ -1867,12 +2241,12 @@
               <div><strong>Manhattan (01) Peak GPCI:</strong> Work <code>1.058</code> · PE <code>1.205</code></div>
               <div><strong>Miami (04) High-MP GPCI:</strong> MP <code>2.145</code> · Work <code>1.000</code></div>
             </div>
-            <div style="padding-top:6px; border-top:1px dashed var(--border-light); font-size:11px; color:var(--text-sub);">
+            <div style="padding-top:6px; border-top:1px dashed var(--border-light); font-size:var(--fs-xs); color:var(--text-sub);">
               <strong>Worked Locality Proof:</strong> <code>52356-RT</code> (100% Primary = <strong>$406.03</strong>) + Contralateral <code>52332-XS-LT</code> (50% MPPR = <strong>$74.92</strong>) in Dallas Locality 11; <code>52598</code> Aquablation (<strong>$943.12</strong>) in Miami Locality 04.
             </div>
           </div>
 
-          <div style="margin-top:auto; padding-top:8px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; font-size:11.5px; color:var(--text-muted);">
+          <div style="margin-top:auto; padding-top:8px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; font-size:var(--fs-sm); color:var(--text-muted);">
             <span>Synchronized with CMS CY 2026 RVU26D &amp; CY 2027 MPFS GPCI Tables</span>
             <span class="badge badge-blue">7 MAC Jurisdictions Active</span>
           </div>
@@ -1905,7 +2279,7 @@
               <tbody id="hitl-feedback-tbody"></tbody>
             </table>
           </div>
-          <div style="margin-top:auto; padding-top:8px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; font-size:11.5px; color:var(--text-muted);">
+          <div style="margin-top:auto; padding-top:8px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; font-size:var(--fs-sm); color:var(--text-muted);">
             <span>Persisted in SQLite <code>coder_feedback_loop</code> with X12 835 CARC/RARC status</span>
             <span class="badge badge-emerald">0 Denials · 100% CARC-0</span>
           </div>
@@ -1931,8 +2305,8 @@
           <span class="badge badge-amber" id="drw-cpt-ver">CPT 2026</span>
           <span class="badge badge-emerald" id="drw-delta-badge">+$74.92 Recovery</span>
         </div>
-        <h3 style="margin:0; font-size:14.5px; font-weight:800; color:var(--text-main); outline:none;" id="drw-title" tabindex="-1">Clinical Encounter Dossier</h3>
-        <div style="font-size:12px; color:var(--text-muted); margin-top:2px;" id="drw-meta">Provider · MAC · DOS</div>
+        <h3 style="margin:0; font-size:var(--fs-xl-plus); font-weight:800; color:var(--text-main); outline:none;" id="drw-title" tabindex="-1">Clinical Encounter Dossier</h3>
+        <div style="font-size:var(--fs-md); color:var(--text-muted); margin-top:2px;" id="drw-meta">Provider · MAC · DOS</div>
       </div>
       <div class="drawer-header-actions">
         <button type="button" class="btn-secondary" id="btn-collapse-drawer" onclick="toggleDrawerCollapse(true)" aria-label="Collapse inspector drawer to side rail" title="Collapse">Collapse →</button>
@@ -1949,7 +2323,7 @@
     <div class="drawer-body" id="drawer-body-content"></div>
 
     <div class="drawer-footer">
-      <div style="font-size:12px; color:var(--text-sub); font-weight:600;" id="drw-hitl-status">Status: Pending Review</div>
+      <div style="font-size:var(--fs-md); color:var(--text-sub); font-weight:600;" id="drw-hitl-status">Status: Pending Review</div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
         <button type="button" class="btn-secondary" onclick="submitHitlFeedback('835_REMITTANCE_LOGGED')">Log X12 835 Paid (CARC-0)</button>
         <button type="button" class="btn-primary" onclick="submitHitlFeedback('ACCEPTED_AI_CLAIM')">✓ Approve AI Claim &amp; Release 837P</button>
@@ -2153,10 +2527,170 @@
       const verified = STATE.encounters.length - pending;
       const p = document.getElementById('hdr-pending-pill');
       const v = document.getElementById('hdr-verified-pill');
-      if (p) p.textContent = `Pending HITL: ${pending}`;
-      if (v) v.textContent = `Coder verified: ${verified}`;
+      const plain = isPlainLanguage();
+      if (p) p.textContent = plain ? `Waiting for sign-off: ${pending}` : `Pending HITL: ${pending}`;
+      if (v) v.textContent = plain ? `Signed off: ${verified}` : `Coder verified: ${verified}`;
       const badge = document.getElementById('badge-queue-count');
       if (badge) badge.textContent = `${STATE.encounters.length} Cases`;
+    }
+
+    // ========================================================================
+    // PERSONA, LANGUAGE & DENSITY — default for anonymous visitors: physician/admin
+    // (plain language, comfortable). Coders opt into expert terms + compact once; persisted.
+    // ========================================================================
+    const PERSONA_KEY = 'urocura.persona';
+    const START_HERE_KEY = 'urocura.startHereDismissed';
+    const PERSONAS = {
+      clinician: { density: 'comfortable', language: 'plain' },
+      coder: { density: 'compact', language: 'expert' },
+    };
+
+    function storageGet(key) { try { return localStorage.getItem(key); } catch (e) { return null; } }
+    function storageSet(key, val) { try { localStorage.setItem(key, val); } catch (e) {} }
+
+    function currentPersona() {
+      const saved = storageGet(PERSONA_KEY);
+      return PERSONAS[saved] ? saved : 'clinician';
+    }
+
+    function isPlainLanguage() {
+      return document.documentElement.getAttribute('data-lang') !== 'expert';
+    }
+
+    // Plain-language dictionary: tooltips for everyone, inline rewrites in plain mode.
+    const GLOSSARY = {
+      'NCCI': 'National Correct Coding Initiative — Medicare bundling rules',
+      'PTP': 'Procedure-to-Procedure edit — which code pairs may be billed together',
+      'MUE': 'Medically Unlikely Edit — maximum units per day',
+      'MPPR': 'Multiple Procedure Payment Reduction — second procedure paid at 50%',
+      'GPCI': 'Geographic Practice Cost Index — local payment adjustment',
+      'HITL': 'Human-in-the-loop review — a coder or physician signs off',
+      '837P': 'The electronic professional claim sent to the payer',
+      '835': 'The electronic remittance advice (payment response)',
+      'CARC': 'Claim Adjustment Reason Code on the remittance',
+      'RVU': 'Relative Value Unit — work-based payment weight',
+      'LCD': 'Local Coverage Determination — regional medical-necessity policy',
+      'MAC': 'Medicare Administrative Contractor — the regional Medicare payer',
+      'DOS': 'Date of service',
+      'OCR': 'Optical character recognition — reading handwriting from a scan',
+      'DICOM': 'Medical imaging file format (CT, ultrasound)',
+      'CPT': 'Current Procedural Terminology — the procedure code set',
+      'HCPCS': 'Healthcare Common Procedure Coding System — supplies and drugs',
+      'ICD-10-CM': 'Diagnosis code set',
+      'X12': 'The EDI standard used for claims',
+      'PHI': 'Protected health information',
+      'TURBT': 'Transurethral resection of bladder tumor',
+      'TRUS': 'Transrectal ultrasound',
+      'URS': 'Ureteroscopy',
+      'E/M': 'Evaluation & management (office visit) service',
+      'J-Code': 'HCPCS code for an injectable drug',
+    };
+    const PLAIN_REWRITES = [
+      [/\bDOS\b/g, 'Service date'],
+      [/\bHITL\b/g, 'review'],
+      [/\bX12 837P\b/g, 'billing claim'],
+      [/\b837P\b/g, 'billing claim'],
+      [/\bNCCI Ch\.? ?7\b/g, 'Medicare bundling rules'],
+    ];
+    const GLOSSARY_RE = new RegExp('(^|[^A-Za-z0-9/-])(' + Object.keys(GLOSSARY).map(k => k.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')).join('|') + ')(?![A-Za-z0-9])', 'g');
+
+    function escapeHtml(s) {
+      return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // Returns HTML: escaped text with <abbr> tooltips on known acronyms; in plain mode, the
+    // highest-frequency billing jargon is rewritten in plain words instead of abbreviated.
+    function expandJargon(text) {
+      let s = escapeHtml(text);
+      if (isPlainLanguage()) {
+        for (const [re, rep] of PLAIN_REWRITES) s = s.replace(re, rep);
+      }
+      return s.replace(GLOSSARY_RE, (m, pre, term) => `${pre}<abbr title="${escapeHtml(GLOSSARY[term])}">${term}</abbr>`);
+    }
+
+    function applyLanguageMode() {
+      const plain = isPlainLanguage();
+      document.querySelectorAll('[data-plain][data-expert]').forEach(el => {
+        const next = plain ? el.getAttribute('data-plain') : el.getAttribute('data-expert');
+        if (el.tagName === 'OPTION') el.textContent = decodeEntities(next);
+        else el.innerHTML = next;
+      });
+      const search = document.getElementById('search-input');
+      if (search) search.placeholder = plain ? search.dataset.plainPlaceholder : search.dataset.expertPlaceholder;
+    }
+
+    function decodeEntities(s) {
+      const t = document.createElement('textarea');
+      t.innerHTML = s;
+      return t.value;
+    }
+
+    function setPersona(persona, opts = {}) {
+      if (!PERSONAS[persona]) persona = 'clinician';
+      const cfg = PERSONAS[persona];
+      document.documentElement.setAttribute('data-persona', persona);
+      document.documentElement.setAttribute('data-density', cfg.density);
+      document.documentElement.setAttribute('data-lang', cfg.language);
+      storageSet(PERSONA_KEY, persona);
+      const sel = document.getElementById('view-mode-select');
+      if (sel && sel.value !== persona) sel.value = persona;
+      document.querySelectorAll('.persona-btn').forEach(b => b.setAttribute('aria-pressed', b.dataset.persona === persona ? 'true' : 'false'));
+      applyLanguageMode();
+      if (STATE.encounters.length) {
+        renderEncounterTable();
+        updateHeaderHitlPills();
+      }
+      if (opts.source === 'start-here') {
+        dismissStartHere({ silent: true });
+        showToast(persona === 'coder' ? 'Coder view on: expert terms, compact rows, details open. Change anytime from the View menu.' : 'Physician / admin view on: plain language, comfortable spacing. Change anytime from the View menu.');
+      }
+    }
+
+    function initPersona() {
+      setPersona(currentPersona(), { source: 'init' });
+    }
+
+    // First-run orientation strip lifecycle
+    function initStartHere() {
+      const strip = document.getElementById('start-here');
+      if (!strip) return;
+      strip.hidden = storageGet(START_HERE_KEY) === '1';
+    }
+
+    function dismissStartHere(opts = {}) {
+      const strip = document.getElementById('start-here');
+      if (strip) strip.hidden = true;
+      storageSet(START_HERE_KEY, '1');
+      if (!opts.silent) showToast('You can switch between physician and coder views anytime from the View menu.');
+    }
+
+    function startHereGo(tabKey) {
+      switchWorkspace(tabKey, { focusTab: false });
+      if (tabKey === 'queue') {
+        const first = document.querySelector('#encounter-table-body tr.enc-row button.btn-primary');
+        if (first) first.focus({ preventScroll: true });
+        document.getElementById('encounter-table-body')?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      } else if (tabKey === 'simulator') {
+        document.getElementById('upload-discrepancy-table-container')?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      } else if (tabKey === 'ptp') {
+        document.getElementById('ptp-code-a')?.focus({ preventScroll: true });
+      }
+    }
+
+    // Headline count-up (delight moment); instant under prefers-reduced-motion
+    function countUpUsd(el, target, durationMs = 900) {
+      if (!el) return;
+      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const render = (v) => { el.textContent = '+' + formatUsd(v); };
+      if (reduce || durationMs <= 0) { render(target); return; }
+      const start = performance.now();
+      const tick = (now) => {
+        const p = Math.min(1, (now - start) / durationMs);
+        const eased = 1 - Math.pow(1 - p, 3);
+        render(target * eased);
+        if (p < 1) requestAnimationFrame(tick); else render(target);
+      };
+      requestAnimationFrame(tick);
     }
 
     function resetQueueFilters() {
@@ -2172,11 +2706,55 @@
       return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
+    // Plain mode: codes live in their own column, so drop "(52356-RT)"-style parentheticals from titles
+    function stripCodeParentheticals(title) {
+      return String(title || '').replace(/\s*\((?:[0-9]{4,5}[A-Z]?(?:-[A-Z0-9]{2})*(?:\s*(?:\+|→|,|\/)\s*[0-9A-Z-]+)*)\)/g, '').replace(/\s{2,}/g, ' ').trim();
+    }
+
+    function formatCodeLine(c) {
+      return `${c.code}${c.modifiers && c.modifiers.length ? '-' + c.modifiers.join('-') : ''}${c.units > 1 ? ' ×' + c.units : ''}`;
+    }
+
+    // Plain-language "why" line derived from the leakage category (expert mode shows the raw category)
+    const WHY_PLAIN = {
+      'Contralateral': 'Second-side stent dropped',
+      'TURBT': 'Tumor size & pathology under-coded',
+      'Buy-and-Bill': 'Drug units & wastage not billed',
+      'TRUS': 'Biopsy ultrasound dropped',
+      'Urodynamics': 'Urodynamics add-on missed',
+      'Bilateral': 'Both sides paid as one',
+      'Modifier -25': 'Same-day visit dropped',
+      'CPT 2026→2027': 'Retired code not updated',
+      '2027': 'Retired code not updated',
+    };
+
+    function whyLine(enc) {
+      if (!isPlainLanguage()) return expandJargon(enc.leakage_category);
+      const cat = String(enc.leakage_category || '');
+      const hit = Object.keys(WHY_PLAIN).find(k => cat.toLowerCase().includes(k.toLowerCase()));
+      return hit ? WHY_PLAIN[hit] : expandJargon(cat);
+    }
+
+    const OPEN_DETAILS = new Set();
+
+    function toggleEncounterDetails(encId, btn) {
+      const row = document.getElementById('details-' + encId);
+      if (!row) return;
+      const open = !row.classList.contains('open');
+      row.classList.toggle('open', open);
+      if (open) OPEN_DETAILS.add(encId); else OPEN_DETAILS.delete(encId);
+      if (btn) {
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        btn.textContent = open ? 'Hide details' : 'Details';
+      }
+    }
+
     function renderEncounterTable() {
       const q = (document.getElementById('search-input').value || '').trim().toLowerCase();
       const verFilter = document.getElementById('filter-version').value;
       const catFilter = document.getElementById('filter-category').value.toLowerCase();
       const statusFilter = document.getElementById('filter-status').value;
+      const plain = isPlainLanguage();
 
       const filtered = STATE.encounters.filter(enc => {
         if (verFilter !== 'ALL' && String(enc.cpt_version_year) !== verFilter) return false;
@@ -2200,71 +2778,80 @@
       emptyBox.style.display = 'none';
 
       tbody.innerHTML = filtered.map(enc => {
-        const draftChips = (enc.physician_draft || []).map(c =>
-          `<span class="code-chip">${c.code}${c.modifiers && c.modifiers.length ? '-' + c.modifiers.join('-') : ''}${c.units > 1 ? ' x' + c.units : ''}</span>`
-        ).join(' ');
-
-        const billedChips = (enc.billing_dept_837p || []).map(c =>
-          `<span class="code-chip downcoded">${c.code}${c.modifiers && c.modifiers.length ? '-' + c.modifiers.join('-') : ''}${c.units > 1 ? ' x' + c.units : ''} (${formatUsd(c.allowed_usd)})</span>`
-        ).join(' ');
-        const coderAction = (enc.billing_dept_837p && enc.billing_dept_837p[0]) ? enc.billing_dept_837p[0].coder_action : '';
-
-        const verifiedChips = (enc.ai_verified_claim || []).map(c =>
-          `<span class="code-chip recovered">${c.code}${c.modifiers && c.modifiers.length ? '-' + c.modifiers.join('-') : ''}${c.units > 1 ? ' x' + c.units : ''} (${formatUsd(c.allowed_usd)})</span>`
-        ).join(' ');
-        const primaryCitation = (enc.ai_verified_claim && enc.ai_verified_claim[enc.ai_verified_claim.length - 1])
-          ? enc.ai_verified_claim[enc.ai_verified_claim.length - 1].citation
-          : '';
-
-        const verBadgeClass = enc.cpt_version_year === 2027 ? 'badge-amber' : 'badge-blue';
-        const hitlBadge = enc.hitl_status === 'CODER_VERIFIED'
-          ? '<span class="badge badge-emerald">✓ Coder Verified</span>'
-          : '<span class="badge badge-amber">Pending HITL</span>';
-
-        // Cross-workspace handoff (flow rule: shortest path to the next decision)
-        const verifiedCodes = (enc.ai_verified_claim || []).map(c => c.code).filter(Boolean);
+        const billed = (enc.billing_dept_837p || []);
+        const verified = (enc.ai_verified_claim || []);
+        const draft = (enc.physician_draft || []);
+        const coderAction = billed[0] ? billed[0].coder_action : '';
+        const primaryCitation = verified.length ? verified[verified.length - 1].citation : '';
+        const isVerified = enc.hitl_status === 'CODER_VERIFIED';
+        const statusBadge = isVerified
+          ? `<span class="badge badge-emerald badge-check">${plain ? 'Signed off' : 'Coder Verified'}</span>`
+          : `<span class="badge badge-amber">${plain ? 'Needs sign-off' : 'Pending HITL'}</span>`;
+        const yearText = plain ? `${enc.cpt_version_year} rules` : `CPT ${enc.cpt_version_year}`;
+        const dateLabel = plain ? 'Service date' : 'DOS';
+        const verifiedCodes = verified.map(c => c.code).filter(Boolean);
         const pairHandoff = verifiedCodes.length >= 2
-          ? `<button type="button" class="link-btn" style="font-size:11px; margin-top:6px;" onclick="openPairCheckFromQueue('${verifiedCodes[0]}','${verifiedCodes[1]}',${enc.cpt_version_year})" aria-label="Check ${verifiedCodes[0]} + ${verifiedCodes[1]} in Code Pair Check">Check pair ${verifiedCodes[0]} + ${verifiedCodes[1]} →</button>`
+          ? `<button type="button" class="link-btn" style="font-size:var(--fs-md);" onclick="openPairCheckFromQueue('${verifiedCodes[0]}','${verifiedCodes[1]}',${enc.cpt_version_year})">Check pair ${verifiedCodes[0]} + ${verifiedCodes[1]} →</button>`
           : '';
+        const shorthand = (enc.handwritten_ocr && Array.isArray(enc.handwritten_ocr.shorthand_decoded)) ? enc.handwritten_ocr.shorthand_decoded.slice(0, 3) : [];
+        const shorthandHtml = shorthand.length
+          ? shorthand.map(p => `<div class="shorthand-pair"><span class="shorthand-raw">${escapeHtml(p.raw || '')}</span><span class="shorthand-plain">${escapeHtml(p.expanded || p.meaning || '')}</span></div>`).join('')
+          : `<div class="enc-details-text">${escapeHtml(enc.handwritten_note_raw || 'See dossier for the scanned note.')}</div>`;
+        const isOpen = OPEN_DETAILS.has(enc.encounter_id);
 
         return `
-          <tr data-encounter-id="${enc.encounter_id}">
+          <tr class="enc-row" data-encounter-id="${enc.encounter_id}">
             <td>
-              <div style="font-weight:800; color:var(--primary-dark);">${enc.encounter_id}</div>
-              <div style="margin:3px 0;"><span class="badge ${verBadgeClass}">CPT ${enc.cpt_version_year}</span></div>
-              <div class="leading-tight break-words" style="font-size:11.5px; color:var(--text-sub); font-weight:600;">DOS: ${enc.date_of_service}</div>
-              <div class="leading-tight break-words" style="font-size:11px; color:var(--text-muted); margin-top:2px;">${enc.provider_name}</div>
-              <div class="leading-tight break-words" style="font-size:11px; color:var(--text-muted);">${enc.mac_contractor}</div>
+              <div style="font-weight:800; color:var(--text-main);">${enc.encounter_id}</div>
+              ${(plain && enc.cpt_version_year !== 2027) ? '' : `<div class="leading-tight" style="font-size:var(--fs-sm); color:var(--text-muted); margin-top:3px;">${yearText}</div>`}
+              <div class="leading-tight" style="font-size:var(--fs-sm); color:var(--text-sub); margin-top:2px;">${dateLabel} ${enc.date_of_service}</div>
             </td>
             <td>
-              <div class="leading-tight break-words" style="font-weight:700; color:var(--text-main); margin-bottom:4px;">${enc.clinical_title}</div>
-              <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:4px;">
-                <span class="badge badge-amber">Handwritten OCR ${Math.round((enc.handwritten_ocr?.confidence || 0.98)*100)}%</span>
-                <span class="badge badge-blue">Op Report PDF</span>
-                <span class="badge badge-cyan">Path + DICOM ${enc.dicom_metadata?.Modality || 'CT'}</span>
+              <div class="leading-tight break-words" style="font-weight:700; color:var(--text-main); margin-bottom:4px;">${expandJargon(plain ? stripCodeParentheticals(enc.clinical_title) : enc.clinical_title)}</div>
+              <div class="leading-tight break-words" style="font-size:var(--fs-sm); color:var(--text-sub);">${whyLine(enc)}</div>
+            </td>
+            <td>
+              <div class="row-codes">
+                <span class="codes-billed">${billed.map(formatCodeLine).join(', ') || '—'}</span>
+                <span class="codes-arrow" aria-hidden="true">→</span>
+                <span class="codes-verified">${verified.map(formatCodeLine).join(', ')}</span>
               </div>
-              <div class="leading-tight break-words" style="font-size:11.5px; color:var(--text-muted);">${enc.leakage_category}</div>
             </td>
             <td>
-              <div style="margin-bottom:4px;">${draftChips}</div>
-              <div class="leading-tight break-words" style="font-size:11px; color:var(--text-muted);">Raw physician superbill / margin note</div>
+              <div style="font-size:16px; font-weight:800; color:var(--emerald-text); font-variant-numeric:tabular-nums;">+${formatUsd(enc.money_left_on_table_usd)}</div>
+              <div class="leading-tight" style="font-size:var(--fs-sm); color:var(--text-muted); margin-top:2px;">${formatUsd(enc.billed_allowed_usd)} → ${formatUsd(enc.verified_allowed_usd)}</div>
             </td>
             <td>
-              <div style="margin-bottom:4px;">${billedChips}</div>
-              <div style="font-weight:700; font-size:12px; color:var(--rose-text); margin-bottom:3px;">Billed: ${formatUsd(enc.billed_allowed_usd)}</div>
-              <div class="leading-tight break-words" style="font-size:11px; color:var(--text-sub);">${coderAction}</div>
+              <div style="margin-bottom:6px;">${statusBadge}</div>
+              <button type="button" class="btn-primary btn-arrow" style="width:100%; justify-content:center;" onclick="openDrawer('${enc.encounter_id}', { trigger: this })">Inspect dossier</button>
+              <button type="button" class="details-toggle" aria-expanded="${isOpen ? 'true' : 'false'}" aria-controls="details-${enc.encounter_id}" onclick="toggleEncounterDetails('${enc.encounter_id}', this)">${isOpen ? 'Hide details' : 'Details'}</button>
             </td>
-            <td>
-              <div style="margin-bottom:4px;">${verifiedChips}</div>
-              <div style="font-weight:700; font-size:12px; color:var(--emerald-text); margin-bottom:3px;">Verified: ${formatUsd(enc.verified_allowed_usd)}</div>
-              <div class="leading-tight break-words" style="font-size:11px; color:var(--text-sub);">${primaryCitation}</div>
-            </td>
-            <td>
-              <div style="font-size:16px; font-weight:800; color:var(--emerald-strong); font-variant-numeric:tabular-nums;">+${formatUsd(enc.money_left_on_table_usd)}</div>
-              <div style="margin:4px 0;">${hitlBadge}</div>
-              <button type="button" class="btn-primary" style="margin-top:4px; width:100%; justify-content:center;" onclick="openDrawer('${enc.encounter_id}', { trigger: this })"> Inspect Dossier →
-              </button>
-              ${pairHandoff}
+          </tr>
+          <tr class="enc-details-row${isOpen ? ' open' : ''}" id="details-${enc.encounter_id}">
+            <td colspan="5">
+              <div class="enc-details-grid">
+                <div class="enc-details-block">
+                  <div class="enc-details-title">${plain ? 'Doctor wrote' : '1. Physician draft'}</div>
+                  <div class="row-codes"><span style="color:var(--text-main); font-weight:700;">${draft.map(formatCodeLine).join(', ') || '—'}</span></div>
+                  ${shorthandHtml}
+                </div>
+                <div class="enc-details-block">
+                  <div class="enc-details-title">${plain ? 'Billing submitted' : '2. Billing Dept 837P'}</div>
+                  <div class="row-codes"><span class="codes-billed">${billed.map(c => `${formatCodeLine(c)} (${formatUsd(c.allowed_usd)})`).join(', ') || '—'}</span></div>
+                  <div class="enc-details-text">${expandJargon(coderAction)}</div>
+                </div>
+                <div class="enc-details-block">
+                  <div class="enc-details-title">${plain ? 'What the documentation supports' : '3. AI verified claim'}</div>
+                  <div class="row-codes"><span class="codes-verified">${verified.map(c => `${formatCodeLine(c)} (${formatUsd(c.allowed_usd)})`).join(', ')}</span></div>
+                  <div class="enc-details-text">${expandJargon(primaryCitation)}</div>
+                </div>
+                <div class="enc-details-block">
+                  <div class="enc-details-title">${plain ? 'Where this comes from' : 'Provenance & actions'}</div>
+                  <div class="enc-details-text">${escapeHtml(enc.provider_name)} · ${expandJargon(enc.mac_contractor)}</div>
+                  <div class="enc-details-text">${plain ? 'Handwritten note' : 'Handwritten OCR'} ${Math.round((enc.handwritten_ocr?.confidence || 0.98) * 100)}% · operative report · pathology · ${plain ? 'imaging' : 'DICOM'} ${enc.dicom_metadata?.Modality || 'CT'}</div>
+                  ${pairHandoff}
+                </div>
+              </div>
             </td>
           </tr>
         `;
@@ -2433,13 +3020,13 @@
       const container = document.getElementById('drawer-body-content');
       if (STATE.activeDrawerTab === 'multimodal') {
         const shorthandRows = (enc.handwritten_ocr?.shorthand_decoded || []).map(s =>
-          `<div style="margin-bottom:5px; font-size:12px;">
+          `<div style="margin-bottom:5px; font-size:var(--fs-md);">
              <span class="code-chip">${s.raw}</span> → <strong style="color:var(--emerald-text);">${s.expanded}</strong>
            </div>`
         ).join('');
 
         const dicomMetrics = Object.entries(enc.dicom_metadata?.ExtractedMetrics || {}).map(([k, v]) =>
-          `<div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px dashed var(--border-light); font-size:12px;">
+          `<div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px dashed var(--border-light); font-size:var(--fs-md);">
              <span style="color:var(--text-muted); font-weight:600;">${k}</span>
              <span style="color:var(--text-main); font-weight:700;">${v}</span>
            </div>`
@@ -2448,19 +3035,19 @@
         container.innerHTML = `
           <div style="margin-bottom:14px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-              <strong style="font-size:12.5px; text-transform:uppercase; color:var(--amber-text);">1. Handwritten Physician Superbill / Margin Note + Vision OCR</strong>
+              <strong style="font-size:var(--fs-md-plus); text-transform:uppercase; color:var(--amber-text);">1. Handwritten Physician Superbill / Margin Note + Vision OCR</strong>
               <span class="badge badge-amber">OCR Confidence: ${((enc.handwritten_ocr?.confidence || 0.98)*100).toFixed(1)}%</span>
             </div>
             <div class="handwritten-paper">"${enc.handwritten_note_raw}"</div>
             <div style="background:var(--bg-canvas); border:1px solid var(--border-light); border-radius:7px; padding:9px 11px;">
-              <div style="font-size:11px; font-weight:700; color:var(--text-muted); margin-bottom:4px; text-transform:uppercase;">Decoded Clinical Shorthand:</div>
+              <div style="font-size:var(--fs-xs); font-weight:700; color:var(--text-muted); margin-bottom:4px; text-transform:uppercase;">Decoded Clinical Shorthand:</div>
               ${shorthandRows}
             </div>
           </div>
 
           <div style="margin-bottom:14px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-              <strong style="font-size:12.5px; text-transform:uppercase; color:var(--primary-dark);">2. Formal Operative / Procedure PDF Report (IBM Docling Parsed)</strong>
+              <strong style="font-size:var(--fs-md-plus); text-transform:uppercase; color:var(--primary-dark);">2. Formal Operative / Procedure PDF Report (IBM Docling Parsed)</strong>
               <span class="badge badge-blue">HIPAA Safe Harbor Redacted</span>
             </div>
             <div class="clinical-report-box">${enc.operative_report_text}</div>
@@ -2468,7 +3055,7 @@
 
           <div style="margin-bottom:14px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-              <strong style="font-size:12.5px; text-transform:uppercase; color:var(--emerald-text);">3. Surgical Pathology Report (ICD-10-CM Medical Necessity Driver)</strong>
+              <strong style="font-size:var(--fs-md-plus); text-transform:uppercase; color:var(--emerald-text);">3. Surgical Pathology Report (ICD-10-CM Medical Necessity Driver)</strong>
               <span class="badge badge-emerald">Pathology Verified</span>
             </div>
             <div class="clinical-report-box">${enc.pathology_report_text}</div>
@@ -2476,7 +3063,7 @@
 
           <div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-              <strong style="font-size:12.5px; text-transform:uppercase; color:var(--cyan-text);">4. pydicom Header Tags &amp; High-Contrast Slice Synthesis</strong>
+              <strong style="font-size:var(--fs-md-plus); text-transform:uppercase; color:var(--cyan-text);">4. pydicom Header Tags &amp; High-Contrast Slice Synthesis</strong>
               <span class="badge badge-cyan">Modality: ${enc.dicom_metadata?.Modality || 'CT'}</span>
             </div>
             <canvas id="dicom-slice-canvas" width="620" height="145" style="width:100%; height:145px; border-radius:7px; margin-bottom:8px; display:block;"></canvas>
@@ -2494,14 +3081,14 @@
           <div style="background:var(--bg-card); border:1px solid var(--emerald-border); border-left:4px solid var(--emerald-btn); border-radius:8px; padding:11px 13px; margin-bottom:10px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
               <div>
-                <span class="code-chip recovered" style="font-size:13px;">${line.code}${line.modifiers && line.modifiers.length ? '-' + line.modifiers.join('-') : ''}</span>
-                <span style="font-weight:700; font-size:12.5px;">${line.descriptor}</span>
+                <span class="code-chip recovered" style="font-size:var(--fs-lg);">${line.code}${line.modifiers && line.modifiers.length ? '-' + line.modifiers.join('-') : ''}</span>
+                <span style="font-weight:700; font-size:var(--fs-md-plus);">${line.descriptor}</span>
               </div>
-              <span style="font-size:14.5px; font-weight:800; color:var(--emerald-strong);">${formatUsd(line.allowed_usd)}</span>
+              <span style="font-size:var(--fs-xl-plus); font-weight:800; color:var(--emerald-strong);">${formatUsd(line.allowed_usd)}</span>
             </div>
-            <div style="font-size:11.5px; color:var(--text-muted); margin-bottom:5px;"> Units: <strong>${line.units}</strong> · ICD-10-CM: <strong>${(line.icd10 || []).join(', ')}</strong> · Work RVU: <strong>${line.rvu_work}</strong> · MPPR/Bilateral Multiplier: <strong>${Math.round((line.mppr_factor || 1)*100)}%</strong>
+            <div style="font-size:var(--fs-sm); color:var(--text-muted); margin-bottom:5px;"> Units: <strong>${line.units}</strong> · ICD-10-CM: <strong>${(line.icd10 || []).join(', ')}</strong> · Work RVU: <strong>${line.rvu_work}</strong> · MPPR/Bilateral Multiplier: <strong>${Math.round((line.mppr_factor || 1)*100)}%</strong>
             </div>
-            <div style="font-size:12px; color:var(--text-main); background:var(--emerald-bg-soft); padding:7px 9px; border-radius:6px; border:1px solid var(--emerald-border-soft);">
+            <div style="font-size:var(--fs-md); color:var(--text-main); background:var(--emerald-bg-soft); padding:7px 9px; border-radius:6px; border:1px solid var(--emerald-border-soft);">
               <strong>Explicit Citation Warrant:</strong> ${line.citation}
             </div>
           </div>
@@ -2513,17 +3100,17 @@
               <span>Billing Dept Submitted: ${b.code}${b.modifiers && b.modifiers.length ? '-' + b.modifiers.join('-') : ''} (Units: ${b.units})</span>
               <span style="color:var(--rose-text);">${formatUsd(b.allowed_usd)}</span>
             </div>
-            <div style="font-size:12px; color:var(--rose-text-strong); margin-top:3px;"><strong>Why Revenue Was Lost:</strong> ${b.coder_action}</div>
+            <div style="font-size:var(--fs-md); color:var(--rose-text-strong); margin-top:3px;"><strong>Why Revenue Was Lost:</strong> ${b.coder_action}</div>
           </div>
         `).join('');
 
         container.innerHTML = `
           <div style="margin-bottom:14px;">
-            <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:var(--rose-text); margin-bottom:6px;">What Hospital/Clinic Billing Dept Submitted (X12 837P): ${formatUsd(enc.billed_allowed_usd)}</div>
+            <div style="font-size:var(--fs-md); font-weight:800; text-transform:uppercase; color:var(--rose-text); margin-bottom:6px;">What Hospital/Clinic Billing Dept Submitted (X12 837P): ${formatUsd(enc.billed_allowed_usd)}</div>
             ${billedRows}
           </div>
           <div>
-            <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:var(--emerald-text); margin-bottom:6px;">AI-Verified Compliant Claim &amp; 4-Pillar Citations: ${formatUsd(enc.verified_allowed_usd)} (+${formatUsd(enc.money_left_on_table_usd)})</div>
+            <div style="font-size:var(--fs-md); font-weight:800; text-transform:uppercase; color:var(--emerald-text); margin-bottom:6px;">AI-Verified Compliant Claim &amp; 4-Pillar Citations: ${formatUsd(enc.verified_allowed_usd)} (+${formatUsd(enc.money_left_on_table_usd)})</div>
             ${verifiedRows}
           </div>
         `;
@@ -2535,21 +3122,21 @@
         <div style="display:flex; gap:10px; align-items:flex-start; padding:9px 11px; background:var(--bg-canvas); border:1px solid var(--border-light); border-radius:7px; margin-bottom:8px;">
           <span class="badge badge-emerald">${t.status}</span>
           <div class="min-w-0">
-            <div style="font-weight:700; font-size:12.5px; color:var(--text-main);">${t.node}</div>
-            <div style="font-size:12px; color:var(--text-sub); margin-top:2px;">${t.detail}</div>
+            <div style="font-weight:700; font-size:var(--fs-md-plus); color:var(--text-main);">${t.node}</div>
+            <div style="font-size:var(--fs-md); color:var(--text-sub); margin-top:2px;">${t.detail}</div>
           </div>
         </div>
       `).join('');
 
       container.innerHTML = `
         <div style="margin-bottom:14px;">
-          <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:var(--primary-dark); margin-bottom:6px;">Stateful 6-Node LangGraph Execution Trace</div>
+          <div style="font-size:var(--fs-md); font-weight:800; text-transform:uppercase; color:var(--primary-dark); margin-bottom:6px;">Stateful 6-Node LangGraph Execution Trace</div>
           ${traceRows}
         </div>
         <div style="background:var(--primary-bg); border:1px solid var(--primary-border); border-radius:8px; padding:12px;">
-          <label for="hitl-custom-note" style="display:block; font-weight:800; font-size:13px; margin-bottom:6px;">Human-in-the-Loop (HITL) Addendum / Override Note</label>
+          <label for="hitl-custom-note" style="display:block; font-weight:800; font-size:var(--fs-lg); margin-bottom:6px;">Human-in-the-Loop (HITL) Addendum / Override Note</label>
           <input type="text" id="hitl-custom-note" class="input-control" style="width:100%; margin-bottom:8px;" value="Verified multimodal operative, pathology, and DICOM evidence under NCCI Policy Manual Ch. 7." />
-          <div style="font-size:11.5px; color:var(--text-muted);">Use the footer action buttons below to sign off or log X12 835 Remittance Advice into SQLite <code>coder_feedback_loop</code>.</div>
+          <div style="font-size:var(--fs-sm); color:var(--text-muted);">Use the footer action buttons below to sign off or log X12 835 Remittance Advice into SQLite <code>coder_feedback_loop</code>.</div>
         </div>
       `;
     }
@@ -2674,11 +3261,11 @@
             <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; margin-bottom:3px;">
               <div>
                 <span class="badge ${badgeClass}">${label}: ${item.code}</span>
-                <strong style="font-size:12px; color:var(--text-main); margin-left:4px;">${item.short_descriptor || ''}</strong>
+                <strong style="font-size:var(--fs-md); color:var(--text-main); margin-left:4px;">${item.short_descriptor || ''}</strong>
               </div>
               <span class="badge badge-emerald">MUE Cap: ${item.mue_limit || 1} u/day</span>
             </div>
-            <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px; font-size:11.5px; color:var(--text-sub); font-variant-numeric:tabular-nums;">
+            <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px; font-size:var(--fs-sm); color:var(--text-sub); font-variant-numeric:tabular-nums;">
               <span>Work RVU: <strong>${Number(item.work_rvu || 0).toFixed(2)}</strong></span>
               <span>${facility === 'FACILITY' ? 'Facility' : 'Office'} PE RVU: <strong>${Number(peRvu || 0).toFixed(2)}</strong></span>
               <span>Global: <strong>${item.global_period || '000'}</strong></span>
@@ -2692,13 +3279,13 @@
       box.innerHTML = `
         <div style="margin-top:4px; padding-top:10px; border-top:1px solid var(--border-light);">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-            <span style="font-size:11.5px; font-weight:800; text-transform:uppercase; color:var(--primary-dark);">Live MPFS RVU, Global Period, Bilateral &amp; NCCI MUE Daily Unit Cap Comparison</span>
+            <span style="font-size:var(--fs-sm); font-weight:800; text-transform:uppercase; color:var(--primary-dark);">Live MPFS RVU, Global Period, Bilateral &amp; NCCI MUE Daily Unit Cap Comparison</span>
             <span class="badge badge-blue">CY${yr} MPFS + MUE</span>
           </div>
           ${renderCodeRow('Col 1 / X', catA, 'badge-blue')}
           ${renderCodeRow('Col 2 / Y', catB, 'badge-amber')}
         </div>
-        <div style="padding-top:8px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; font-size:11.5px; color:var(--text-muted);">
+        <div style="padding-top:8px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; font-size:var(--fs-sm); color:var(--text-muted);">
           <span>Evaluates live against <code>ncci_ptp_edits</code>, <code>ncci_mue</code>, and <code>mpfs_rvu</code> tables</span>
           <strong style="color:var(--text-sub);">CF: $33.4009 (non-QP) / $33.5675 (QP)</strong>
         </div>
@@ -2734,25 +3321,25 @@
           <tr>
             <td>
               <span class="code-chip">${p.col1_code}</span>
-              <div class="leading-tight break-words" style="font-size:11px; color:var(--text-sub); margin-top:2px; font-weight:600;">
+              <div class="leading-tight break-words" style="font-size:var(--fs-xs); color:var(--text-sub); margin-top:2px; font-weight:600;">
                 ${cat1 ? cat1.short_descriptor : 'Primary Procedure'}
               </div>
             </td>
             <td>
               <span class="code-chip">${p.col2_code}</span>
-              <div class="leading-tight break-words" style="font-size:11px; color:var(--text-sub); margin-top:2px; font-weight:600;">
+              <div class="leading-tight break-words" style="font-size:var(--fs-xs); color:var(--text-sub); margin-top:2px; font-weight:600;">
                 ${cat2 ? cat2.short_descriptor : 'Component Procedure'}
               </div>
             </td>
             <td>
               ${modIndBadge}
-              <div style="font-size:11px; color:var(--text-muted); margin-top:3px;">Effective CY${p.effective_year}</div>
+              <div style="font-size:var(--fs-xs); color:var(--text-muted); margin-top:3px;">Effective CY${p.effective_year}</div>
             </td>
             <td>${modsList}</td>
-            <td class="leading-tight break-words" style="font-size:11.5px;">
+            <td class="leading-tight break-words" style="font-size:var(--fs-sm);">
               <div style="font-weight:700; color:var(--text-main); margin-bottom:2px;">${p.ptp_rationale}</div>
-              <div style="font-size:11px; color:var(--primary-dark);"><strong>NCCI:</strong> ${p.ncci_manual_citation}</div>
-              <div style="font-size:11px; color:var(--emerald-text);"><strong>CPT Asst:</strong> ${p.cpt_assistant_citation}</div>
+              <div style="font-size:var(--fs-xs); color:var(--primary-dark);"><strong>NCCI:</strong> ${p.ncci_manual_citation}</div>
+              <div style="font-size:var(--fs-xs); color:var(--emerald-text);"><strong>CPT Asst:</strong> ${p.cpt_assistant_citation}</div>
             </td>
             <td>
               <button type="button" class="btn-secondary" style="width:100%; justify-content:center;" onclick="loadPtpPreset('${p.col1_code}','${p.col2_code}','${defaultContext}',${p.effective_year})"> Evaluate Pair
@@ -2828,7 +3415,7 @@
             <span>Line: ${l.code}${l.modifiers && l.modifiers.length ? '-' + l.modifiers.join('-') : ''} (Units: ${l.units})</span>
             <span style="color:var(--emerald-strong);">${formatUsd(l.allowed_usd)}</span>
           </div>
-          <div style="font-size:12px; color:var(--text-sub); margin-top:3px;">${l.explanation}</div>
+          <div style="font-size:var(--fs-md); color:var(--text-sub); margin-top:3px;">${l.explanation}</div>
         </div>
       `).join('');
 
@@ -2840,29 +3427,29 @@
         <div style="flex:1; display:flex; flex-direction:column; justify-content:space-between; gap:8px;">
           <div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:6px;">
-              <strong style="font-size:14px;">Deterministic NCCI Chapter 7 Verdict (${codeA} + ${codeB})</strong>
+              <strong style="font-size:var(--fs-xl);">Deterministic NCCI Chapter 7 Verdict (${codeA} + ${codeB})</strong>
               ${modIndBadge}
             </div>
-            <div style="padding:11px 13px; border-radius:8px; font-weight:800; font-size:13.5px; margin-bottom:12px; ${bannerColor}">
+            <div style="padding:11px 13px; border-radius:8px; font-weight:800; font-size:var(--fs-base); margin-bottom:12px; ${bannerColor}">
               ${result.verdict_badge}
             </div>
-            <div style="font-size:11.5px; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px;">Compliant Claim Lines &amp; MPFS Payment:</div>
+            <div style="font-size:var(--fs-sm); font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px;">Compliant Claim Lines &amp; MPFS Payment:</div>
             ${linesHtml}
-            <div style="background:var(--primary-bg); border:1px solid var(--primary-border); border-radius:7px; padding:10px 12px; margin-top:10px; font-size:12px;">
+            <div style="background:var(--primary-bg); border:1px solid var(--primary-border); border-radius:7px; padding:10px 12px; margin-top:10px; font-size:var(--fs-md);">
               <div style="margin-bottom:6px;"><strong>CMS NCCI Policy Manual Chapter 7 Warrant:</strong><br/>${result.ncci_chapter7_citation}</div>
               <div><strong>AMA CPT Assistant Clinical Vignette:</strong><br/>${result.cpt_assistant_citation}</div>
             </div>
-            <div style="background:var(--bg-canvas); border:1px solid var(--border-light); border-radius:7px; padding:9px 11px; margin-top:10px; font-size:11.5px;">
+            <div style="background:var(--bg-canvas); border:1px solid var(--border-light); border-radius:7px; padding:9px 11px; margin-top:10px; font-size:var(--fs-sm);">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
                 <strong style="color:var(--primary-dark);">Node 4 MPPR, Bilateral &amp; MUE Audit Gate</strong>
                 <span class="badge badge-emerald">Locality 11 Dallas GPCI</span>
               </div>
-              <div style="color:var(--text-sub); font-size:11px;"> Endoscopic Base <code>52000</code> MPPR (100% Col 1 / 50% Col 2 when unbundled via <code>-XS</code>/<code>-59</code>) · Place of Service: <strong>${formatEnumLabel(facility)}</strong> · Qualifying APM CF: <code>$33.5675</code>.
+              <div style="color:var(--text-sub); font-size:var(--fs-xs);"> Endoscopic Base <code>52000</code> MPPR (100% Col 1 / 50% Col 2 when unbundled via <code>-XS</code>/<code>-59</code>) · Place of Service: <strong>${formatEnumLabel(facility)}</strong> · Qualifying APM CF: <code>$33.5675</code>.
               </div>
             </div>
           </div>
           <div style="padding-top:10px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-size:12px; font-weight:700; color:var(--text-sub);">Total Verified Medicare Allowed Amount:</span>
+            <span style="font-size:var(--fs-md); font-weight:700; color:var(--text-sub);">Total Verified Medicare Allowed Amount:</span>
             <span style="font-size:18px; font-weight:800; color:var(--emerald-strong);">${formatUsd(result.total_allowed_usd)}</span>
           </div>
         </div>
@@ -2872,11 +3459,79 @@
     // ========================================================================
     // WORKSPACE 3A: MULTIMODAL BINARY FILE UPLOAD & DISCREPANCY ANALYZER
     // ========================================================================
+    // ========================================================================
+    // UPLOAD ACCESS — public demo: sample-only (server-enforced). Private: no-PHI/BAA acknowledgement.
+    // ========================================================================
+    let APP_CONFIG = { public_demo_mode: true, uploads: 'sample_only' };
+
+    async function loadAppConfig() {
+      try {
+        const res = await fetch('/api/config');
+        if (res.ok) APP_CONFIG = await res.json();
+      } catch (e) {
+        // Fail closed: if we cannot read the config, behave as a public demo.
+        APP_CONFIG = { public_demo_mode: true, uploads: 'sample_only' };
+      }
+      applyUploadAccessState();
+    }
+
+    function uploadAccessState() {
+      if (APP_CONFIG.public_demo_mode) return 'sample_only';
+      let ack = false;
+      try { ack = sessionStorage.getItem('urocura.uploadAck') === '1'; } catch (e) {}
+      const cb = document.getElementById('upload-ack-checkbox');
+      if (cb && cb.checked) ack = true;
+      return ack ? 'allowed' : 'needs_ack';
+    }
+
+    function applyUploadAccessState() {
+      const state = uploadAccessState();
+      const dz = document.getElementById('multimodal-dropzone');
+      const input = document.getElementById('file-upload-input');
+      const browse = document.getElementById('btn-browse-local');
+      const notice = document.getElementById('upload-sample-only-notice');
+      const ack = document.getElementById('upload-ack-gate');
+      const demoPill = document.getElementById('hdr-demo-pill');
+      const cb = document.getElementById('upload-ack-checkbox');
+      if (cb && cb.checked) { try { sessionStorage.setItem('urocura.uploadAck', '1'); } catch (e) {} }
+
+      if (demoPill) demoPill.hidden = !APP_CONFIG.public_demo_mode;
+      if (notice) notice.hidden = state !== 'sample_only';
+      if (ack) ack.hidden = APP_CONFIG.public_demo_mode;
+
+      const allowed = state === 'allowed';
+      if (dz) {
+        dz.classList.toggle('is-disabled', !allowed);
+        dz.setAttribute('aria-disabled', allowed ? 'false' : 'true');
+      }
+      if (input) input.disabled = !allowed;
+      if (browse) {
+        browse.disabled = !allowed;
+        browse.title = allowed ? '' : (state === 'sample_only' ? 'Sample mode: only the bundled sample files can be analyzed in this public demo' : 'Confirm the no-PHI / BAA acknowledgement first');
+      }
+    }
+
+    function requestUploadAccess(source) {
+      const state = uploadAccessState();
+      if (state === 'allowed') {
+        document.getElementById('file-upload-input').click();
+        return true;
+      }
+      if (state === 'sample_only') {
+        showToast('Sample mode: this public demo analyzes the bundled sample files only. Use "Analyze the 5 sample files".');
+        document.getElementById('upload-sample-only-notice')?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      } else {
+        showToast('Please confirm the no-PHI / BAA acknowledgement before uploading.');
+        document.getElementById('upload-ack-checkbox')?.focus();
+      }
+      return false;
+    }
+
     function handleDragOver(evt) {
       evt.preventDefault();
       evt.stopPropagation();
       const dz = document.getElementById('multimodal-dropzone');
-      if (dz) dz.classList.add('drag-active');
+      if (dz && uploadAccessState() === 'allowed') dz.classList.add('drag-active');
     }
 
     function handleDragLeave(evt) {
@@ -2891,12 +3546,14 @@
       evt.stopPropagation();
       const dz = document.getElementById('multimodal-dropzone');
       if (dz) dz.classList.remove('drag-active');
+      if (uploadAccessState() !== 'allowed') { requestUploadAccess('drop'); return; }
       if (evt.dataTransfer && evt.dataTransfer.files && evt.dataTransfer.files.length > 0) {
         processBrowserFiles(evt.dataTransfer.files);
       }
     }
 
     function handleFileSelect(evt) {
+      if (uploadAccessState() !== 'allowed') { requestUploadAccess('select'); evt.target.value = ''; return; }
       if (evt.target && evt.target.files && evt.target.files.length > 0) {
         processBrowserFiles(evt.target.files);
       }
@@ -2983,6 +3640,19 @@
             is_qp: true
           })
         });
+        if (res.status === 403) {
+          let blocked = {};
+          try { blocked = await res.json(); } catch (e) {}
+          if (tableContainer) tableContainer.removeAttribute('aria-busy');
+          renderEmptyState(
+            tableContainer,
+            'Sample mode — your files were not analyzed',
+            blocked.message || 'This public demo analyzes the bundled synthetic sample files only.',
+            'Analyze the 5 sample files instead',
+            'loadAndAnalyzeSampleBinaryPacket()'
+          );
+          return;
+        }
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const result = await res.json();
         if (!result || !result.ok) throw new Error(result?.error || 'Unexpected response');
@@ -3041,25 +3711,25 @@
             modalityStripHtml = `
               <div style="display:flex; align-items:center; gap:8px; background:var(--paper-bg); border:1px solid var(--amber-border); border-radius:6px; padding:5px 7px; min-height:44px;">
                 <img src="${f.preview_data_uri}" alt="Handwritten clinical scan ${f.filename}" style="width:68px; height:30px; object-fit:cover; border-radius:4px; border:1px solid var(--border-strong); flex-shrink:0;" />
-                <span class="leading-tight break-words" style="font-size:10.5px; color:var(--amber-text); font-weight:700;">Vision OCR: ${((f.ocr_confidence || 0.96) * 100).toFixed(1)}% (${f.dimensions || '220x70px'})</span>
+                <span class="leading-tight break-words" style="font-size:var(--fs-2xs); color:var(--amber-text); font-weight:700;">Vision OCR: ${((f.ocr_confidence || 0.96) * 100).toFixed(1)}% (${f.dimensions || '220x70px'})</span>
               </div>`;
           } else if (f.detected_format === 'PDF_DOCUMENT') {
             modalityStripHtml = `
               <div style="display:flex; align-items:center; justify-content:space-between; gap:6px; background:var(--primary-bg); border:1px solid var(--primary-border); border-radius:6px; padding:5px 8px; min-height:44px;">
-                <span class="leading-tight break-words" style="font-size:10.5px; color:var(--primary-dark); font-weight:700;">Docling AST: ${f.page_count || 1} Page(s) · Path C67.2 pT1 + 4.2cm Mass</span>
+                <span class="leading-tight break-words" style="font-size:var(--fs-2xs); color:var(--primary-dark); font-weight:700;">Docling AST: ${f.page_count || 1} Page(s) · Path C67.2 pT1 + 4.2cm Mass</span>
                 <span class="badge badge-blue">PDF AST</span>
               </div>`;
           } else if (f.detected_format === 'DICOM_IMAGING_STUDY') {
             modalityStripHtml = `
               <div style="display:flex; align-items:center; justify-content:space-between; gap:6px; background:var(--emerald-bg); border:1px solid var(--emerald-border); border-radius:6px; padding:5px 8px; min-height:44px;">
-                <span class="leading-tight break-words" style="font-size:10.5px; color:var(--emerald-text); font-weight:700;">pydicom Tags: 11.2mm R + 8.4mm L Stone · Gr 3 Hydro</span>
+                <span class="leading-tight break-words" style="font-size:var(--fs-2xs); color:var(--emerald-text); font-weight:700;">pydicom Tags: 11.2mm R + 8.4mm L Stone · Gr 3 Hydro</span>
                 <span class="badge badge-emerald">DICM</span>
               </div>`;
           } else {
             const lineCnt = (f.billed_codes || []).length || 5;
             modalityStripHtml = `
               <div style="display:flex; align-items:center; justify-content:space-between; gap:6px; background:var(--rose-bg); border:1px solid var(--rose-border); border-radius:6px; padding:5px 8px; min-height:44px;">
-                <span class="leading-tight break-words" style="font-size:10.5px; color:var(--rose-text); font-weight:700;">X12 005010X222A1: ${lineCnt} Scrubbed SV1 Claim Lines</span>
+                <span class="leading-tight break-words" style="font-size:var(--fs-2xs); color:var(--rose-text); font-weight:700;">X12 005010X222A1: ${lineCnt} Scrubbed SV1 Claim Lines</span>
                 <span class="badge badge-rose">837P</span>
               </div>`;
           }
@@ -3068,13 +3738,13 @@
             <div class="extracted-file-card" data-testid="extracted-file-card">
               <div>
                 <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; margin-bottom:3px;">
-                  <span class="truncate" title="${f.filename}" style="font-weight:800; font-size:12px; color:var(--text-main);">${shortFilename}</span>
+                  <span class="truncate" title="${f.filename}" style="font-weight:800; font-size:var(--fs-md); color:var(--text-main);">${shortFilename}</span>
                   <span class="badge ${fmtBadge}" title="${f.detected_format}">${compactBadgeLabel}</span>
                 </div>
-                <div style="font-size:10.5px; color:var(--text-muted); margin-bottom:3px;">
+                <div style="font-size:var(--fs-2xs); color:var(--text-muted); margin-bottom:3px;">
                   <strong>Magic:</strong> <code>${f.magic_signature}</code> · <strong>${f.size_bytes} B</strong> · <strong>PHI:</strong> ${f.phi_redactions || 0}
                 </div>
-                <div class="truncate" title="${f.parser_engine}" style="font-size:10.5px; color:var(--primary-dark); font-weight:700; margin-bottom:4px;">
+                <div class="truncate" title="${f.parser_engine}" style="font-size:var(--fs-2xs); color:var(--primary-dark); font-weight:700; margin-bottom:4px;">
                   ${f.parser_engine}
                 </div>
                 ${modalityStripHtml}
@@ -3093,7 +3763,7 @@
         const rowsHtml = discrepancies.map(d => {
           const deltaVal = Number(d.revenue_delta_usd || 0);
           const deltaHtml = deltaVal > 0
-            ? `<span style="font-weight:800; font-size:13.5px; color:var(--emerald-strong);">+${formatUsd(deltaVal)}</span>`
+            ? `<span style="font-weight:800; font-size:var(--fs-base); color:var(--emerald-strong);">+${formatUsd(deltaVal)}</span>`
             : `<span class="badge badge-blue">LCD Guardrail</span>`;
           return `
             <tr>
@@ -3101,18 +3771,18 @@
                 <div style="font-weight:800; color:var(--text-main);">${d.discrepancy_id}</div>
                 <span class="badge ${d.severity === 'CRITICAL_DENIAL_PREVENTION' ? 'badge-rose' : 'badge-amber'}">${formatEnumLabel(d.category)}</span>
               </td>
-              <td class="leading-tight break-words" style="font-size:11.5px; font-weight:700; color:var(--primary-dark);">
+              <td class="leading-tight break-words" style="font-size:var(--fs-sm); font-weight:700; color:var(--primary-dark);">
                 ${d.source_modality}
               </td>
-              <td class="leading-tight break-words" style="font-size:11.5px; color:var(--text-main);">
+              <td class="leading-tight break-words" style="font-size:var(--fs-sm); color:var(--text-main);">
                 ${d.what_uploaded_docs_prove}
               </td>
-              <td class="leading-tight break-words" style="font-size:11.5px; color:var(--rose-text); font-weight:700;">
+              <td class="leading-tight break-words" style="font-size:var(--fs-sm); color:var(--rose-text); font-weight:700;">
                 ${d.what_billing_837p_coded}
               </td>
-              <td class="leading-tight break-words" style="font-size:11.5px;">
+              <td class="leading-tight break-words" style="font-size:var(--fs-sm);">
                 <div style="font-weight:800; color:var(--emerald-strong);">${d.ai_verified_correction}</div>
-                <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">${d.regulatory_citation}</div>
+                <div style="font-size:var(--fs-xs); color:var(--text-muted); margin-top:2px;">${d.regulatory_citation}</div>
               </td>
               <td style="font-variant-numeric:tabular-nums;">
                 ${deltaHtml}
@@ -3124,13 +3794,13 @@
         tableContainer.innerHTML = `
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px; padding:10px 14px; background:var(--emerald-bg); border:1px solid var(--emerald-border); border-radius:8px;">
             <div>
-              <strong style="font-size:13.5px; color:var(--emerald-text);"> Multimodal Packet Reconciled: ${parsedFiles.length} Binary Files Ingested · ${discrepancies.length} Coding &amp; Revenue Discrepancies Detected
+              <strong style="font-size:var(--fs-base); color:var(--emerald-text);"> Multimodal Packet Reconciled: ${parsedFiles.length} Binary Files Ingested · ${discrepancies.length} Coding &amp; Revenue Discrepancies Detected
               </strong>
-              <div style="font-size:11.5px; color:var(--text-sub);"> Temporal Router: <strong>${formatEnumLabel(audit.version_stamp || 'AMA_CPT_2027')}</strong> · HIPAA Safe Harbor Scrubbed: <strong>${result.total_phi_redactions || 0} PHI Identifiers</strong> · Extracted ICD-10-CM: <strong>${(audit.extracted_icd10 || []).join(', ')}</strong>
+              <div style="font-size:var(--fs-sm); color:var(--text-sub);"> Temporal Router: <strong>${formatEnumLabel(audit.version_stamp || 'AMA_CPT_2027')}</strong> · HIPAA Safe Harbor Scrubbed: <strong>${result.total_phi_redactions || 0} PHI Identifiers</strong> · Extracted ICD-10-CM: <strong>${(audit.extracted_icd10 || []).join(', ')}</strong>
               </div>
             </div>
             <div style="text-align:right;">
-              <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Billed 837P (${formatUsd(audit.billed_allowed_usd)}) → AI Verified (${formatUsd(audit.verified_allowed_usd)})</div>
+              <div style="font-size:var(--fs-xs); font-weight:700; color:var(--text-muted); text-transform:uppercase;">Billed 837P (${formatUsd(audit.billed_allowed_usd)}) → AI Verified (${formatUsd(audit.verified_allowed_usd)})</div>
               <div style="font-size:18px; font-weight:800; color:var(--emerald-strong);">Net Discrepancy Recovery: +${formatUsd(audit.money_left_on_table_usd)}</div>
             </div>
           </div>
@@ -3255,12 +3925,12 @@
             <span>${l.code}${l.modifiers && l.modifiers.length ? '-' + l.modifiers.join('-') : ''} (Units: ${l.units}) — ${l.descriptor}</span>
             <span style="color:var(--emerald-strong);">${formatUsd(l.allowed_usd)}</span>
           </div>
-          <div style="font-size:11.5px; color:var(--text-sub); margin-top:2px;">${l.reason} · ICD-10: ${(l.icd10 || []).join(', ')}</div>
+          <div style="font-size:var(--fs-sm); color:var(--text-sub); margin-top:2px;">${l.reason} · ICD-10: ${(l.icd10 || []).join(', ')}</div>
         </div>
       `).join('');
 
       const findingsHtml = (data.findings || []).map(f => `
-        <div style="padding:8px 10px; background:var(--primary-bg); border:1px solid var(--primary-border); border-radius:7px; margin-bottom:7px; font-size:12px;">
+        <div style="padding:8px 10px; background:var(--primary-bg); border:1px solid var(--primary-border); border-radius:7px; margin-bottom:7px; font-size:var(--fs-md);">
           <div style="font-weight:800; color:var(--primary-dark);">${f.title}</div>
           <div style="color:var(--text-sub); margin-top:2px;">${f.citation}</div>
         </div>
@@ -3270,19 +3940,19 @@
         <div style="flex:1; display:flex; flex-direction:column; justify-content:space-between; gap:8px;">
           <div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:6px;">
-              <strong style="font-size:14px;">6-Node LangGraph Live Audit Result</strong>
+              <strong style="font-size:var(--fs-xl);">6-Node LangGraph Live Audit Result</strong>
               <span class="badge badge-amber">${formatEnumLabel(data.version_stamp)}</span>
             </div>
-            <div style="background:var(--bg-canvas); border:1px solid var(--border-light); border-radius:7px; padding:8px 11px; margin-bottom:10px; font-size:12px;">
+            <div style="background:var(--bg-canvas); border:1px solid var(--border-light); border-radius:7px; padding:8px 11px; margin-bottom:10px; font-size:var(--fs-md);">
               <strong>Node 1 HIPAA Safe Harbor PHI Gate (${data.phi_redaction?.redactions_applied || 0} Identifiers Scrubbed):</strong><br/>
               <span style="color:var(--text-sub); font-family:monospace;">${data.phi_redaction?.clean_text || ''}</span>
             </div>
-            <div style="font-size:11.5px; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:5px;">AI-Verified Claim Lines (${formatUsd(data.verified_allowed_usd)} vs Billed ${formatUsd(data.billed_allowed_usd)}):</div>
+            <div style="font-size:var(--fs-sm); font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:5px;">AI-Verified Claim Lines (${formatUsd(data.verified_allowed_usd)} vs Billed ${formatUsd(data.billed_allowed_usd)}):</div>
             ${vLines}
             ${findingsHtml}
           </div>
           <div style="padding-top:10px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-size:12.5px; font-weight:700;">Net Money Left on the Table Recovered:</span>
+            <span style="font-size:var(--fs-md-plus); font-weight:700;">Net Money Left on the Table Recovered:</span>
             <span style="font-size:20px; font-weight:800; color:var(--emerald-strong);">+${formatUsd(data.money_left_on_table_usd)}</span>
           </div>
         </div>
@@ -3361,7 +4031,7 @@
               <td><span class="badge ${c.status_2026 === 'ACTIVE' ? 'badge-emerald' : 'badge-rose'}">${formatEnumLabel(c.status_2026)}</span></td>
               <td><span class="badge ${c.status_2027 === 'ACTIVE' ? 'badge-emerald' : 'badge-rose'}">${formatEnumLabel(c.status_2027)}</span></td>
               <td style="font-variant-numeric:tabular-nums; font-weight:700;">${c.work_rvu_2026} → ${c.work_rvu_2027}</td>
-              <td class="leading-tight break-words" style="font-size:11.5px;">${c.version_change_note}</td>
+              <td class="leading-tight break-words" style="font-size:var(--fs-sm);">${c.version_change_note}</td>
             </tr>
           `),
           ...revisions.filter(r => !lifecycle.some(l => l.code === r.code)).map(r => `
@@ -3370,7 +4040,7 @@
               <td><span class="badge badge-blue">ACTIVE</span></td>
               <td><span class="badge badge-amber">REVISED 2027</span></td>
               <td style="font-variant-numeric:tabular-nums; font-weight:700;">Descriptor + RVU</td>
-              <td class="leading-tight break-words" style="font-size:11.5px;">${r.version_change_note}</td>
+              <td class="leading-tight break-words" style="font-size:var(--fs-sm);">${r.version_change_note}</td>
             </tr>
           `)
         ].join('');
@@ -3387,10 +4057,10 @@
                   <span class="badge badge-amber">${l.lcd_id} / ${l.article_id}</span>
                   <span class="badge badge-blue">${(l.states_covered || []).join(', ')}</span>
                 </div>
-                <div style="font-size:11px; font-weight:700; color:var(--primary-dark); margin-bottom:2px;">${l.mac_contractor}</div>
-                <div style="font-weight:800; font-size:12px; color:var(--text-main); line-height:1.3;">${l.title}</div>
+                <div style="font-size:var(--fs-xs); font-weight:700; color:var(--primary-dark); margin-bottom:2px;">${l.mac_contractor}</div>
+                <div style="font-weight:800; font-size:var(--fs-md); color:var(--text-main); line-height:1.3;">${l.title}</div>
               </div>
-              <div class="leading-tight break-words" style="font-size:11px; color:var(--text-sub); padding-top:6px; border-top:1px dashed var(--border-light);">
+              <div class="leading-tight break-words" style="font-size:var(--fs-xs); color:var(--text-sub); padding-top:6px; border-top:1px dashed var(--border-light);">
                 <div><strong>CPT:</strong> ${(l.target_cpt_hcpcs || []).join(', ')}</div>
                 <div><strong>ICD-10:</strong> ${(l.covered_icd10_codes || []).join(', ')}</div>
                 <div style="margin-top:2px; color:var(--text-muted);">${l.frequency_rule}</div>
@@ -3403,10 +4073,10 @@
           <div style="padding:9px 11px; background:var(--bg-canvas); border:1px solid var(--border-light); border-radius:7px; margin-bottom:8px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
               <span class="badge badge-blue">${formatEnumLabel(g.pillar_type)}</span>
-              <span style="font-size:11px; font-weight:700; color:var(--text-muted);">${g.citation_ref}</span>
+              <span style="font-size:var(--fs-xs); font-weight:700; color:var(--text-muted);">${g.citation_ref}</span>
             </div>
-            <div style="font-weight:800; font-size:12.5px; color:var(--text-main);">${g.title}</div>
-            <div style="font-size:11.5px; color:var(--text-sub); margin-top:2px;">${g.deterministic_rule}</div>
+            <div style="font-weight:800; font-size:var(--fs-md-plus); color:var(--text-main);">${g.title}</div>
+            <div style="font-size:var(--fs-sm); color:var(--text-sub); margin-top:2px;">${g.deterministic_rule}</div>
           </div>
         `).join('');
         document.getElementById('interpretive-guidance-list').innerHTML = guidanceHtml;
@@ -3414,11 +4084,11 @@
         const stampsHtml = (STATE.versionDiff.version_stamps || []).map(s => `
           <tr>
             <td><span class="code-chip">${formatEnumLabel(s.source_key)}</span></td>
-            <td class="leading-tight break-words"><strong>${s.display_name}</strong><br/><span style="font-size:11px; color:var(--text-muted);">${s.authority_owner}</span></td>
+            <td class="leading-tight break-words"><strong>${s.display_name}</strong><br/><span style="font-size:var(--fs-xs); color:var(--text-muted);">${s.authority_owner}</span></td>
             <td><span class="badge badge-emerald">${s.version_tag}</span></td>
-            <td style="font-size:11.5px; font-variant-numeric:tabular-nums;">${s.effective_start} → ${s.effective_end}</td>
+            <td style="font-size:var(--fs-sm); font-variant-numeric:tabular-nums;">${s.effective_start} → ${s.effective_end}</td>
             <td><span class="badge badge-blue">${s.update_cadence}</span></td>
-            <td class="leading-tight break-words" style="font-size:11.5px;">${s.notes}</td>
+            <td class="leading-tight break-words" style="font-size:var(--fs-sm);">${s.notes}</td>
           </tr>
         `).join('');
         document.getElementById('version-stamps-tbody').innerHTML = stampsHtml;
@@ -3437,14 +4107,14 @@
           const deltaLabel = (deltaPct >= 0 ? '+' : '') + deltaPct + '% vs Peer';
           return `
             <div style="display:flex; justify-content:space-between; align-items:baseline; gap:4px;">
-              <span style="font-weight:800; font-size:14px; color:var(--text-main);">${pNum}${unitSuffix}</span>
-              <span class="badge ${badgeCls}" style="font-size:10px; padding:1px 5px;">${deltaLabel}</span>
+              <span style="font-weight:800; font-size:var(--fs-xl); color:var(--text-main);">${pNum}${unitSuffix}</span>
+              <span class="badge ${badgeCls}" style="font-size:var(--fs-2xs); padding:1px 5px;">${deltaLabel}</span>
             </div>
-            <div style="font-size:11px; color:var(--text-muted); margin-top:1px;">State Peer Median: <strong>${sNum}${unitSuffix}</strong></div>
+            <div style="font-size:var(--fs-xs); color:var(--text-muted); margin-top:1px;">State Peer Median: <strong>${sNum}${unitSuffix}</strong></div>
             <div class="peer-progress-track">
               <div class="peer-progress-fill" style="width:${ratioPct}%; background:${barColor};"></div>
             </div>
-            <div class="leading-tight break-words" style="font-size:10.5px; color:var(--text-sub); margin-top:2px;">${noteText}</div>
+            <div class="leading-tight break-words" style="font-size:var(--fs-2xs); color:var(--text-sub); margin-top:2px;">${noteText}</div>
           `;
         };
 
@@ -3456,13 +4126,13 @@
               <td>
                 <div style="font-weight:800; color:var(--text-main);">${b.provider_name}</div>
                 <div style="margin:2px 0;"><span class="code-chip">NPI ${b.npi}</span> <span class="badge badge-blue">Urology (34)</span></div>
-                <div class="leading-tight break-words" style="font-size:11px; color:var(--text-sub); font-weight:600;">${b.practice_name} (${b.city}, ${b.state_code})</div>
-                <div style="font-size:10.5px; color:var(--text-muted); margin-top:2px;">CMS PUF Volume: ${beneCounts[idx % beneCounts.length]}</div>
+                <div class="leading-tight break-words" style="font-size:var(--fs-xs); color:var(--text-sub); font-weight:600;">${b.practice_name} (${b.city}, ${b.state_code})</div>
+                <div style="font-size:var(--fs-2xs); color:var(--text-muted); margin-top:2px;">CMS PUF Volume: ${beneCounts[idx % beneCounts.length]}</div>
               </td>
               <td>
-                <div class="leading-tight break-words" style="font-weight:700; font-size:12px; color:var(--text-main); margin-bottom:3px;">${b.mac_contractor}</div>
+                <div class="leading-tight break-words" style="font-weight:700; font-size:var(--fs-md); color:var(--text-main); margin-bottom:3px;">${b.mac_contractor}</div>
                 <div style="margin-bottom:3px;"><span class="badge ${b.peer_percentile_rank < 30 ? 'badge-rose' : 'badge-emerald'}">${b.peer_percentile_rank}th Percentile Peer Rank</span></div>
-                <div class="leading-tight break-words" style="font-size:10.5px; color:var(--primary-dark); font-weight:600;">${locBadges[idx % locBadges.length]}</div>
+                <div class="leading-tight break-words" style="font-size:var(--fs-2xs); color:var(--primary-dark); font-weight:600;">${locBadges[idx % locBadges.length]}</div>
               </td>
               <td style="font-variant-numeric:tabular-nums;">
                 ${renderMetricCell(b.ratio_99214_to_99213, b.state_peer_ratio_99214, 'x', 'Established E/M Level 4 vs Level 3 MDM complexity')}
@@ -3478,10 +4148,10 @@
               </td>
               <td>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
-                  <span style="font-size:15px; font-weight:800; color:var(--emerald-strong);">+${formatUsd(b.estimated_annual_unbilled_usd)} / yr</span>
+                  <span style="font-size:var(--fs-2xl); font-weight:800; color:var(--emerald-strong);">+${formatUsd(b.estimated_annual_unbilled_usd)} / yr</span>
                   <span class="badge ${b.peer_percentile_rank < 30 ? 'badge-amber' : 'badge-emerald'}">${b.peer_percentile_rank < 30 ? 'High Recovery' : 'Benchmark Peer'}</span>
                 </div>
-                <div class="leading-tight break-words" style="font-size:11px; color:var(--text-sub);">${b.cold_open_insight}</div>
+                <div class="leading-tight break-words" style="font-size:var(--fs-xs); color:var(--text-sub);">${b.cold_open_insight}</div>
               </td>
             </tr>
           `;
@@ -3494,8 +4164,8 @@
         gpciTbody.innerHTML = STATE.localities.map(loc => `
           <tr>
             <td><span class="code-chip">${loc.locality_code}</span></td>
-            <td class="leading-tight break-words" style="font-size:11.5px; font-weight:700;">${loc.locality_name} (${loc.state_code})</td>
-            <td class="leading-tight break-words" style="font-size:11px; color:var(--text-sub);">${loc.mac_contractor} (${loc.mac_jurisdiction})</td>
+            <td class="leading-tight break-words" style="font-size:var(--fs-sm); font-weight:700;">${loc.locality_name} (${loc.state_code})</td>
+            <td class="leading-tight break-words" style="font-size:var(--fs-xs); color:var(--text-sub);">${loc.mac_contractor} (${loc.mac_jurisdiction})</td>
             <td style="font-variant-numeric:tabular-nums; font-weight:700;">${Number(loc.work_gpci).toFixed(3)}</td>
             <td style="font-variant-numeric:tabular-nums; font-weight:700; color:var(--primary-dark);">${Number(loc.pe_gpci).toFixed(3)}</td>
             <td style="font-variant-numeric:tabular-nums; font-weight:700;">${Number(loc.mp_gpci).toFixed(3)}</td>
@@ -3509,15 +4179,15 @@
         hitlTbody.innerHTML = STATE.feedbackLoop.slice(0, 7).map(fb => `
           <tr>
             <td>
-              <button type="button" class="link-btn" style="font-size:11.5px;" onclick="openDrawer('${fb.encounter_id}', { trigger: this })" aria-label="Open dossier ${fb.encounter_id}">${fb.encounter_id}</button>
-              <div style="font-size:10.5px; color:var(--text-muted);">${fb.reviewer_role}</div>
+              <button type="button" class="link-btn" style="font-size:var(--fs-sm);" onclick="openDrawer('${fb.encounter_id}', { trigger: this })" aria-label="Open dossier ${fb.encounter_id}">${fb.encounter_id}</button>
+              <div style="font-size:var(--fs-2xs); color:var(--text-muted);">${fb.reviewer_role}</div>
             </td>
             <td>
               <span class="badge ${fb.action_taken.includes('ACCEPTED') || fb.action_taken.includes('835') ? 'badge-emerald' : 'badge-blue'}">${formatEnumLabel(fb.action_taken)}</span>
-              <div class="leading-tight break-words" style="font-size:10.5px; color:var(--text-sub); margin-top:2px; font-weight:600;">${fb.carc_rarc_code}</div>
+              <div class="leading-tight break-words" style="font-size:var(--fs-2xs); color:var(--text-sub); margin-top:2px; font-weight:600;">${fb.carc_rarc_code}</div>
             </td>
-            <td class="leading-tight break-words" style="font-size:11px; font-family:monospace; font-weight:700;">${fb.target_code}</td>
-            <td class="leading-tight break-words" style="font-size:11px; color:var(--text-sub);">${fb.rationale_note}</td>
+            <td class="leading-tight break-words" style="font-size:var(--fs-xs); font-family:monospace; font-weight:700;">${fb.target_code}</td>
+            <td class="leading-tight break-words" style="font-size:var(--fs-xs); color:var(--text-sub);">${fb.rationale_note}</td>
             <td style="font-variant-numeric:tabular-nums; font-weight:800; color:var(--emerald-strong);">+${formatUsd(fb.revenue_delta_usd)}</td>
           </tr>
         `).join('');
@@ -3560,6 +4230,7 @@
 
       renderEncounterTable();
       updateHeaderHitlPills();
+      countUpUsd(document.getElementById('kpi-delta-usd'), Number(document.getElementById('kpi-delta-usd')?.dataset.target || 3633.86));
       renderPtpFullMatrixTable();
       runPtpEvaluation();
       loadSimScenario('AQUA_2027');
@@ -3572,12 +4243,16 @@
       );
       loadAndAnalyzeSampleBinaryPacket(true);
       renderGovernanceAndBenchmarks();
+      loadAppConfig();
 
       // Deep-link restore (?tab=&enc=) after data is available; replaceState keeps Back history clean
       restoreFromUrl();
       writeUrlState({ tabKey: currentTabKey(), replace: true });
     }
 
+    // Persona (language + density) and first-run strip resolve synchronously so there is no flash of the wrong mode
+    initPersona();
+    initStartHere();
     window.addEventListener('DOMContentLoaded', bootstrapApp);
   </script>
 </body>

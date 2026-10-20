@@ -202,6 +202,30 @@ The end user uploads clinical files via the HTML5 Multi-File Drag-and-Drop & Fil
 - **Tokens only**: component templates use CSS custom properties (`--emerald-strong`, `--rose-text`, `--paper-bg`, …); `0` raw hex inside `style="..."`. Motion animates specific properties only (`0` `transition: all`) on the `120/200/320ms` scale and honours `prefers-reduced-motion`. Emoji are not used as icons in chrome (only `✓`/`✕` glyphs; toasts are the single allowed emoji surface).
 - **Fail-closed gate** (`scripts/stop_forensic_gate.mjs` → *Navigation & IA Gate*): `firstRowTopPx <= 380`, `0` header/KPI duplicates, `1` trigger per row and `0` non-button triggers, `ArrowRight` moves selection+focus+URL, `?tab=` survives reload and Back, focus inside drawer on open / returned on Esc, collapse rail `40–70px`, synchronous busy state + skeleton, plus static checks for slogan, `transition: all`, reduced-motion, inline hex, and emoji icons.
 
+## 6C. Public Audience Model — Persona, Density, Plain Language, Progressive Disclosure & the PHI Gate
+
+**Why.** A measured first screen of the previous build showed 583–905 words, 46–113 jargon tokens, 79% of text under 12px and no orientation — fine for an expert console, fatiguing for coders and confusing for physicians, administrators and public visitors. The remedy is progressive disclosure, not blank space.
+
+**Persona (persisted in `localStorage['urocura.persona']`).**
+
+| Persona | Default for | `data-density` | `data-lang` | Work Queue rows |
+| :-- | :-- | :-- | :-- | :-- |
+| `clinician` (Physician / admin) | **anonymous visitors** | `comfortable` — nothing below 12px (`--fs-*` tokens: 12 / 12.5 / 13 / 13.5 / 14 / 14.5 / 15 / 15.5px) | `plain` | summary rows; `▸ Details` opens one row inline |
+| `coder` | opt-in (first-run strip or header **View** selector) | `compact` — original scale (10.5–15px) | `expert` | every details row open, toggles hidden |
+
+- `setPersona()` sets the three `<html data-*>` attributes, rewrites every `[data-plain][data-expert]` element (KPI copy, table heads, filter options, pills, upload copy), swaps the search placeholder, and re-renders the queue. `initPersona()` runs synchronously at script end so there is no flash of the wrong mode.
+- **Plain-language layer**: `expandJargon()` wraps 25 acronyms in `<abbr title>` (both modes) and, in plain mode, rewrites the highest-frequency billing jargon (`DOS` → *Service date*, `HITL` → *review*, `837P` → *billing claim*, `NCCI Ch. 7` → *Medicare bundling rules*). `whyLine()` maps each leakage category to a ≤ 6-word plain reason. Clinical acronyms (TURBT, TRUS, URS) are kept — physicians own them.
+- **First-run orientation strip** (`#start-here`, `localStorage['urocura.startHereDismissed']`): one sentence of what the product does, three entry actions (`See the 8 recovered cases` · `Try a 5-file sample packet` · `Check two codes`), persona choice, dismiss. Choosing a persona applies it and dismisses the strip. Never shown again once dismissed.
+- **Progressive-disclosure Work Queue**: 5 columns — *Encounter* · *What happened* (title with code parentheticals stripped in plain mode + one-line why) · *Billed → supported* (coloured monospace text, not chips) · *Recovered* (`+$` and `billed → supported` totals) · *Status* (one badge, `Inspect dossier`, `Details`). The details row (`tr.enc-details-row`, 4 blocks, `align-items: start`) carries the physician draft + **handwritten shorthand → decoded English**, billing paragraph, verified citation, provenance and the `Check pair →` handoff.
+- **Delight**: `countUpUsd()` animates the headline recovery figure over 900ms (ease-out), instantly under `prefers-reduced-motion`.
+
+**Measured first screen (1440×900, anonymous default, strip dismissed):** 583 → **290 words**, 46 → **1** billing-jargon token, 38 → **14** badges, 79% → **0%** text under 12px, 10 → **7** text colours (3 text tiers + 3 semantic states + white on the active tab; the plan's ≤ 6 target would require merging semantic states, so the gate enforces ≤ 8), first row at **334px**. First-run with strip: 282 words, first row 440px.
+
+**PHI gate (non-negotiable for public deployments).**
+- `UROCURA_PUBLIC_DEMO=1` puts the server in **sample-only mode**: `/api/upload-analyze` compares every uploaded file's SHA-256 against the bundled synthetic samples and returns **403 `public_demo_sample_only`** for anything else — the UI cannot bypass it. `/api/config` exposes the mode; the client shows the `Synthetic demo data` pill, disables the dropzone/picker/Browse, and shows the sample-mode notice. `Analyze the 5 sample files` keeps working (sample bytes are allow-listed).
+- Flag unset (private deployment): uploads require the in-page acknowledgement *“no PHI, or a BAA covers this deployment”* (session-scoped) before the dropzone enables. This is a client acknowledgement, not authentication — a production deployment must sit behind SSO/IAP and a BAA.
+- **Fail-closed gate** (*Public First-Impression Gate*): default persona `clinician`/`comfortable`/`plain`; strip visible on first run, hidden after dismiss and after reload; first screen ≤ 300 words, ≤ 20 billing-jargon tokens, ≤ 16 badges, 0 words < 12px, ≤ 8 text colours, first row ≤ 380px (≤ 480px with strip); coder persona → compact + 8 open details rows + persisted + reversible from the header selector; details toggle opens a row with the decoded shorthand; count-up lands within 1.5s and is instant under reduced motion; server returns 403 for non-sample bytes and 200 for sample bytes in public mode; private mode shows the acknowledgement and enables uploads only after it is checked.
+
 ---
 
 ## 7. Quick Start & Verification Commands

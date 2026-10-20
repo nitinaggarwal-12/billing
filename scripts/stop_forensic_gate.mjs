@@ -18,6 +18,7 @@ import path from 'path';
 import { spawn } from 'child_process';
 import { createRequire } from 'module';
 import { fileURLToPath } from 'url';
+import net from 'net';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -37,6 +38,12 @@ const puppeteerPath = require.resolve('puppeteer', {
 const puppeteer = require(puppeteerPath);
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const getFreePort = () => new Promise((resolve, reject) => {
+  const srv = net.createServer();
+  srv.unref();
+  srv.on('error', reject);
+  srv.listen(0, '127.0.0.1', () => { const { port } = srv.address(); srv.close(() => resolve(port)); });
+});
 
 function assertStaticRules() {
   const cssPath = path.join(ROOT_DIR, 'src', 'index.css');
@@ -118,7 +125,7 @@ async function main() {
   const PORT = 8094;
   const serverProc = spawn('python3', ['app.py'], {
     cwd: ROOT_DIR,
-    env: { ...process.env, PORT: String(PORT) },
+    env: { ...process.env, PORT: String(PORT), UROCURA_PUBLIC_DEMO: '1' },
     stdio: ['ignore', 'pipe', 'pipe'],
   });
 
@@ -361,6 +368,186 @@ async function main() {
     await beforePage.close();
     console.log(' ✅ [Stage 0 Baseline Gate] 100% Edge-to-Edge Full-Viewport before_urocura_workspace.png Captured');
 
+    // 1C'. Public First-Impression Gate — persona default, orientation strip, first-screen budgets, PHI gate
+    const BILLING_JARGON = ['NCCI','PTP','MUE','MPPR','GPCI','HITL','837P','835','CARC','RARC','RVU','LCD','MAC','X12','EDI','MPFS','PUF','NPPES','DOS','OCR','DICOM','CPT','HCPCS','ICD-10','ICD-10-CM','Ind-0','-XS','-59','-25','-JW','-50','MAI','RVU26D','LangGraph','Docling','pydicom','Magika','SV1','DTP','PHI','E/M','J-Code','QP'];
+    const measureFirstScreen = () => page.evaluate((JARGON) => {
+      const vh = window.innerHeight, vw = window.innerWidth;
+      const inView = (el) => { const r = el.getBoundingClientRect(); return r.bottom > 0 && r.top < vh && r.right > 0 && r.left < vw && r.width > 0 && r.height > 0; };
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      let words = 0; let text = ''; const sizes = {}; const colors = new Set();
+      while (walker.nextNode()) {
+        const n = walker.currentNode; const el = n.parentElement; if (!el) continue;
+        if (['SCRIPT', 'STYLE', 'NOSCRIPT', 'OPTION'].includes(el.tagName)) continue;
+        const t = n.textContent.replace(/\s+/g, ' ').trim(); if (!t) continue;
+        const cs = getComputedStyle(el); if (cs.visibility === 'hidden' || cs.display === 'none') continue;
+        if (!inView(el)) continue;
+        const panel = el.closest('.workspace-panel'); if (panel && !panel.classList.contains('active')) continue;
+        if (el.closest('#multimodal-drawer')) continue;
+        const w = t.split(' ').length; words += w; text += ' ' + t;
+        const fs = parseFloat(cs.fontSize); sizes[fs] = (sizes[fs] || 0) + w; colors.add(cs.color);
+      }
+      const upper = text.toUpperCase();
+      let jargon = 0;
+      for (const j of JARGON) { const re = new RegExp('(^|[^A-Z0-9])' + j.replace(/[-*/\\^$+?.()|[\]{}]/g, '\\$&').toUpperCase() + '(?![A-Z0-9])', 'g'); jargon += (upper.match(re) || []).length; }
+      const badges = [...document.querySelectorAll('.badge, .code-chip, .tab-badge, .telemetry-pill, .demo-pill')].filter(inView).filter((b) => !b.closest('.workspace-panel') || b.closest('.workspace-panel').classList.contains('active')).length;
+      const minFontPx = Math.min(...Object.keys(sizes).map(Number));
+      const wordsBelow12 = Object.entries(sizes).filter(([fs]) => Number(fs) < 12).reduce((a, [, w]) => a + w, 0);
+      return { words, jargon, badges, minFontPx, wordsBelow12, textColors: colors.size };
+    }, BILLING_JARGON);
+
+    await page.setViewport({ width: 1440, height: 900 });
+    await page.evaluate(() => { try { localStorage.clear(); sessionStorage.clear(); } catch (e) {} });
+    await page.goto(baseUrl, { waitUntil: 'networkidle0' });
+    await page.waitForSelector('#encounter-table-body tr.enc-row');
+    await sleep(400);
+    const firstRun = await page.evaluate(() => {
+      const strip = document.getElementById('start-here');
+      const visibleDetails = [...document.querySelectorAll('#encounter-table-body tr.enc-details-row')].filter((r) => getComputedStyle(r).display !== 'none').length;
+      return {
+        persona: document.documentElement.getAttribute('data-persona'),
+        density: document.documentElement.getAttribute('data-density'),
+        lang: document.documentElement.getAttribute('data-lang'),
+        stripVisible: !strip.hidden && strip.getBoundingClientRect().height > 20,
+        firstRowTopPx: Math.round(document.querySelector('#encounter-table-body tr.enc-row').getBoundingClientRect().top),
+        demoPillVisible: !document.getElementById('hdr-demo-pill').hidden,
+        dropzoneDisabled: document.getElementById('multimodal-dropzone').getAttribute('aria-disabled') === 'true' && document.getElementById('file-upload-input').disabled,
+        sampleNoticeVisible: !document.getElementById('upload-sample-only-notice').hidden,
+        ackGateHidden: document.getElementById('upload-ack-gate').hidden,
+        visibleDetails,
+        headerPillText: document.getElementById('hdr-pending-pill').textContent,
+      };
+    });
+    if (
+      firstRun.persona !== 'clinician' || firstRun.density !== 'comfortable' || firstRun.lang !== 'plain' ||
+      !firstRun.stripVisible || firstRun.firstRowTopPx > 480 || !firstRun.demoPillVisible || !firstRun.dropzoneDisabled ||
+      !firstRun.sampleNoticeVisible || !firstRun.ackGateHidden || firstRun.visibleDetails !== 0 || !/Waiting for sign-off/.test(firstRun.headerPillText)
+    ) {
+      throw new Error(`First-run gate failed: ${JSON.stringify(firstRun)}`);
+    }
+    const firstRunBudget = await measureFirstScreen();
+
+    // Dismiss the strip → steady-state budgets for an anonymous visitor (plain + comfortable, 1440x900)
+    await page.click('#start-here .start-here-dismiss');
+    await sleep(250);
+    const steady = await measureFirstScreen();
+    const steadyGeom = await page.evaluate(() => ({
+      stripHidden: document.getElementById('start-here').hidden,
+      firstRowTopPx: Math.round(document.querySelector('#encounter-table-body tr.enc-row').getBoundingClientRect().top),
+    }));
+    if (
+      !steadyGeom.stripHidden || steadyGeom.firstRowTopPx > 380 ||
+      steady.words > 300 || steady.jargon > 20 || steady.badges > 16 || steady.minFontPx < 12 || steady.wordsBelow12 !== 0 || steady.textColors > 8
+    ) {
+      throw new Error(`First-screen budget gate failed: ${JSON.stringify({ ...steady, ...steadyGeom })}`);
+    }
+    // Dismissal persists across reload
+    await page.reload({ waitUntil: 'networkidle0' });
+    await page.waitForSelector('#encounter-table-body tr.enc-row');
+    const stripAfterReload = await page.evaluate(() => document.getElementById('start-here').hidden);
+    if (!stripAfterReload) throw new Error('Start-here strip reappeared after dismissal + reload.');
+
+    // Persona switch: coder = expert terms + compact + details open; persisted; reversible from the header selector
+    await page.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
+    await page.reload({ waitUntil: 'networkidle0' });
+    await page.waitForSelector('#start-here:not([hidden]) .persona-btn[data-persona="coder"]');
+    await page.click('#start-here .persona-btn[data-persona="coder"]');
+    await sleep(300);
+    const coderView = await page.evaluate(() => ({
+      persona: document.documentElement.getAttribute('data-persona'),
+      density: document.documentElement.getAttribute('data-density'),
+      lang: document.documentElement.getAttribute('data-lang'),
+      stripHidden: document.getElementById('start-here').hidden,
+      visibleDetails: [...document.querySelectorAll('#encounter-table-body tr.enc-details-row')].filter((r) => getComputedStyle(r).display !== 'none').length,
+      headerPillText: document.getElementById('hdr-pending-pill').textContent,
+      firstTh: document.querySelector('#workspace-queue thead th').textContent.trim(),
+      bodyFontPx: parseFloat(getComputedStyle(document.body).fontSize),
+      selectValue: document.getElementById('view-mode-select').value,
+    }));
+    if (coderView.persona !== 'coder' || coderView.density !== 'compact' || coderView.lang !== 'expert' || !coderView.stripHidden || coderView.visibleDetails !== 8 || !/Pending HITL/.test(coderView.headerPillText) || coderView.firstTh !== 'Encounter & Version' || coderView.bodyFontPx !== 13.5 || coderView.selectValue !== 'coder') {
+      throw new Error(`Coder persona gate failed: ${JSON.stringify(coderView)}`);
+    }
+    await page.reload({ waitUntil: 'networkidle0' });
+    await page.waitForSelector('#encounter-table-body tr.enc-row');
+    const coderPersisted = await page.evaluate(() => document.documentElement.getAttribute('data-persona'));
+    if (coderPersisted !== 'coder') throw new Error('Coder persona did not persist across reload.');
+    await page.select('#view-mode-select', 'clinician');
+    await sleep(300);
+    const backToPlain = await page.evaluate(() => ({
+      persona: document.documentElement.getAttribute('data-persona'),
+      visibleDetails: [...document.querySelectorAll('#encounter-table-body tr.enc-details-row')].filter((r) => getComputedStyle(r).display !== 'none').length,
+      bodyFontPx: parseFloat(getComputedStyle(document.body).fontSize),
+    }));
+    if (backToPlain.persona !== 'clinician' || backToPlain.visibleDetails !== 0 || backToPlain.bodyFontPx !== 14) {
+      throw new Error(`Header view selector gate failed: ${JSON.stringify(backToPlain)}`);
+    }
+    // Details toggle opens one row inline
+    await page.click('#encounter-table-body tr.enc-row:first-child .details-toggle');
+    await sleep(150);
+    const detailsOpened = await page.evaluate(() => {
+      const row = document.querySelector('#encounter-table-body tr.enc-details-row');
+      return { visible: getComputedStyle(row).display !== 'none', hasShorthand: Boolean(row.querySelector('.shorthand-pair')), ariaExpanded: document.querySelector('#encounter-table-body tr.enc-row:first-child .details-toggle').getAttribute('aria-expanded') };
+    });
+    if (!detailsOpened.visible || !detailsOpened.hasShorthand || detailsOpened.ariaExpanded !== 'true') {
+      throw new Error(`Details toggle gate failed: ${JSON.stringify(detailsOpened)}`);
+    }
+
+    // Count-up delight: final value lands within 1.5s; instant under prefers-reduced-motion
+    await page.reload({ waitUntil: 'networkidle0' });
+    await page.waitForFunction(() => document.getElementById('kpi-delta-usd')?.textContent.trim() === '+$3,633.86', { timeout: 1500 });
+    await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
+    await page.reload({ waitUntil: 'networkidle0' });
+    await page.waitForSelector('#encounter-table-body tr.enc-row');
+    const reducedInstant = await page.evaluate(() => document.getElementById('kpi-delta-usd').textContent.trim());
+    if (reducedInstant !== '+$3,633.86') throw new Error(`Reduced-motion count-up not instant: ${reducedInstant}`);
+    await page.emulateMediaFeatures([]);
+
+    // PHI gate — server-side: non-sample bytes rejected with 403 in public mode; bundled sample bytes accepted
+    const phiGate = await page.evaluate(async () => {
+      const fake = { filename: 'real_patient_note.pdf', content_base64: btoa('%PDF-1.4 real patient record ' + Date.now()) };
+      const r1 = await fetch('/api/upload-analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ files: [fake] }) });
+      const j1 = await r1.json();
+      const samples = await (await fetch('/api/sample-files')).json();
+      const s0 = samples.sample_files[0];
+      const r2 = await fetch('/api/upload-analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ files: [{ filename: s0.filename, content_base64: s0.content_base64 }] }) });
+      const cfg = await (await fetch('/api/config')).json();
+      return { fakeStatus: r1.status, fakeError: j1.error, sampleStatus: r2.status, publicMode: cfg.public_demo_mode };
+    });
+    if (phiGate.fakeStatus !== 403 || phiGate.fakeError !== 'public_demo_sample_only' || phiGate.sampleStatus !== 200 || phiGate.publicMode !== true) {
+      throw new Error(`PHI gate (server) failed: ${JSON.stringify(phiGate)}`);
+    }
+
+    // PHI gate — private deployment: acknowledgement required before the dropzone enables
+    const PRIVATE_PORT = await getFreePort();
+    const privateEnv = { ...process.env, PORT: String(PRIVATE_PORT) };
+    delete privateEnv.UROCURA_PUBLIC_DEMO;
+    const privateProc = spawn('python3', ['app.py'], { cwd: ROOT_DIR, env: privateEnv, stdio: ['ignore', 'pipe', 'pipe'] });
+    try {
+      await sleep(1200);
+      const privPage = await browser.newPage();
+      await privPage.setViewport({ width: 1440, height: 900 });
+      await privPage.goto(`http://127.0.0.1:${PRIVATE_PORT}/?tab=upload`, { waitUntil: 'networkidle0' });
+      await privPage.waitForSelector('#upload-ack-gate:not([hidden])');
+      const privBefore = await privPage.evaluate(() => ({
+        demoPill: !document.getElementById('hdr-demo-pill').hidden,
+        ackVisible: !document.getElementById('upload-ack-gate').hidden,
+        inputDisabled: document.getElementById('file-upload-input').disabled,
+      }));
+      await privPage.click('#upload-ack-checkbox');
+      await sleep(100);
+      const privAfter = await privPage.evaluate(() => ({ inputDisabled: document.getElementById('file-upload-input').disabled, dzDisabled: document.getElementById('multimodal-dropzone').getAttribute('aria-disabled') }));
+      await privPage.close();
+      if (privBefore.demoPill || !privBefore.ackVisible || !privBefore.inputDisabled || privAfter.inputDisabled || privAfter.dzDisabled !== 'false') {
+        throw new Error(`PHI gate (private acknowledgement) failed: ${JSON.stringify({ privBefore, privAfter })}`);
+      }
+    } finally {
+      privateProc.kill('SIGTERM');
+    }
+
+    console.log(
+      ` ✅ [Public First-Impression Gate] default plain/comfortable, strip→dismiss persisted, first screen ${steady.words} words (first-run ${firstRunBudget.words}) / ${steady.jargon} jargon / ${steady.badges} badges / min ${steady.minFontPx}px / ${steady.textColors} colors, coder view persisted + reversible, count-up, PHI gate 403/200 + private ack`
+    );
+    await page.setViewport({ width: 1600, height: 950 });
+
     // 1D. Navigation & IA Gate (Rule 25A/25D/25H, WAI-ARIA tabs, WCAG 2.4.3 focus, 5-State loading)
     await page.setViewport({ width: 1600, height: 950 });
     await page.goto(baseUrl, { waitUntil: 'networkidle0' });
@@ -374,7 +561,7 @@ async function main() {
       return {
         firstRowTopPx: Math.round(r('#encounter-table-body tr').top),
         headerHeightPx: Math.round(r('header.global-header').height),
-        duplicatedHeaderKpiValues: kpiValues.filter((v) => headerPills.some((p) => p.includes(v))),
+        duplicatedHeaderKpiValues: kpiValues.filter((v) => v.length >= 4 && headerPills.some((p) => p.split(/\s+/).includes(v))),
         hasSlogan: Boolean(document.querySelector('.brand-subtitle')),
         drawerTriggersPerRow: document.querySelectorAll('#encounter-table-body tr:first-child [onclick^="openDrawer"]').length,
         nonButtonDrawerTriggers: [...document.querySelectorAll('[onclick^="openDrawer"]')].filter((e) => e.tagName !== 'BUTTON').length,
@@ -494,8 +681,9 @@ async function main() {
     await sleep(200);
 
     // 2. Verify Workspace 1 (Revenue Recovery Queue, Single-Row Filter Toolbar, 0 Duplicate Upload Button)
+    await page.waitForFunction(() => document.getElementById('kpi-delta-usd')?.textContent.trim() === '+$3,633.86', { timeout: 5000 });
     const ws1Audit = await page.evaluate(() => {
-      const rows = document.querySelectorAll('#encounter-table-body tr');
+      const rows = document.querySelectorAll('#encounter-table-body tr.enc-row');
       const kpiDelta = document.getElementById('kpi-delta-usd')?.textContent.trim();
       const kpiCards = Array.from(document.querySelectorAll('#workspace-queue .kpi-card')).map((el) =>
         Math.round(el.getBoundingClientRect().height)

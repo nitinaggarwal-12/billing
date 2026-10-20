@@ -72,5 +72,8 @@ python3 tests/test_e2e_forensic.py
 node scripts/stop_forensic_gate.mjs
 
 # 5. Launch the UroCura OS Server (http://localhost:8080)
+#    Public deployments MUST run sample-only (server rejects non-sample uploads with 403):
+#    UROCURA_PUBLIC_DEMO=1 python3 app.py
+#    Private deployments (flag unset) allow uploads after the in-page no-PHI/BAA acknowledgement.
 python3 app.py
 ```
