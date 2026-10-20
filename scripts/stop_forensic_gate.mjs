@@ -76,7 +76,38 @@ function assertStaticRules() {
     throw new Error('Rule 25J violation: Synchronous browser dialog detected in static/index.html.');
   }
 
-  console.log(' ✅ [Static Gate] Rule 54 (Executive Light), WCAG 2.1 AA Contrast/Focus, Rule 25 & Rule 26 PASS');
+  // Rule 25D: no slogan/marketing subtitle in the operational header
+  if (html.includes('brand-subtitle')) {
+    throw new Error('Rule 25D violation: brand-subtitle slogan copy present in operational header.');
+  }
+
+  // Motion hygiene (content-studio §2.5): no transition: all, reduced-motion honoured
+  if (/transition:\s*all\b/.test(html) || /transition:\s*all\b/.test(css)) {
+    throw new Error('Motion violation: "transition: all" detected (animate specific properties only).');
+  }
+  if (!html.includes('prefers-reduced-motion')) {
+    throw new Error('Motion violation: Missing @media (prefers-reduced-motion: reduce) handling.');
+  }
+
+  // Tokens only in components (content-studio Phase 0 #1): no raw hex inside style="..." attributes
+  const inlineHex = html.match(/style="[^"]*#[0-9a-fA-F]{6}[^"]*"/g) || [];
+  if (inlineHex.length > 0) {
+    throw new Error(`Token violation: ${inlineHex.length} inline style attribute(s) still use raw hex (first: ${inlineHex[0].slice(0, 80)}).`);
+  }
+
+  // No emoji-as-icons in chrome (content-studio #6); toasts are the only allowed surface
+  const htmlNoToasts = html.replace(/showToast\(`[^`]*`\)|showToast\(['"][^'"]*['"]\)/g, '');
+  const emojiInChrome = (htmlNoToasts.match(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B50}\u{2605}]/gu) || []).filter(c => c !== '✓' && c !== '✕');
+  if (emojiInChrome.length > 0) {
+    throw new Error(`Icon violation: ${emojiInChrome.length} emoji used as icons in UI chrome (${[...new Set(emojiInChrome)].join(' ')}).`);
+  }
+
+  // Navigation wiring must exist: URL state, popstate, roving tabindex, drawer keyboard handler
+  for (const needle of ['history.pushState', "addEventListener('popstate'", 'tabindex="-1"', 'handleDrawerKeydown', 'prefers-reduced-motion', 'setButtonBusy', 'renderErrorState', 'renderSkeleton']) {
+    if (!html.includes(needle)) throw new Error(`Navigation wiring missing: ${needle}`);
+  }
+
+  console.log(' ✅ [Static Gate] Rule 54 (Executive Light), WCAG 2.1 AA Contrast/Focus, Rule 25 & Rule 26, Motion, Tokens & Icon Hygiene PASS');
 }
 
 async function main() {
@@ -330,6 +361,138 @@ async function main() {
     await beforePage.close();
     console.log(' ✅ [Stage 0 Baseline Gate] 100% Edge-to-Edge Full-Viewport before_urocura_workspace.png Captured');
 
+    // 1D. Navigation & IA Gate (Rule 25A/25D/25H, WAI-ARIA tabs, WCAG 2.4.3 focus, 5-State loading)
+    await page.setViewport({ width: 1600, height: 950 });
+    await page.goto(baseUrl, { waitUntil: 'networkidle0' });
+    await page.waitForSelector('#encounter-table-body tr');
+    await sleep(300);
+
+    const navGeom = await page.evaluate(() => {
+      const r = (sel) => document.querySelector(sel)?.getBoundingClientRect();
+      const headerPills = [...document.querySelectorAll('.telemetry-pill')].map((p) => p.textContent.trim());
+      const kpiValues = [...document.querySelectorAll('#workspace-queue .hero-kpi-grid .kpi-value')].map((p) => p.textContent.trim());
+      return {
+        firstRowTopPx: Math.round(r('#encounter-table-body tr').top),
+        headerHeightPx: Math.round(r('header.global-header').height),
+        duplicatedHeaderKpiValues: kpiValues.filter((v) => headerPills.some((p) => p.includes(v))),
+        hasSlogan: Boolean(document.querySelector('.brand-subtitle')),
+        drawerTriggersPerRow: document.querySelectorAll('#encounter-table-body tr:first-child [onclick^="openDrawer"]').length,
+        nonButtonDrawerTriggers: [...document.querySelectorAll('[onclick^="openDrawer"]')].filter((e) => e.tagName !== 'BUTTON').length,
+        truncatedTabs: [...document.querySelectorAll('.workspace-tab-btn .truncate')].filter((t) => t.scrollWidth > t.clientWidth + 1).length,
+        rovingTabindexOk: document.querySelectorAll('.workspace-tab-btn[tabindex="0"]').length === 1 && document.querySelectorAll('.workspace-tab-btn[tabindex="-1"]').length === 4,
+        urlHasTab: new URLSearchParams(location.search).get('tab') === 'queue',
+      };
+    });
+    if (
+      navGeom.firstRowTopPx > 380 ||
+      navGeom.duplicatedHeaderKpiValues.length !== 0 ||
+      navGeom.hasSlogan ||
+      navGeom.drawerTriggersPerRow !== 1 ||
+      navGeom.nonButtonDrawerTriggers !== 0 ||
+      navGeom.truncatedTabs !== 0 ||
+      !navGeom.rovingTabindexOk ||
+      !navGeom.urlHasTab
+    ) {
+      throw new Error(`Navigation/IA geometry gate failed: ${JSON.stringify(navGeom)}`);
+    }
+
+    // Keyboard: ArrowRight on the focused tab must move selection + focus (WAI-ARIA tabs pattern)
+    await page.focus('#tab-btn-queue');
+    await page.keyboard.press('ArrowRight');
+    await sleep(80);
+    const afterArrow = await page.evaluate(() => ({
+      selected: document.querySelector('.workspace-tab-btn[aria-selected="true"]')?.id,
+      focused: document.activeElement?.id,
+      url: new URLSearchParams(location.search).get('tab'),
+    }));
+    if (afterArrow.selected !== 'tab-btn-ptp' || afterArrow.focused !== 'tab-btn-ptp' || afterArrow.url !== 'pairs') {
+      throw new Error(`Keyboard tab navigation failed: ${JSON.stringify(afterArrow)}`);
+    }
+
+    // URL state: switching to Tab 3 writes ?tab=upload and survives a reload; Back returns to pairs
+    await page.click('#tab-btn-simulator');
+    await sleep(80);
+    const urlAfterTab3 = await page.evaluate(() => location.search);
+    await page.reload({ waitUntil: 'networkidle0' });
+    await sleep(300);
+    const tabAfterReload = await page.evaluate(() => document.querySelector('.workspace-tab-btn[aria-selected="true"]')?.id);
+    await page.goBack({ waitUntil: 'networkidle0' });
+    await sleep(300);
+    const tabAfterBack = await page.evaluate(() => document.querySelector('.workspace-tab-btn[aria-selected="true"]')?.id);
+    if (!urlAfterTab3.includes('tab=upload') || tabAfterReload !== 'tab-btn-simulator' || tabAfterBack !== 'tab-btn-ptp') {
+      throw new Error(`URL state gate failed: ${JSON.stringify({ urlAfterTab3, tabAfterReload, tabAfterBack })}`);
+    }
+
+    // Drawer: focus moves inside on open, ?enc= is written, collapse rail works, Esc closes and returns focus
+    await page.evaluate(() => window.switchWorkspace('queue'));
+    await page.waitForSelector('#encounter-table-body tr button.btn-primary');
+    await page.click('#encounter-table-body tr:first-child button.btn-primary');
+    await sleep(500);
+    const drawerOpen = await page.evaluate(() => {
+      const drw = document.getElementById('multimodal-drawer');
+      return {
+        open: drw.classList.contains('open'),
+        focusInside: drw.contains(document.activeElement),
+        ariaHidden: drw.getAttribute('aria-hidden'),
+        encParam: new URLSearchParams(location.search).get('enc'),
+        hasCollapse: Boolean(document.getElementById('btn-collapse-drawer')),
+      };
+    });
+    if (!drawerOpen.open || !drawerOpen.focusInside || drawerOpen.ariaHidden !== 'false' || !drawerOpen.encParam || !drawerOpen.hasCollapse) {
+      throw new Error(`Drawer open/focus gate failed: ${JSON.stringify(drawerOpen)}`);
+    }
+    await page.click('#btn-collapse-drawer');
+    await sleep(400);
+    const collapsed = await page.evaluate(() => {
+      const drw = document.getElementById('multimodal-drawer');
+      const rect = drw.getBoundingClientRect();
+      return { collapsedClass: drw.classList.contains('collapsed'), visibleRailPx: Math.round(window.innerWidth - rect.left), expandFocused: document.activeElement?.id === 'btn-expand-drawer' };
+    });
+    if (!collapsed.collapsedClass || collapsed.visibleRailPx < 40 || collapsed.visibleRailPx > 70 || !collapsed.expandFocused) {
+      throw new Error(`Drawer collapse gate failed: ${JSON.stringify(collapsed)}`);
+    }
+    await page.click('#btn-expand-drawer');
+    await sleep(400);
+    await page.keyboard.press('Escape');
+    await sleep(300);
+    const drawerClosed = await page.evaluate(() => ({
+      open: document.getElementById('multimodal-drawer').classList.contains('open'),
+      encParam: new URLSearchParams(location.search).get('enc'),
+      focusBackOnRowButton: document.activeElement?.closest('#encounter-table-body tr:first-child') !== null && document.activeElement?.tagName === 'BUTTON',
+    }));
+    if (drawerClosed.open || drawerClosed.encParam || !drawerClosed.focusBackOnRowButton) {
+      throw new Error(`Drawer Esc/focus-return gate failed: ${JSON.stringify(drawerClosed)}`);
+    }
+
+    // 5-State loading: busy state must be set synchronously when the primary action fires
+    await page.evaluate(() => window.switchWorkspace('simulator'));
+    await page.waitForSelector('#btn-run-sim:not([disabled])');
+    const busySnapshot = await page.evaluate(() => {
+      const btn = document.getElementById('btn-run-sim');
+      btn.click();
+      const card = document.getElementById('sim-output-card');
+      return { disabled: btn.disabled, ariaBusy: btn.getAttribute('aria-busy'), cardBusy: card.getAttribute('aria-busy'), hasSkeleton: Boolean(card.querySelector('.skeleton-row')) };
+    });
+    if (!busySnapshot.disabled || busySnapshot.ariaBusy !== 'true' || busySnapshot.cardBusy !== 'true' || !busySnapshot.hasSkeleton) {
+      throw new Error(`Loading-state gate failed: ${JSON.stringify(busySnapshot)}`);
+    }
+    await page.waitForSelector('#btn-run-sim:not([disabled])');
+    await sleep(200);
+    const afterRun = await page.evaluate(() => ({
+      cardBusy: document.getElementById('sim-output-card').getAttribute('aria-busy'),
+      hasSkeleton: Boolean(document.querySelector('#sim-output-card .skeleton-row')),
+      hasResult: (document.getElementById('sim-output-card').textContent || '').includes('Audit Result'),
+    }));
+    if (afterRun.cardBusy || afterRun.hasSkeleton || !afterRun.hasResult) {
+      throw new Error(`Populated-state gate failed: ${JSON.stringify(afterRun)}`);
+    }
+    console.log(
+      ` ✅ [Navigation & IA Gate] firstRowTop ${navGeom.firstRowTopPx}px (<=380), header ${navGeom.headerHeightPx}px, 0 header/KPI duplicates, 1 trigger/row, Arrow-key tabs, ?tab= reload+Back, drawer focus/Esc/collapse, sync busy state`
+    );
+
+    await page.evaluate(() => window.switchWorkspace('queue'));
+    await sleep(200);
+
     // 2. Verify Workspace 1 (Revenue Recovery Queue, Single-Row Filter Toolbar, 0 Duplicate Upload Button)
     const ws1Audit = await page.evaluate(() => {
       const rows = document.querySelectorAll('#encounter-table-body tr');
@@ -391,6 +554,7 @@ async function main() {
       const closeBtnHeight = closeBtn ? Math.round(closeBtn.getBoundingClientRect().height) : 999;
       const subtabs = Array.from(drw.querySelectorAll('.drawer-subtab-btn'));
       const clippedSubtabs = subtabs.filter((b) => b.getBoundingClientRect().right > drwRect.right + 1).length;
+      const truncatedSubtabs = subtabs.filter((b) => b.scrollWidth > b.clientWidth + 1).length;
       const canvas = document.getElementById('dicom-slice-canvas');
       const hitlStatusText = document.getElementById('drw-hitl-status')?.textContent || '';
       return {
@@ -398,6 +562,7 @@ async function main() {
         ariaHidden: drw.getAttribute('aria-hidden'),
         closeBtnHeight,
         clippedSubtabs,
+        truncatedSubtabs,
         hasCanvas: Boolean(canvas && canvas.width > 0),
         hasRawUnderscore: hitlStatusText.includes('_'),
         text: drw.innerText,
@@ -408,11 +573,12 @@ async function main() {
       drawerCheck.ariaHidden !== 'false' ||
       drawerCheck.closeBtnHeight > 40 ||
       drawerCheck.clippedSubtabs > 0 ||
+      drawerCheck.truncatedSubtabs > 0 ||
       drawerCheck.hasRawUnderscore ||
       !drawerCheck.hasCanvas ||
       !drawerCheck.text.includes('J0585')
     ) {
-      throw new Error(`Docked Multimodal Drawer failed geometry/a11y verification: ${JSON.stringify(drawerCheck)}`);
+      throw new Error(`Docked Multimodal Drawer failed geometry/a11y verification: ${JSON.stringify({ ...drawerCheck, text: '[omitted]' })}`);
     }
     const shotDrawer = path.join(SCREENSHOT_DIR, 'after_urocura_drawer_multimodal.png');
     await page.screenshot({ path: shotDrawer, fullPage: false });

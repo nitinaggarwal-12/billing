@@ -38,6 +38,16 @@
       --cyan-text: #155e75;
       --cyan-bg: #ecfeff;
       --cyan-border: #a5f3fc;
+      /* Semantic tokens for component templates (content-studio Phase 0 #1: tokens only, no raw hex in components) */
+      --emerald-strong: #047857;
+      --emerald-btn: #059669;
+      --emerald-bg-soft: #f0fdf4;
+      --emerald-border-soft: #bbf7d0;
+      --rose-text-strong: #881337;
+      --paper-bg: #fffdf5;
+      --motion-micro: 120ms;
+      --motion-ui: 200ms;
+      --motion-panel: 320ms;
     }
 
     * {
@@ -96,13 +106,13 @@
       word-break: break-word;
     }
 
-    /* Global Persistent Top Header (Rule 25A & Rule 25G) */
+    /* Global Persistent Top Header (Rule 25A & Rule 25G) — single compact row so data starts <= 380px (Rule 25D) */
     .global-header {
       background: var(--bg-card);
       border-bottom: 1px solid var(--border-strong);
       width: 100%;
       max-width: 100%;
-      padding: 10px clamp(16px, 1.8vw, 28px);
+      padding: 8px clamp(16px, 1.8vw, 28px);
       position: sticky;
       top: 0;
       z-index: 30;
@@ -114,51 +124,61 @@
       align-items: center;
       justify-content: space-between;
       gap: 14px;
-      flex-wrap: wrap;
-      margin-bottom: 9px;
+      flex-wrap: nowrap;
+      min-height: 36px;
+      margin-bottom: 8px;
     }
 
     .brand-cluster {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       min-width: 0;
+      flex-shrink: 0;
     }
 
     .brand-mark {
-      width: 34px;
-      height: 34px;
+      width: 30px;
+      height: 30px;
       border-radius: 8px;
-      background: linear-gradient(135deg, #1d4ed8 0%, #0284c7 100%);
+      background: linear-gradient(135deg, var(--primary-dark) 0%, #0284c7 100%);
       color: #ffffff;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 800;
-      font-size: 15px;
+      font-size: 13px;
       letter-spacing: -0.5px;
       flex-shrink: 0;
     }
 
     .brand-title {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 800;
       color: var(--text-main);
       letter-spacing: -0.3px;
       margin: 0;
+      white-space: nowrap;
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
     }
 
-    .brand-subtitle {
+    .brand-context {
       font-size: 12px;
+      font-weight: 600;
       color: var(--text-muted);
-      margin: 0;
+      letter-spacing: 0;
     }
 
     .telemetry-pills-bar {
       display: flex;
       align-items: center;
+      justify-content: flex-end;
       gap: 8px;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
+      min-width: 0;
+      overflow: hidden;
     }
 
     .telemetry-pill {
@@ -194,6 +214,14 @@
       border-color: var(--amber-border);
     }
 
+    .telemetry-pill .pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 99px;
+      background: currentColor;
+      flex-shrink: 0;
+    }
+
     /* Interactive Workspace Navigation Tabs (Single Persistent Navigation Surface - Rule 25A) */
     .workspace-tabs-bar {
       display: grid;
@@ -207,19 +235,19 @@
       background: var(--bg-canvas);
       border: 1px solid var(--border-light);
       color: var(--text-sub);
-      padding: 6px 9px;
+      padding: 6px 10px;
       border-radius: 7px;
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 5px;
+      gap: 6px;
       min-width: 0;
       white-space: nowrap;
       overflow: hidden;
-      transition: all 0.15s ease;
+      transition: background-color var(--motion-micro) ease-out, border-color var(--motion-micro) ease-out, color var(--motion-micro) ease-out;
     }
 
     .workspace-tab-btn:hover {
@@ -250,12 +278,43 @@
       color: #ffffff;
     }
 
+    .tab-kbd {
+      display: inline-block;
+      min-width: 16px;
+      padding: 0 4px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 16px;
+      text-align: center;
+      background: rgba(15, 23, 42, 0.08);
+      color: inherit;
+      flex-shrink: 0;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .workspace-tab-btn.active .tab-kbd {
+      background: rgba(255, 255, 255, 0.22);
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
     /* Main Fluid Edge-to-Edge Container (Rule 25G / Rule 50A) */
     .fluid-main {
       width: 100%;
       max-width: 100%;
       box-sizing: border-box;
-      padding: 16px clamp(16px, 1.8vw, 28px) 28px;
+      padding: 14px clamp(16px, 1.8vw, 28px) 28px;
     }
 
     .workspace-panel {
@@ -579,6 +638,94 @@
       background: #ffffff;
     }
 
+    /* 5-State Completeness: Loading skeleton, inline Error + Retry, pre-run Empty state */
+    .state-box {
+      border: 1px dashed var(--border-strong);
+      border-radius: 8px;
+      padding: 18px 16px;
+      background: var(--bg-canvas);
+      text-align: center;
+      color: var(--text-sub);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 160px;
+    }
+
+    .state-box.state-error {
+      border-style: solid;
+      border-color: var(--rose-border);
+      background: var(--rose-bg);
+      color: var(--rose-text);
+    }
+
+    .state-box .state-title {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .state-box.state-error .state-title {
+      color: var(--rose-text);
+    }
+
+    .state-box .state-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      max-width: 520px;
+    }
+
+    .skeleton-stack {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+      flex: 1;
+      min-height: 160px;
+    }
+
+    .skeleton-row {
+      height: 14px;
+      border-radius: 5px;
+      background: linear-gradient(90deg, var(--bg-subtle) 25%, var(--border-light) 50%, var(--bg-subtle) 75%);
+      background-size: 200% 100%;
+      animation: skeleton-shimmer 1.2s ease-in-out infinite;
+    }
+
+    .skeleton-row.tall {
+      height: 56px;
+    }
+
+    @keyframes skeleton-shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .btn-primary[disabled],
+    .btn-emerald[disabled],
+    .btn-secondary[disabled] {
+      opacity: 0.72;
+      cursor: progress;
+    }
+
+    .btn-spinner {
+      width: 12px;
+      height: 12px;
+      border-radius: 99px;
+      border: 2px solid rgba(255, 255, 255, 0.45);
+      border-top-color: #ffffff;
+      animation: btn-spin 0.8s linear infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes btn-spin {
+      to { transform: rotate(360deg); }
+    }
+
     /* Non-Blocking Docked Right-Side Drawer (Rule 25F) */
     .docked-drawer {
       position: fixed;
@@ -593,7 +740,7 @@
       z-index: 50;
       transform: translateX(102%);
       visibility: hidden;
-      transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.24s;
+      transition: transform var(--motion-panel) cubic-bezier(0.16, 1, 0.3, 1), visibility var(--motion-panel);
       display: flex;
       flex-direction: column;
     }
@@ -601,6 +748,63 @@
     .docked-drawer.open {
       transform: translateX(0);
       visibility: visible;
+    }
+
+    /* Collapsed mode: slide off-canvas leaving a 52px rail so the dossier stays one click away */
+    .docked-drawer.open.collapsed {
+      transform: translateX(calc(100% - 52px));
+      box-shadow: -4px 0 14px rgba(15, 23, 42, 0.10);
+    }
+
+    .drawer-collapsed-rail {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 52px;
+      background: var(--bg-card);
+      border-right: 1px solid var(--border-light);
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 14px;
+    }
+
+    .docked-drawer.collapsed .drawer-collapsed-rail {
+      display: flex;
+    }
+
+    .drawer-expand-btn {
+      appearance: none;
+      background: var(--primary-bg);
+      border: 1px solid var(--primary-border);
+      color: var(--primary-dark);
+      border-radius: 6px;
+      padding: 8px 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .drawer-expand-arrow {
+      font-size: 11px;
+      line-height: 1;
+    }
+
+    .drawer-expand-label {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+    }
+
+    .drawer-header-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
     }
 
     .drawer-header {
@@ -636,7 +840,7 @@
       overflow: hidden;
       text-overflow: ellipsis;
       text-align: center;
-      transition: all 0.12s ease;
+      transition: background-color var(--motion-micro) ease-out, border-color var(--motion-micro) ease-out, color var(--motion-micro) ease-out;
     }
 
     .drawer-subtab-btn:hover {
@@ -749,7 +953,7 @@
       font-size: 11.5px;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.12s ease;
+      transition: background-color var(--motion-micro) ease-out, border-color var(--motion-micro) ease-out, color var(--motion-micro) ease-out;
     }
 
     .preset-pill-btn:hover, .preset-pill-btn.active {
@@ -805,7 +1009,7 @@
       padding: 14px 18px;
       text-align: center;
       cursor: pointer;
-      transition: all 0.15s ease;
+      transition: background-color var(--motion-ui) ease-out, border-color var(--motion-ui) ease-out;
       margin-bottom: 12px;
     }
 
@@ -878,6 +1082,15 @@
       outline-offset: 2px;
     }
 
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
     @media (max-width: 1100px) {
       .workspace-tabs-bar {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -948,40 +1161,38 @@
   <header class="global-header" data-testid="urocura-global-header">
     <div class="header-top-row">
       <div class="brand-cluster">
-        <div class="brand-mark">UC</div>
-        <div class="min-w-0">
-          <h1 class="brand-title">UroCura OS · Urology AI Coding &amp; Revenue Recovery Platform</h1>
-          <p class="brand-subtitle">The chart and the claim should not tell different stories · Multimodal LangGraph + Deterministic CMS NCCI Ch. 7 &amp; AMA CPT 2026/2027 Engine</p>
-        </div>
+        <div class="brand-mark" aria-hidden="true">UC</div>
+        <h1 class="brand-title">UroCura OS <span class="brand-context">Urology Coding &amp; Revenue Recovery</span></h1>
       </div>
 
+      <!-- Global-only telemetry (Rule 25A: never repeats values owned by a workspace KPI card) -->
       <div class="telemetry-pills-bar" data-testid="header-telemetry-bar">
-        <span class="telemetry-pill pill-blue" id="hdr-version-pill">📅 Temporal Router: CPT 2026 &amp; CPT 2027 Active</span>
-        <span class="telemetry-pill" id="hdr-billed-pill">Billing 837P: $3,137.16</span>
-        <span class="telemetry-pill pill-emerald" id="hdr-recovered-pill">💰 Money Left on Table: +$3,633.86 (+115.8%)</span>
-        <span class="telemetry-pill pill-amber">🛡️ HIPAA Safe Harbor PHI Gate: ON</span>
+        <span class="telemetry-pill pill-blue" id="hdr-version-pill">CPT 2026 · 2027 routing by DOS</span>
+        <span class="telemetry-pill pill-amber" id="hdr-phi-pill"><span class="pill-dot" aria-hidden="true"></span>PHI Safe Harbor gate on</span>
+        <span class="telemetry-pill" id="hdr-pending-pill">Pending HITL: —</span>
+        <span class="telemetry-pill pill-emerald" id="hdr-verified-pill">Coder verified: —</span>
       </div>
     </div>
 
     <nav id="workspace-tabs-bar" class="workspace-tabs-bar" role="tablist" aria-label="Primary Workspaces">
-      <button type="button" role="tab" aria-selected="true" aria-controls="workspace-queue" class="workspace-tab-btn active" data-tab="queue" id="tab-btn-queue" onclick="switchWorkspace('queue')">
-        <span class="truncate">1. Revenue Recovery Queue (3-Way)</span>
+      <button type="button" role="tab" aria-selected="true" tabindex="0" aria-controls="workspace-queue" class="workspace-tab-btn active" data-tab="queue" id="tab-btn-queue" onclick="switchWorkspace('queue')" title="Alt+1">
+        <span class="truncate"><span class="tab-kbd" aria-hidden="true">1</span> Work Queue</span>
         <span class="tab-badge" id="badge-queue-count">8 Cases</span>
       </button>
-      <button type="button" role="tab" aria-selected="false" aria-controls="workspace-ptp" class="workspace-tab-btn" data-tab="ptp" id="tab-btn-ptp" onclick="switchWorkspace('ptp')">
-        <span class="truncate">2. "Can I Report Both?" NCCI Ch. 7</span>
+      <button type="button" role="tab" aria-selected="false" tabindex="-1" aria-controls="workspace-ptp" class="workspace-tab-btn" data-tab="ptp" id="tab-btn-ptp" onclick="switchWorkspace('ptp')" title="Alt+2">
+        <span class="truncate"><span class="tab-kbd" aria-hidden="true">2</span> Code Pair Check</span>
         <span class="tab-badge">16 Pairs</span>
       </button>
-      <button type="button" role="tab" aria-selected="false" aria-controls="workspace-simulator" class="workspace-tab-btn" data-tab="simulator" id="tab-btn-simulator" onclick="switchWorkspace('simulator')">
-        <span class="truncate">3. Multimodal Upload &amp; 6-Node AI</span>
-        <span class="tab-badge">PDF/PNG/DCM</span>
+      <button type="button" role="tab" aria-selected="false" tabindex="-1" aria-controls="workspace-simulator" class="workspace-tab-btn" data-tab="simulator" id="tab-btn-simulator" onclick="switchWorkspace('simulator')" title="Alt+3">
+        <span class="truncate"><span class="tab-kbd" aria-hidden="true">3</span> Upload &amp; Analyze</span>
+        <span class="tab-badge">PDF · PNG · DCM</span>
       </button>
-      <button type="button" role="tab" aria-selected="false" aria-controls="workspace-governance" class="workspace-tab-btn" data-tab="governance" id="tab-btn-governance" onclick="switchWorkspace('governance')">
-        <span class="truncate">4. 4-Pillar &amp; CPT 2026 ↔ 2027</span>
+      <button type="button" role="tab" aria-selected="false" tabindex="-1" aria-controls="workspace-governance" class="workspace-tab-btn" data-tab="governance" id="tab-btn-governance" onclick="switchWorkspace('governance')" title="Alt+4">
+        <span class="truncate"><span class="tab-kbd" aria-hidden="true">4</span> Rules &amp; Versions</span>
         <span class="tab-badge">9 Sources</span>
       </button>
-      <button type="button" role="tab" aria-selected="false" aria-controls="workspace-benchmarks" class="workspace-tab-btn" data-tab="benchmarks" id="tab-btn-benchmarks" onclick="switchWorkspace('benchmarks')">
-        <span class="truncate">5. CMS PUF NPI Peer Benchmarks</span>
+      <button type="button" role="tab" aria-selected="false" tabindex="-1" aria-controls="workspace-benchmarks" class="workspace-tab-btn" data-tab="benchmarks" id="tab-btn-benchmarks" onclick="switchWorkspace('benchmarks')" title="Alt+5">
+        <span class="truncate"><span class="tab-kbd" aria-hidden="true">5</span> Peer Benchmarks</span>
         <span class="tab-badge">4 NPIs</span>
       </button>
     </nav>
@@ -1261,18 +1472,15 @@
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
             <div>
               <h2 class="section-title" style="margin-bottom:2px;">
-                <span>📤 Multimodal Clinical Packet Upload &amp; Line-by-Line Discrepancy Analyzer (.PDF · .PNG · .JPG/.JPEG · .DCM DICOM · .837P EDI)</span>
+                <span>Multimodal Clinical Packet Upload &amp; Line-by-Line Discrepancy Analyzer (.PDF · .PNG · .JPG/.JPEG · .DCM DICOM · .837P EDI)</span>
               </h2>
-              <p class="section-desc" style="margin-bottom:0;">
-                Drop or select multiple clinical files from your computer. Node 0 inspects binary magic headers (<code>%PDF-1.4</code>, <code>89 50 4E 47</code> PNG, <code>FF D8 FF E0</code> JPEG, <code>DICM</code> Part-10 DICOM, <code>ANSI X12 837P</code>), Node 1 scrubs 18 HIPAA Safe Harbor PHI identifiers, Node 2 extracts text/OCR/tags, and Nodes 3–5 reconcile every clinical fact against the Billing Dept's 837P claim.
+              <p class="section-desc" style="margin-bottom:0;"> Drop or select multiple clinical files from your computer. Node 0 inspects binary magic headers (<code>%PDF-1.4</code>, <code>89 50 4E 47</code> PNG, <code>FF D8 FF E0</code> JPEG, <code>DICM</code> Part-10 DICOM, <code>ANSI X12 837P</code>), Node 1 scrubs 18 HIPAA Safe Harbor PHI identifiers, Node 2 extracts text/OCR/tags, and Nodes 3–5 reconcile every clinical fact against the Billing Dept's 837P claim.
               </p>
             </div>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
-              <button type="button" class="btn-emerald" id="btn-load-binary-samples" onclick="loadAndAnalyzeSampleBinaryPacket()">
-                📂 Load &amp; Analyze 5 Real Binary Sample Files (.PDF + .PNG + .JPG + .DCM + .837P)
+              <button type="button" class="btn-emerald" id="btn-load-binary-samples" onclick="loadAndAnalyzeSampleBinaryPacket()"> Load &amp; Analyze 5 Real Binary Sample Files (.PDF + .PNG + .JPG + .DCM + .837P)
               </button>
-              <button type="button" class="btn-secondary" onclick="document.getElementById('file-upload-input').click()">
-                💻 Browse Local Files...
+              <button type="button" class="btn-secondary" onclick="document.getElementById('file-upload-input').click()"> Browse Local Files...
               </button>
             </div>
           </div>
@@ -1300,19 +1508,17 @@
               style="display:none;"
               onchange="handleFileSelect(event)"
             />
-            <div style="font-size:15px; font-weight:800; color:var(--primary-dark); margin-bottom:4px;">
-              📥 Drag &amp; Drop PDF Operative/Pathology Reports, PNG/JPEG Handwritten Superbills, DICOM (.dcm) Imaging &amp; X12 837P Claims Here
+            <div style="font-size:15px; font-weight:800; color:var(--primary-dark); margin-bottom:4px;"> Drag &amp; Drop PDF Operative/Pathology Reports, PNG/JPEG Handwritten Superbills, DICOM (.dcm) Imaging &amp; X12 837P Claims Here
             </div>
-            <div style="font-size:12px; color:var(--text-sub);">
-              Or click anywhere in this box to select files from disk · Raw binary streams are classified via Magic-Byte Gate &amp; HIPAA Safe Harbor PHI Redactor before analysis
+            <div style="font-size:12px; color:var(--text-sub);"> Or click anywhere in this box to select files from disk · Raw binary streams are classified via Magic-Byte Gate &amp; HIPAA Safe Harbor PHI Redactor before analysis
             </div>
             <div style="margin-top:8px; display:flex; justify-content:center; gap:8px; flex-wrap:wrap; font-size:11.5px;" onclick="event.stopPropagation();">
               <span style="color:var(--text-muted); font-weight:700;">Download Real Sample Files to Test Local Drag-and-Drop:</span>
-              <a href="/api/sample-files/operative_and_pathology_report_turbt.pdf" download style="color:var(--primary-dark); font-weight:700;">📄 operative_and_pathology_report_turbt.pdf</a>
-              <a href="/api/sample-files/handwritten_superbill_botox_52287.png" download style="color:var(--primary-dark); font-weight:700;">🖼️ handwritten_superbill_botox_52287.png</a>
-              <a href="/api/sample-files/handwritten_note_contralateral_urs.jpg" download style="color:var(--primary-dark); font-weight:700;">📸 handwritten_note_contralateral_urs.jpg</a>
-              <a href="/api/sample-files/ct_urogram_stone_study.dcm" download style="color:var(--primary-dark); font-weight:700;">🩻 ct_urogram_stone_study.dcm</a>
-              <a href="/api/sample-files/billing_dept_scrubbed_claim.837p.txt" download style="color:var(--primary-dark); font-weight:700;">🧾 billing_dept_scrubbed_claim.837p.txt</a>
+              <a href="/api/sample-files/operative_and_pathology_report_turbt.pdf" download style="color:var(--primary-dark); font-weight:700;">operative_and_pathology_report_turbt.pdf</a>
+              <a href="/api/sample-files/handwritten_superbill_botox_52287.png" download style="color:var(--primary-dark); font-weight:700;">handwritten_superbill_botox_52287.png</a>
+              <a href="/api/sample-files/handwritten_note_contralateral_urs.jpg" download style="color:var(--primary-dark); font-weight:700;">handwritten_note_contralateral_urs.jpg</a>
+              <a href="/api/sample-files/ct_urogram_stone_study.dcm" download style="color:var(--primary-dark); font-weight:700;">ct_urogram_stone_study.dcm</a>
+              <a href="/api/sample-files/billing_dept_scrubbed_claim.837p.txt" download style="color:var(--primary-dark); font-weight:700;">billing_dept_scrubbed_claim.837p.txt</a>
             </div>
           </div>
 
@@ -1386,9 +1592,9 @@
             </div>
 
             <!-- Active Node 0-3 Pipeline & Locality GPCI Telemetry Strip (Balances Left/Right Simulator Cards) -->
-            <div id="sim-left-telemetry-strip" style="background:#f8fafc; border:1px solid var(--border-light); border-radius:7px; padding:8px 10px; margin-bottom:8px; font-size:11.5px;">
+            <div id="sim-left-telemetry-strip" style="background:var(--bg-canvas); border:1px solid var(--border-light); border-radius:7px; padding:8px 10px; margin-bottom:8px; font-size:11.5px;">
               <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:4px;">
-                <strong style="color:var(--primary-dark);">⚙️ Active 6-Node Stateful Graph &amp; Locality GPCI Guardrails</strong>
+                <strong style="color:var(--primary-dark);">Active 6-Node Stateful Graph &amp; Locality GPCI Guardrails</strong>
                 <span class="badge badge-blue" id="sim-telemetry-version-badge">CPT 2027 Router Active</span>
               </div>
               <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:4px 10px; color:var(--text-sub); font-size:11px;">
@@ -1401,7 +1607,7 @@
           </div>
 
           <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; padding-top:8px; border-top:1px solid var(--border-light);">
-            <button type="button" class="btn-primary" id="btn-run-sim" onclick="runLiveSimulator()">⚡ Run 6-Node LangGraph &amp; Deterministic NCCI Audit</button>
+            <button type="button" class="btn-primary" id="btn-run-sim" onclick="runLiveSimulator()">Run 6-Node LangGraph &amp; Deterministic NCCI Audit</button>
             <span style="font-size:11.5px; color:var(--text-muted); font-weight:600;">Nodes 1–6 Stateful Execution · Zero Unconstrained LLM Guessing</span>
           </div>
         </div>
@@ -1482,9 +1688,9 @@
             <div id="interpretive-guidance-list"></div>
 
             <!-- CY 2026 vs CY 2027 MPFS Conversion Factor & Efficiency Adjustment (-2.5%) Reference Box -->
-            <div style="background:#f8fafc; border:1px solid var(--border-light); border-radius:7px; padding:10px 12px; font-size:11.5px; margin-top:8px;">
+            <div style="background:var(--bg-canvas); border:1px solid var(--border-light); border-radius:7px; padding:10px 12px; font-size:11.5px; margin-top:8px;">
               <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:5px;">
-                <strong style="color:var(--primary-dark);">📊 CY 2026 RVU26D vs. CY 2027 MPFS Conversion Factors &amp; -2.5% Efficiency Adjustment</strong>
+                <strong style="color:var(--primary-dark);">CY 2026 RVU26D vs. CY 2027 MPFS Conversion Factors &amp; -2.5% Efficiency Adjustment</strong>
                 <span class="badge badge-blue">Deterministic Node 3 &amp; 4 Router</span>
               </div>
               <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:6px 12px; color:var(--text-sub);">
@@ -1646,13 +1852,12 @@
           </div>
 
           <!-- Node 4 Geographic Payment Formula & MPPR/Bilateral Reference Box (Eliminates Left-Card Bottom Gap) -->
-          <div id="gpci-formula-callout" style="background:#f8fafc; border:1px solid var(--border-light); border-radius:7px; padding:10px 12px; font-size:11.5px;">
+          <div id="gpci-formula-callout" style="background:var(--bg-canvas); border:1px solid var(--border-light); border-radius:7px; padding:10px 12px; font-size:11.5px;">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:6px;">
-              <strong style="color:var(--primary-dark);">🧮 Node 4 Deterministic Medicare Allowed Amount &amp; MPPR Formula</strong>
+              <strong style="color:var(--primary-dark);">Node 4 Deterministic Medicare Allowed Amount &amp; MPPR Formula</strong>
               <span class="badge badge-emerald">RVU26D Verified</span>
             </div>
-            <div style="background:#ffffff; border:1px solid var(--border-light); border-radius:6px; padding:7px 10px; font-family:monospace; font-size:11px; color:var(--text-main); margin-bottom:6px;">
-              Allowed = [(Work_RVU × Work_GPCI) + (PE_RVU × PE_GPCI) + (MP_RVU × MP_GPCI)] × CF × Factor
+            <div style="background:var(--bg-card); border:1px solid var(--border-light); border-radius:6px; padding:7px 10px; font-family:monospace; font-size:11px; color:var(--text-main); margin-bottom:6px;"> Allowed = [(Work_RVU × Work_GPCI) + (PE_RVU × PE_GPCI) + (MP_RVU × MP_GPCI)] × CF × Factor
             </div>
             <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:5px 12px; color:var(--text-sub); font-size:11px; margin-bottom:6px;">
               <div><strong>Standard CF (Non-QP):</strong> <code>$33.4009</code></div>
@@ -1713,7 +1918,12 @@
   <!-- ========================================================================
        NON-BLOCKING DOCKED RIGHT-SIDE MULTIMODAL DOSSIER & HITL DRAWER (Rule 25F)
        ======================================================================== -->
-  <aside id="multimodal-drawer" class="docked-drawer" role="dialog" aria-modal="false" aria-hidden="true" aria-label="Multimodal Encounter Dossier Inspector" data-testid="multimodal-drawer">
+  <aside id="multimodal-drawer" class="docked-drawer" role="dialog" aria-modal="false" aria-hidden="true" aria-labelledby="drw-title" data-testid="multimodal-drawer" onkeydown="handleDrawerKeydown(event)">
+    <!-- Collapsed rail (Rule 25F collapse control): keeps the open dossier one click away -->
+    <div class="drawer-collapsed-rail">
+      <button type="button" class="drawer-expand-btn" id="btn-expand-drawer" onclick="toggleDrawerCollapse(false)" aria-label="Expand dossier inspector"><span class="drawer-expand-arrow" aria-hidden="true">◀</span><span class="drawer-expand-label">Expand <span id="drw-rail-enc-id">ENC</span></span></button>
+    </div>
+
     <div class="drawer-header">
       <div class="min-w-0">
         <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:4px;">
@@ -1721,16 +1931,19 @@
           <span class="badge badge-amber" id="drw-cpt-ver">CPT 2026</span>
           <span class="badge badge-emerald" id="drw-delta-badge">+$74.92 Recovery</span>
         </div>
-        <h3 style="margin:0; font-size:14.5px; font-weight:800; color:var(--text-main);" id="drw-title">Clinical Encounter Dossier</h3>
+        <h3 style="margin:0; font-size:14.5px; font-weight:800; color:var(--text-main); outline:none;" id="drw-title" tabindex="-1">Clinical Encounter Dossier</h3>
         <div style="font-size:12px; color:var(--text-muted); margin-top:2px;" id="drw-meta">Provider · MAC · DOS</div>
       </div>
-      <button type="button" class="btn-secondary" id="btn-close-drawer" onclick="closeDrawer()" aria-label="Close Inspector Drawer">✕ Close →</button>
+      <div class="drawer-header-actions">
+        <button type="button" class="btn-secondary" id="btn-collapse-drawer" onclick="toggleDrawerCollapse(true)" aria-label="Collapse inspector drawer to side rail" title="Collapse">Collapse →</button>
+        <button type="button" class="btn-secondary" id="btn-close-drawer" onclick="closeDrawer()" aria-label="Close inspector drawer (Esc)" title="Close (Esc)">✕ Close</button>
+      </div>
     </div>
 
     <div class="drawer-subtabs" role="tablist" aria-label="Dossier Inspector Views">
-      <button type="button" role="tab" aria-selected="true" class="drawer-subtab-btn active" id="dtab-btn-multimodal" onclick="switchDrawerTab('multimodal')">1. Multimodal Artifacts (OCR/DICOM)</button>
-      <button type="button" role="tab" aria-selected="false" class="drawer-subtab-btn" id="dtab-btn-reconcile" onclick="switchDrawerTab('reconcile')">2. 3-Way Claim Diff &amp; Citations</button>
-      <button type="button" role="tab" aria-selected="false" class="drawer-subtab-btn" id="dtab-btn-langgraph" onclick="switchDrawerTab('langgraph')">3. 6-Node LangGraph &amp; HITL</button>
+      <button type="button" role="tab" aria-selected="true" class="drawer-subtab-btn active" id="dtab-btn-multimodal" onclick="switchDrawerTab('multimodal')">1. Artifacts (OCR · PDF · DICOM)</button>
+      <button type="button" role="tab" aria-selected="false" class="drawer-subtab-btn" id="dtab-btn-reconcile" onclick="switchDrawerTab('reconcile')">2. 3-Way Claim Diff</button>
+      <button type="button" role="tab" aria-selected="false" class="drawer-subtab-btn" id="dtab-btn-langgraph" onclick="switchDrawerTab('langgraph')">3. LangGraph Trace &amp; HITL</button>
     </div>
 
     <div class="drawer-body" id="drawer-body-content"></div>
@@ -1738,7 +1951,7 @@
     <div class="drawer-footer">
       <div style="font-size:12px; color:var(--text-sub); font-weight:600;" id="drw-hitl-status">Status: Pending Review</div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="btn-secondary" onclick="submitHitlFeedback('835_REMITTANCE_LOGGED')">📥 Log X12 835 Paid (CARC-0)</button>
+        <button type="button" class="btn-secondary" onclick="submitHitlFeedback('835_REMITTANCE_LOGGED')">Log X12 835 Paid (CARC-0)</button>
         <button type="button" class="btn-primary" onclick="submitHitlFeedback('ACCEPTED_AI_CLAIM')">✓ Approve AI Claim &amp; Release 837P</button>
       </div>
     </div>
@@ -1773,15 +1986,177 @@
       setTimeout(() => { el.style.display = 'none'; }, 3200);
     }
 
-    function switchWorkspace(tabKey) {
+    // ========================================================================
+    // NAVIGATION CONTROLLER — URL state (?tab=&enc=), roving tabindex, keyboard
+    // ========================================================================
+    const TAB_ORDER = ['queue', 'ptp', 'simulator', 'governance', 'benchmarks'];
+    const TAB_URL_SLUGS = { queue: 'queue', ptp: 'pairs', simulator: 'upload', governance: 'rules', benchmarks: 'benchmarks' };
+    const TAB_FROM_SLUG = Object.fromEntries(Object.entries(TAB_URL_SLUGS).map(([k, v]) => [v, k]));
+    const TAB_PRIMARY_ACTION = {
+      ptp: () => runPtpEvaluation(),
+      simulator: () => runLiveSimulator(),
+    };
+
+    function currentTabKey() {
+      const active = document.querySelector('.workspace-tab-btn[aria-selected="true"]');
+      return active ? active.dataset.tab : 'queue';
+    }
+
+    function writeUrlState({ tabKey, encId, replace }) {
+      const params = new URLSearchParams(location.search);
+      if (tabKey) params.set('tab', TAB_URL_SLUGS[tabKey] || tabKey);
+      if (encId === null) params.delete('enc');
+      else if (encId) params.set('enc', encId);
+      const next = `${location.pathname}?${params.toString()}`;
+      if (`${location.pathname}${location.search}` === next) return;
+      const state = { tab: params.get('tab'), enc: params.get('enc') };
+      if (replace) history.replaceState(state, '', next);
+      else history.pushState(state, '', next);
+    }
+
+    function switchWorkspace(tabKey, opts = {}) {
+      if (!TAB_ORDER.includes(tabKey)) tabKey = 'queue';
       document.querySelectorAll('.workspace-tab-btn').forEach(btn => {
         const isActive = btn.dataset.tab === tabKey;
         btn.classList.toggle('active', isActive);
         btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        btn.setAttribute('tabindex', isActive ? '0' : '-1');
       });
       document.querySelectorAll('.workspace-panel').forEach(panel => {
         panel.classList.toggle('active', panel.id === 'workspace-' + tabKey);
       });
+      if (!opts.silent) writeUrlState({ tabKey, replace: !!opts.replace });
+      if (opts.focusTab) {
+        const btn = document.getElementById('tab-btn-' + tabKey);
+        if (btn) btn.focus();
+      }
+    }
+
+    function restoreFromUrl() {
+      const params = new URLSearchParams(location.search);
+      const slug = params.get('tab');
+      const tabKey = TAB_FROM_SLUG[slug] || (TAB_ORDER.includes(slug) ? slug : 'queue');
+      switchWorkspace(tabKey, { silent: true });
+      const encId = params.get('enc');
+      if (encId && STATE.encounters.some(e => e.encounter_id === encId)) {
+        openDrawer(encId, { silent: true });
+      } else if (document.getElementById('multimodal-drawer').classList.contains('open')) {
+        closeDrawer({ silent: true });
+      }
+    }
+
+    window.addEventListener('popstate', restoreFromUrl);
+
+    function isTypingTarget(el) {
+      if (!el) return false;
+      const tag = el.tagName;
+      return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || el.isContentEditable;
+    }
+
+    function handleTablistKeydown(event) {
+      const tabs = TAB_ORDER;
+      const idx = tabs.indexOf(currentTabKey());
+      let next = null;
+      if (event.key === 'ArrowRight') next = tabs[(idx + 1) % tabs.length];
+      else if (event.key === 'ArrowLeft') next = tabs[(idx - 1 + tabs.length) % tabs.length];
+      else if (event.key === 'Home') next = tabs[0];
+      else if (event.key === 'End') next = tabs[tabs.length - 1];
+      if (!next) return;
+      event.preventDefault();
+      switchWorkspace(next, { focusTab: true });
+    }
+
+    document.addEventListener('keydown', (event) => {
+      const drawer = document.getElementById('multimodal-drawer');
+      // Esc: close the docked drawer (even while typing inside it)
+      if (event.key === 'Escape' && drawer.classList.contains('open')) {
+        event.preventDefault();
+        closeDrawer();
+        return;
+      }
+      // Alt+1..5: jump to workspace
+      if (event.altKey && !event.metaKey && !event.ctrlKey && /^[1-5]$/.test(event.key)) {
+        event.preventDefault();
+        switchWorkspace(TAB_ORDER[Number(event.key) - 1], { focusTab: true });
+        return;
+      }
+      // Cmd/Ctrl+Enter: run the active workspace's primary action
+      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+        const action = TAB_PRIMARY_ACTION[currentTabKey()];
+        if (action) { event.preventDefault(); action(); }
+        return;
+      }
+      if (isTypingTarget(event.target)) return;
+      // "/": focus the work-queue search
+      if (event.key === '/' && !event.metaKey && !event.ctrlKey && !event.altKey) {
+        event.preventDefault();
+        if (currentTabKey() !== 'queue') switchWorkspace('queue');
+        document.getElementById('search-input').focus();
+        return;
+      }
+      // Arrow / Home / End while focus is on a top tab (WAI-ARIA tabs pattern)
+      if (event.target && event.target.classList && event.target.classList.contains('workspace-tab-btn')) {
+        handleTablistKeydown(event);
+      }
+    });
+
+    // ========================================================================
+    // 5-STATE HELPERS — busy buttons, skeletons, empty, error + retry
+    // ========================================================================
+    function setButtonBusy(btn, busy, busyLabel) {
+      if (!btn) return;
+      if (busy) {
+        if (!btn.dataset.idleHtml) btn.dataset.idleHtml = btn.innerHTML;
+        btn.disabled = true;
+        btn.setAttribute('aria-busy', 'true');
+        btn.innerHTML = `<span class="btn-spinner" aria-hidden="true"></span>${busyLabel || 'Running…'}`;
+      } else {
+        btn.disabled = false;
+        btn.removeAttribute('aria-busy');
+        if (btn.dataset.idleHtml) btn.innerHTML = btn.dataset.idleHtml;
+      }
+    }
+
+    function renderSkeleton(card, rows = 6) {
+      if (!card) return;
+      card.setAttribute('aria-busy', 'true');
+      const lines = Array.from({ length: rows }, (_, i) =>
+        `<div class="skeleton-row${i === 1 ? ' tall' : ''}" style="width:${[92, 100, 76, 88, 64, 82][i % 6]}%;"></div>`
+      ).join('');
+      card.innerHTML = `<div class="skeleton-stack" role="status" aria-live="polite"><span class="sr-only">Loading…</span>${lines}</div>`;
+    }
+
+    function renderEmptyState(card, title, hint, actionLabel, actionJs) {
+      if (!card) return;
+      card.removeAttribute('aria-busy');
+      card.innerHTML = `
+        <div class="state-box state-empty" data-state="empty">
+          <div class="state-title">${title}</div>
+          <div class="state-hint">${hint}</div>
+          ${actionLabel ? `<button type="button" class="btn-primary" onclick="${actionJs}">${actionLabel}</button>` : ''}
+        </div>`;
+    }
+
+    function renderErrorState(card, what, detail, retryJs) {
+      if (!card) return;
+      card.removeAttribute('aria-busy');
+      card.innerHTML = `
+        <div class="state-box state-error" role="alert" data-state="error">
+          <div class="state-title">${what} didn't complete</div>
+          <div class="state-hint">${detail} Your inputs are unchanged.</div>
+          <button type="button" class="btn-secondary" onclick="${retryJs}">↺ Retry</button>
+        </div>`;
+    }
+
+    function updateHeaderHitlPills() {
+      const pending = STATE.encounters.filter(e => e.hitl_status !== 'CODER_VERIFIED').length;
+      const verified = STATE.encounters.length - pending;
+      const p = document.getElementById('hdr-pending-pill');
+      const v = document.getElementById('hdr-verified-pill');
+      if (p) p.textContent = `Pending HITL: ${pending}`;
+      if (v) v.textContent = `Coder verified: ${verified}`;
+      const badge = document.getElementById('badge-queue-count');
+      if (badge) badge.textContent = `${STATE.encounters.length} Cases`;
     }
 
     function resetQueueFilters() {
@@ -1844,12 +2219,18 @@
         const verBadgeClass = enc.cpt_version_year === 2027 ? 'badge-amber' : 'badge-blue';
         const hitlBadge = enc.hitl_status === 'CODER_VERIFIED'
           ? '<span class="badge badge-emerald">✓ Coder Verified</span>'
-          : '<span class="badge badge-amber">⏳ Pending HITL</span>';
+          : '<span class="badge badge-amber">Pending HITL</span>';
+
+        // Cross-workspace handoff (flow rule: shortest path to the next decision)
+        const verifiedCodes = (enc.ai_verified_claim || []).map(c => c.code).filter(Boolean);
+        const pairHandoff = verifiedCodes.length >= 2
+          ? `<button type="button" class="link-btn" style="font-size:11px; margin-top:6px;" onclick="openPairCheckFromQueue('${verifiedCodes[0]}','${verifiedCodes[1]}',${enc.cpt_version_year})" aria-label="Check ${verifiedCodes[0]} + ${verifiedCodes[1]} in Code Pair Check">Check pair ${verifiedCodes[0]} + ${verifiedCodes[1]} →</button>`
+          : '';
 
         return `
           <tr data-encounter-id="${enc.encounter_id}">
             <td>
-              <div style="font-weight:800; color:var(--primary-dark); cursor:pointer;" onclick="openDrawer('${enc.encounter_id}')">${enc.encounter_id}</div>
+              <div style="font-weight:800; color:var(--primary-dark);">${enc.encounter_id}</div>
               <div style="margin:3px 0;"><span class="badge ${verBadgeClass}">CPT ${enc.cpt_version_year}</span></div>
               <div class="leading-tight break-words" style="font-size:11.5px; color:var(--text-sub); font-weight:600;">DOS: ${enc.date_of_service}</div>
               <div class="leading-tight break-words" style="font-size:11px; color:var(--text-muted); margin-top:2px;">${enc.provider_name}</div>
@@ -1858,9 +2239,9 @@
             <td>
               <div class="leading-tight break-words" style="font-weight:700; color:var(--text-main); margin-bottom:4px;">${enc.clinical_title}</div>
               <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:4px;">
-                <span class="badge badge-amber">✍️ Handwritten OCR (${Math.round((enc.handwritten_ocr?.confidence || 0.98)*100)}%)</span>
-                <span class="badge badge-blue">📄 Op Report PDF</span>
-                <span class="badge badge-cyan">🔬 Path + DICOM (${enc.dicom_metadata?.Modality || 'CT'})</span>
+                <span class="badge badge-amber">Handwritten OCR ${Math.round((enc.handwritten_ocr?.confidence || 0.98)*100)}%</span>
+                <span class="badge badge-blue">Op Report PDF</span>
+                <span class="badge badge-cyan">Path + DICOM ${enc.dicom_metadata?.Modality || 'CT'}</span>
               </div>
               <div class="leading-tight break-words" style="font-size:11.5px; color:var(--text-muted);">${enc.leakage_category}</div>
             </td>
@@ -1870,48 +2251,119 @@
             </td>
             <td>
               <div style="margin-bottom:4px;">${billedChips}</div>
-              <div style="font-weight:700; font-size:12px; color:#9f1239; margin-bottom:3px;">Billed: ${formatUsd(enc.billed_allowed_usd)}</div>
+              <div style="font-weight:700; font-size:12px; color:var(--rose-text); margin-bottom:3px;">Billed: ${formatUsd(enc.billed_allowed_usd)}</div>
               <div class="leading-tight break-words" style="font-size:11px; color:var(--text-sub);">${coderAction}</div>
             </td>
             <td>
               <div style="margin-bottom:4px;">${verifiedChips}</div>
-              <div style="font-weight:700; font-size:12px; color:#065f46; margin-bottom:3px;">Verified: ${formatUsd(enc.verified_allowed_usd)}</div>
+              <div style="font-weight:700; font-size:12px; color:var(--emerald-text); margin-bottom:3px;">Verified: ${formatUsd(enc.verified_allowed_usd)}</div>
               <div class="leading-tight break-words" style="font-size:11px; color:var(--text-sub);">${primaryCitation}</div>
             </td>
             <td>
-              <div style="font-size:16px; font-weight:800; color:#047857; font-variant-numeric:tabular-nums;">+${formatUsd(enc.money_left_on_table_usd)}</div>
+              <div style="font-size:16px; font-weight:800; color:var(--emerald-strong); font-variant-numeric:tabular-nums;">+${formatUsd(enc.money_left_on_table_usd)}</div>
               <div style="margin:4px 0;">${hitlBadge}</div>
-              <button type="button" class="btn-primary" style="margin-top:4px; width:100%; justify-content:center;" onclick="openDrawer('${enc.encounter_id}')">
-                Inspect Dossier →
+              <button type="button" class="btn-primary" style="margin-top:4px; width:100%; justify-content:center;" onclick="openDrawer('${enc.encounter_id}', { trigger: this })"> Inspect Dossier →
               </button>
+              ${pairHandoff}
             </td>
           </tr>
         `;
       }).join('');
     }
 
-    function openDrawer(encId) {
+    // Deep-link from a Work Queue row into Code Pair Check with both codes prefilled
+    function openPairCheckFromQueue(codeA, codeB, year) {
+      switchWorkspace('ptp');
+      const a = document.getElementById('ptp-code-a');
+      const b = document.getElementById('ptp-code-b');
+      const y = document.getElementById('ptp-year');
+      if (a) a.value = codeA;
+      if (b) b.value = codeB;
+      if (y && [...y.options].some(o => o.value === String(year))) y.value = String(year);
+      document.querySelectorAll('#ptp-preset-pills .preset-pill-btn').forEach(p => p.classList.remove('active'));
+      runPtpEvaluation();
+      const card = document.getElementById('ptp-result-card');
+      if (card) card.scrollIntoView({ block: 'start' });
+    }
+
+    function drawerFocusables() {
+      const drw = document.getElementById('multimodal-drawer');
+      const sel = 'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+      return [...drw.querySelectorAll(sel)].filter(el => el.offsetParent !== null);
+    }
+
+    function handleDrawerKeydown(event) {
+      if (event.key !== 'Tab') return;
+      const items = drawerFocusables();
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (event.shiftKey && (document.activeElement === first || document.activeElement === document.getElementById('drw-title'))) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    function toggleDrawerCollapse(collapsed) {
+      const drw = document.getElementById('multimodal-drawer');
+      drw.classList.toggle('collapsed', !!collapsed);
+      if (collapsed) {
+        document.getElementById('btn-expand-drawer').focus();
+      } else {
+        document.getElementById('drw-title').focus();
+      }
+    }
+
+    function openDrawer(encId, opts = {}) {
       STATE.activeEncounterId = encId;
       const enc = STATE.encounters.find(e => e.encounter_id === encId) || STATE.encounters[0];
       if (!enc) return;
 
+      const drw = document.getElementById('multimodal-drawer');
+      const wasOpen = drw.classList.contains('open');
+      if (!wasOpen) {
+        STATE.drawerReturnFocusEl = opts.trigger || (document.activeElement && document.activeElement !== document.body ? document.activeElement : null);
+      }
+
       document.getElementById('drw-enc-id').textContent = enc.encounter_id;
+      document.getElementById('drw-rail-enc-id').textContent = enc.encounter_id;
       document.getElementById('drw-cpt-ver').textContent = 'AMA CPT ' + enc.cpt_version_year;
       document.getElementById('drw-delta-badge').textContent = '+' + formatUsd(enc.money_left_on_table_usd) + ' Left on Table';
       document.getElementById('drw-title').textContent = enc.clinical_title;
       document.getElementById('drw-meta').textContent = `${enc.provider_name} (NPI ${enc.provider_npi}) · ${enc.mac_contractor} · DOS ${enc.date_of_service} · ${formatEnumLabel(enc.facility_type)}`;
       document.getElementById('drw-hitl-status').textContent = `HITL: ${formatEnumLabel(enc.hitl_status)} · 835: ${formatEnumLabel(enc.remittance_835_status)}`;
 
-      const drw = document.getElementById('multimodal-drawer');
+      drw.classList.remove('collapsed');
       drw.classList.add('open');
       drw.setAttribute('aria-hidden', 'false');
       renderDrawerBody(enc);
+      if (!opts.silent) writeUrlState({ encId: enc.encounter_id, replace: wasOpen });
+      // Move focus into the dialog (WCAG 2.4.3). The visibility transition is still
+      // "hidden" at p=0 on the first frame, so retry over a few frames until focus lands.
+      const heading = document.getElementById('drw-title');
+      let attempts = 0;
+      const focusHeading = () => {
+        heading.focus({ preventScroll: true });
+        if (document.activeElement !== heading && attempts++ < 12) setTimeout(focusHeading, 30);
+      };
+      requestAnimationFrame(focusHeading);
     }
 
-    function closeDrawer() {
+    function closeDrawer(opts = {}) {
       const drw = document.getElementById('multimodal-drawer');
+      if (!drw.classList.contains('open')) return;
       drw.classList.remove('open');
+      drw.classList.remove('collapsed');
       drw.setAttribute('aria-hidden', 'true');
+      if (!opts.silent) writeUrlState({ encId: null, replace: true });
+      // Return focus to the control that opened the drawer
+      const back = STATE.drawerReturnFocusEl;
+      STATE.drawerReturnFocusEl = null;
+      if (back && document.body.contains(back)) back.focus({ preventScroll: true });
+      else document.getElementById('tab-btn-' + currentTabKey())?.focus({ preventScroll: true });
     }
 
     function switchDrawerTab(subTab) {
@@ -2000,7 +2452,7 @@
               <span class="badge badge-amber">OCR Confidence: ${((enc.handwritten_ocr?.confidence || 0.98)*100).toFixed(1)}%</span>
             </div>
             <div class="handwritten-paper">"${enc.handwritten_note_raw}"</div>
-            <div style="background:#f8fafc; border:1px solid var(--border-light); border-radius:7px; padding:9px 11px;">
+            <div style="background:var(--bg-canvas); border:1px solid var(--border-light); border-radius:7px; padding:9px 11px;">
               <div style="font-size:11px; font-weight:700; color:var(--text-muted); margin-bottom:4px; text-transform:uppercase;">Decoded Clinical Shorthand:</div>
               ${shorthandRows}
             </div>
@@ -2028,7 +2480,7 @@
               <span class="badge badge-cyan">Modality: ${enc.dicom_metadata?.Modality || 'CT'}</span>
             </div>
             <canvas id="dicom-slice-canvas" width="620" height="145" style="width:100%; height:145px; border-radius:7px; margin-bottom:8px; display:block;"></canvas>
-            <div style="background:#ffffff; border:1px solid var(--border-light); border-radius:7px; padding:8px 12px;">
+            <div style="background:var(--bg-card); border:1px solid var(--border-light); border-radius:7px; padding:8px 12px;">
               ${dicomMetrics}
             </div>
           </div>
@@ -2039,40 +2491,39 @@
 
       if (STATE.activeDrawerTab === 'reconcile') {
         const verifiedRows = (enc.ai_verified_claim || []).map(line => `
-          <div style="background:#ffffff; border:1px solid var(--emerald-border); border-left:4px solid #059669; border-radius:8px; padding:11px 13px; margin-bottom:10px;">
+          <div style="background:var(--bg-card); border:1px solid var(--emerald-border); border-left:4px solid var(--emerald-btn); border-radius:8px; padding:11px 13px; margin-bottom:10px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
               <div>
                 <span class="code-chip recovered" style="font-size:13px;">${line.code}${line.modifiers && line.modifiers.length ? '-' + line.modifiers.join('-') : ''}</span>
                 <span style="font-weight:700; font-size:12.5px;">${line.descriptor}</span>
               </div>
-              <span style="font-size:14.5px; font-weight:800; color:#047857;">${formatUsd(line.allowed_usd)}</span>
+              <span style="font-size:14.5px; font-weight:800; color:var(--emerald-strong);">${formatUsd(line.allowed_usd)}</span>
             </div>
-            <div style="font-size:11.5px; color:var(--text-muted); margin-bottom:5px;">
-              Units: <strong>${line.units}</strong> · ICD-10-CM: <strong>${(line.icd10 || []).join(', ')}</strong> · Work RVU: <strong>${line.rvu_work}</strong> · MPPR/Bilateral Multiplier: <strong>${Math.round((line.mppr_factor || 1)*100)}%</strong>
+            <div style="font-size:11.5px; color:var(--text-muted); margin-bottom:5px;"> Units: <strong>${line.units}</strong> · ICD-10-CM: <strong>${(line.icd10 || []).join(', ')}</strong> · Work RVU: <strong>${line.rvu_work}</strong> · MPPR/Bilateral Multiplier: <strong>${Math.round((line.mppr_factor || 1)*100)}%</strong>
             </div>
-            <div style="font-size:12px; color:var(--text-main); background:#f0fdf4; padding:7px 9px; border-radius:6px; border:1px solid #bbf7d0;">
+            <div style="font-size:12px; color:var(--text-main); background:var(--emerald-bg-soft); padding:7px 9px; border-radius:6px; border:1px solid var(--emerald-border-soft);">
               <strong>Explicit Citation Warrant:</strong> ${line.citation}
             </div>
           </div>
         `).join('');
 
         const billedRows = (enc.billing_dept_837p || []).map(b => `
-          <div style="background:#fff1f2; border:1px solid var(--rose-border); border-radius:7px; padding:9px 11px; margin-bottom:8px;">
+          <div style="background:var(--rose-bg); border:1px solid var(--rose-border); border-radius:7px; padding:9px 11px; margin-bottom:8px;">
             <div style="display:flex; justify-content:space-between; font-weight:700;">
               <span>Billing Dept Submitted: ${b.code}${b.modifiers && b.modifiers.length ? '-' + b.modifiers.join('-') : ''} (Units: ${b.units})</span>
-              <span style="color:#9f1239;">${formatUsd(b.allowed_usd)}</span>
+              <span style="color:var(--rose-text);">${formatUsd(b.allowed_usd)}</span>
             </div>
-            <div style="font-size:12px; color:#881337; margin-top:3px;"><strong>Why Revenue Was Lost:</strong> ${b.coder_action}</div>
+            <div style="font-size:12px; color:var(--rose-text-strong); margin-top:3px;"><strong>Why Revenue Was Lost:</strong> ${b.coder_action}</div>
           </div>
         `).join('');
 
         container.innerHTML = `
           <div style="margin-bottom:14px;">
-            <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:#9f1239; margin-bottom:6px;">What Hospital/Clinic Billing Dept Submitted (X12 837P): ${formatUsd(enc.billed_allowed_usd)}</div>
+            <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:var(--rose-text); margin-bottom:6px;">What Hospital/Clinic Billing Dept Submitted (X12 837P): ${formatUsd(enc.billed_allowed_usd)}</div>
             ${billedRows}
           </div>
           <div>
-            <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:#065f46; margin-bottom:6px;">AI-Verified Compliant Claim &amp; 4-Pillar Citations: ${formatUsd(enc.verified_allowed_usd)} (+${formatUsd(enc.money_left_on_table_usd)})</div>
+            <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:var(--emerald-text); margin-bottom:6px;">AI-Verified Compliant Claim &amp; 4-Pillar Citations: ${formatUsd(enc.verified_allowed_usd)} (+${formatUsd(enc.money_left_on_table_usd)})</div>
             ${verifiedRows}
           </div>
         `;
@@ -2081,7 +2532,7 @@
 
       // Subtab 3: 6-Node LangGraph Trace & HITL
       const traceRows = (enc.langgraph_trace || []).map(t => `
-        <div style="display:flex; gap:10px; align-items:flex-start; padding:9px 11px; background:#f8fafc; border:1px solid var(--border-light); border-radius:7px; margin-bottom:8px;">
+        <div style="display:flex; gap:10px; align-items:flex-start; padding:9px 11px; background:var(--bg-canvas); border:1px solid var(--border-light); border-radius:7px; margin-bottom:8px;">
           <span class="badge badge-emerald">${t.status}</span>
           <div class="min-w-0">
             <div style="font-weight:700; font-size:12.5px; color:var(--text-main);">${t.node}</div>
@@ -2095,7 +2546,7 @@
           <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:var(--primary-dark); margin-bottom:6px;">Stateful 6-Node LangGraph Execution Trace</div>
           ${traceRows}
         </div>
-        <div style="background:#eff6ff; border:1px solid var(--primary-border); border-radius:8px; padding:12px;">
+        <div style="background:var(--primary-bg); border:1px solid var(--primary-border); border-radius:8px; padding:12px;">
           <label for="hitl-custom-note" style="display:block; font-weight:800; font-size:13px; margin-bottom:6px;">Human-in-the-Loop (HITL) Addendum / Override Note</label>
           <input type="text" id="hitl-custom-note" class="input-control" style="width:100%; margin-bottom:8px;" value="Verified multimodal operative, pathology, and DICOM evidence under NCCI Policy Manual Ch. 7." />
           <div style="font-size:11.5px; color:var(--text-muted);">Use the footer action buttons below to sign off or log X12 835 Remittance Advice into SQLite <code>coder_feedback_loop</code>.</div>
@@ -2108,7 +2559,11 @@
       if (!enc) return;
       const noteInput = document.getElementById('hitl-custom-note');
       const note = noteInput ? noteInput.value : 'Confirmed multimodal NCCI Chapter 7 audit.';
+      const footerButtons = [...document.querySelectorAll('#multimodal-drawer .drawer-footer button')];
+      footerButtons.forEach(b => setButtonBusy(b, true, 'Recording…'));
 
+      let recorded = false;
+      let failureDetail = '';
       try {
         const res = await fetch('/api/feedback', {
           method: 'POST',
@@ -2126,15 +2581,25 @@
         if (res.ok) {
           const data = await res.json();
           enc.hitl_status = data.new_hitl_status || 'CODER_VERIFIED';
+          recorded = true;
         } else {
-          enc.hitl_status = 'CODER_VERIFIED';
+          failureDetail = `HTTP ${res.status}`;
         }
       } catch (e) {
-        enc.hitl_status = 'CODER_VERIFIED';
+        failureDetail = 'server unreachable';
+      } finally {
+        footerButtons.forEach(b => setButtonBusy(b, false));
+      }
+
+      if (!recorded) {
+        // Never fake a sign-off: status is unchanged and the user is told why.
+        showToast(`${enc.encounter_id}: sign-off was not recorded (${failureDetail}). Status unchanged — try again.`);
+        return;
       }
 
       document.getElementById('drw-hitl-status').textContent = `HITL: ${formatEnumLabel(enc.hitl_status)} (Updated Live)`;
       renderEncounterTable();
+      updateHeaderHitlPills();
       // Refresh feedback loop table in Workspace 5
       try {
         const bRes = await fetch('/api/benchmarks');
@@ -2205,7 +2670,7 @@
         const peRvu = facility === 'FACILITY' ? item.fac_pe_rvu : item.non_fac_pe_rvu;
         const bilatText = Number(item.bilateral_ind) === 1 ? 'Ind 1 (150% Mod -50)' : 'Ind 0 (No -50)';
         return `
-          <div style="padding:8px 10px; background:#f8fafc; border:1px solid var(--border-light); border-radius:7px; margin-bottom:6px;">
+          <div style="padding:8px 10px; background:var(--bg-canvas); border:1px solid var(--border-light); border-radius:7px; margin-bottom:6px;">
             <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; margin-bottom:3px;">
               <div>
                 <span class="badge ${badgeClass}">${label}: ${item.code}</span>
@@ -2290,8 +2755,7 @@
               <div style="font-size:11px; color:var(--emerald-text);"><strong>CPT Asst:</strong> ${p.cpt_assistant_citation}</div>
             </td>
             <td>
-              <button type="button" class="btn-secondary" style="width:100%; justify-content:center;" onclick="loadPtpPreset('${p.col1_code}','${p.col2_code}','${defaultContext}',${p.effective_year})">
-                ⚡ Evaluate Pair
+              <button type="button" class="btn-secondary" style="width:100%; justify-content:center;" onclick="loadPtpPreset('${p.col1_code}','${p.col2_code}','${defaultContext}',${p.effective_year})"> Evaluate Pair
               </button>
             </td>
           </tr>
@@ -2308,7 +2772,11 @@
 
       renderPtpPairMueTelemetry(codeA, codeB, yr, facility);
 
+      const card = document.getElementById('ptp-result-card');
+      renderSkeleton(card, 7);
+
       let result = null;
+      let failureDetail = '';
       try {
         const res = await fetch('/api/ptp-check', {
           method: 'POST',
@@ -2323,33 +2791,42 @@
           })
         });
         if (res.ok) result = await res.json();
-      } catch (e) {}
-
-      if (!result || !result.ok) {
-        result = {
-          ok: true,
-          verdict_badge: '✅ Deterministic Evaluation Ready',
-          can_report_both: context === 'contralateral',
-          recommended_claim_lines: [
-            { code: codeA, modifiers: ['RT'], units: 1, allowed_usd: 423.48, explanation: 'Primary Column 1 code.' },
-            { code: codeB, modifiers: ['XS', 'LT'], units: 1, allowed_usd: 74.92, explanation: 'Secondary Column 2 code.' }
-          ],
-          ncci_chapter7_citation: 'CMS NCCI Policy Manual 2026, Chapter 7 (Genitourinary System).',
-          cpt_assistant_citation: 'AMA CPT Assistant Vol. 26, Issue 3.',
-          total_allowed_usd: 498.40
-        };
+        else failureDetail = `The NCCI engine returned HTTP ${res.status}.`;
+      } catch (e) {
+        failureDetail = 'The NCCI engine could not be reached.';
       }
 
-      const card = document.getElementById('ptp-result-card');
+      if (!result || !result.ok) {
+        if (location.protocol === 'file:') {
+          // Standalone demo mode only (no server): clearly labelled illustrative result
+          result = {
+            ok: true,
+            verdict_badge: 'Offline demo — illustrative only',
+            can_report_both: context === 'contralateral',
+            recommended_claim_lines: [
+              { code: codeA, modifiers: ['RT'], units: 1, allowed_usd: 423.48, explanation: 'Primary Column 1 code.' },
+              { code: codeB, modifiers: ['XS', 'LT'], units: 1, allowed_usd: 74.92, explanation: 'Secondary Column 2 code.' }
+            ],
+            ncci_chapter7_citation: 'CMS NCCI Policy Manual 2026, Chapter 7 (Genitourinary System).',
+            cpt_assistant_citation: 'AMA CPT Assistant Vol. 26, Issue 3.',
+            total_allowed_usd: 498.40
+          };
+        } else {
+          renderErrorState(card, 'Code pair evaluation', failureDetail || 'The NCCI engine returned an unexpected response.', 'runPtpEvaluation()');
+          return;
+        }
+      }
+      card.removeAttribute('aria-busy');
+
       const bannerColor = result.can_report_both
         ? 'background:var(--emerald-bg); border:1px solid var(--emerald-border); color:var(--emerald-text);'
         : 'background:var(--rose-bg); border:1px solid var(--rose-border); color:var(--rose-text);';
 
       const linesHtml = (result.recommended_claim_lines || []).map(l => `
-        <div style="padding:9px 11px; background:#f8fafc; border:1px solid var(--border-strong); border-radius:7px; margin-bottom:8px;">
+        <div style="padding:9px 11px; background:var(--bg-canvas); border:1px solid var(--border-strong); border-radius:7px; margin-bottom:8px;">
           <div style="display:flex; justify-content:space-between; font-weight:800;">
             <span>Line: ${l.code}${l.modifiers && l.modifiers.length ? '-' + l.modifiers.join('-') : ''} (Units: ${l.units})</span>
-            <span style="color:#047857;">${formatUsd(l.allowed_usd)}</span>
+            <span style="color:var(--emerald-strong);">${formatUsd(l.allowed_usd)}</span>
           </div>
           <div style="font-size:12px; color:var(--text-sub); margin-top:3px;">${l.explanation}</div>
         </div>
@@ -2371,23 +2848,22 @@
             </div>
             <div style="font-size:11.5px; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px;">Compliant Claim Lines &amp; MPFS Payment:</div>
             ${linesHtml}
-            <div style="background:#eff6ff; border:1px solid var(--primary-border); border-radius:7px; padding:10px 12px; margin-top:10px; font-size:12px;">
-              <div style="margin-bottom:6px;"><strong>📘 CMS NCCI Policy Manual Chapter 7 Warrant:</strong><br/>${result.ncci_chapter7_citation}</div>
-              <div><strong>📗 AMA CPT Assistant Clinical Vignette:</strong><br/>${result.cpt_assistant_citation}</div>
+            <div style="background:var(--primary-bg); border:1px solid var(--primary-border); border-radius:7px; padding:10px 12px; margin-top:10px; font-size:12px;">
+              <div style="margin-bottom:6px;"><strong>CMS NCCI Policy Manual Chapter 7 Warrant:</strong><br/>${result.ncci_chapter7_citation}</div>
+              <div><strong>AMA CPT Assistant Clinical Vignette:</strong><br/>${result.cpt_assistant_citation}</div>
             </div>
-            <div style="background:#f8fafc; border:1px solid var(--border-light); border-radius:7px; padding:9px 11px; margin-top:10px; font-size:11.5px;">
+            <div style="background:var(--bg-canvas); border:1px solid var(--border-light); border-radius:7px; padding:9px 11px; margin-top:10px; font-size:11.5px;">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                <strong style="color:var(--primary-dark);">⚙️ Node 4 MPPR, Bilateral &amp; MUE Audit Gate</strong>
+                <strong style="color:var(--primary-dark);">Node 4 MPPR, Bilateral &amp; MUE Audit Gate</strong>
                 <span class="badge badge-emerald">Locality 11 Dallas GPCI</span>
               </div>
-              <div style="color:var(--text-sub); font-size:11px;">
-                Endoscopic Base <code>52000</code> MPPR (100% Col 1 / 50% Col 2 when unbundled via <code>-XS</code>/<code>-59</code>) · Place of Service: <strong>${formatEnumLabel(facility)}</strong> · Qualifying APM CF: <code>$33.5675</code>.
+              <div style="color:var(--text-sub); font-size:11px;"> Endoscopic Base <code>52000</code> MPPR (100% Col 1 / 50% Col 2 when unbundled via <code>-XS</code>/<code>-59</code>) · Place of Service: <strong>${formatEnumLabel(facility)}</strong> · Qualifying APM CF: <code>$33.5675</code>.
               </div>
             </div>
           </div>
           <div style="padding-top:10px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center;">
             <span style="font-size:12px; font-weight:700; color:var(--text-sub);">Total Verified Medicare Allowed Amount:</span>
-            <span style="font-size:18px; font-weight:800; color:#047857;">${formatUsd(result.total_allowed_usd)}</span>
+            <span style="font-size:18px; font-weight:800; color:var(--emerald-strong);">${formatUsd(result.total_allowed_usd)}</span>
           </div>
         </div>
       `;
@@ -2447,28 +2923,55 @@
     async function processBrowserFiles(fileList) {
       const filesArr = Array.from(fileList || []);
       if (!filesArr.length) return;
-      showToast(`📤 Ingesting ${filesArr.length} binary file(s) via Node 0 Magic-Byte Gate & Node 1 PHI Redactor...`);
+      showToast(`Ingesting ${filesArr.length} file(s): Node 0 magic-byte gate → Node 1 PHI redactor…`);
       const encodedFiles = await Promise.all(filesArr.map(readFileAsBase64));
       await submitUploadedFilesForDiscrepancyAnalysis(encodedFiles, false);
     }
 
     async function loadAndAnalyzeSampleBinaryPacket(silentBootstrap = false) {
+      const btn = document.getElementById('btn-load-binary-samples');
+      if (!silentBootstrap) setButtonBusy(btn, true, 'Loading 5 sample files…');
       try {
         const res = await fetch('/api/sample-files');
-        if (!res.ok) return;
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         const sampleFiles = (data.sample_files || []).map(f => ({
           filename: f.filename,
           content_base64: f.content_base64
         }));
-        if (!sampleFiles.length) return;
+        if (!sampleFiles.length) throw new Error('No sample files returned');
         await submitUploadedFilesForDiscrepancyAnalysis(sampleFiles, silentBootstrap);
       } catch (e) {
         console.warn('Sample binary packet load warning:', e);
+        if (!silentBootstrap) {
+          renderErrorState(
+            document.getElementById('upload-discrepancy-table-container'),
+            'Sample packet load',
+            'The sample files could not be fetched from the server.',
+            'loadAndAnalyzeSampleBinaryPacket()'
+          );
+        }
+      } finally {
+        if (!silentBootstrap) setButtonBusy(btn, false);
       }
     }
 
+    // Keep the last submitted packet so Retry never asks the user to re-select files
+    let LAST_UPLOAD_PACKET = null;
+
+    function retryLastUpload() {
+      if (LAST_UPLOAD_PACKET) submitUploadedFilesForDiscrepancyAnalysis(LAST_UPLOAD_PACKET, false);
+      else loadAndAnalyzeSampleBinaryPacket();
+    }
+
     async function submitUploadedFilesForDiscrepancyAnalysis(encodedFiles, silentBootstrap = false) {
+      LAST_UPLOAD_PACKET = encodedFiles;
+      const btn = document.getElementById('btn-load-binary-samples');
+      const tableContainer = document.getElementById('upload-discrepancy-table-container');
+      if (!silentBootstrap) {
+        setButtonBusy(btn, true, `Analyzing ${encodedFiles.length} file(s): Nodes 0–5…`);
+        renderSkeleton(tableContainer, 8);
+      }
       try {
         const res = await fetch('/api/upload-analyze', {
           method: 'POST',
@@ -2480,11 +2983,18 @@
             is_qp: true
           })
         });
-        if (!res.ok) return;
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const result = await res.json();
+        if (!result || !result.ok) throw new Error(result?.error || 'Unexpected response');
+        if (tableContainer) tableContainer.removeAttribute('aria-busy');
         renderUploadDiscrepancyAnalysis(result, silentBootstrap);
       } catch (e) {
         console.warn('Upload analyze error:', e);
+        if (!silentBootstrap) {
+          renderErrorState(tableContainer, 'Discrepancy analysis', `The analyzer did not return a result (${e.message}).`, 'retryLastUpload()');
+        }
+      } finally {
+        if (!silentBootstrap) setButtonBusy(btn, false);
       }
     }
 
@@ -2529,27 +3039,27 @@
           let modalityStripHtml = '';
           if (f.preview_data_uri) {
             modalityStripHtml = `
-              <div style="display:flex; align-items:center; gap:8px; background:#fffdf5; border:1px solid #fde68a; border-radius:6px; padding:5px 7px; min-height:44px;">
-                <img src="${f.preview_data_uri}" alt="Handwritten clinical scan ${f.filename}" style="width:68px; height:30px; object-fit:cover; border-radius:4px; border:1px solid #cbd5e1; flex-shrink:0;" />
-                <span class="leading-tight break-words" style="font-size:10.5px; color:#92400e; font-weight:700;">Vision OCR: ${((f.ocr_confidence || 0.96) * 100).toFixed(1)}% (${f.dimensions || '220x70px'})</span>
+              <div style="display:flex; align-items:center; gap:8px; background:var(--paper-bg); border:1px solid var(--amber-border); border-radius:6px; padding:5px 7px; min-height:44px;">
+                <img src="${f.preview_data_uri}" alt="Handwritten clinical scan ${f.filename}" style="width:68px; height:30px; object-fit:cover; border-radius:4px; border:1px solid var(--border-strong); flex-shrink:0;" />
+                <span class="leading-tight break-words" style="font-size:10.5px; color:var(--amber-text); font-weight:700;">Vision OCR: ${((f.ocr_confidence || 0.96) * 100).toFixed(1)}% (${f.dimensions || '220x70px'})</span>
               </div>`;
           } else if (f.detected_format === 'PDF_DOCUMENT') {
             modalityStripHtml = `
-              <div style="display:flex; align-items:center; justify-content:space-between; gap:6px; background:#eff6ff; border:1px solid #bfdbfe; border-radius:6px; padding:5px 8px; min-height:44px;">
-                <span class="leading-tight break-words" style="font-size:10.5px; color:#1d4ed8; font-weight:700;">📄 Docling AST: ${f.page_count || 1} Page(s) · Path C67.2 pT1 + 4.2cm Mass</span>
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:6px; background:var(--primary-bg); border:1px solid var(--primary-border); border-radius:6px; padding:5px 8px; min-height:44px;">
+                <span class="leading-tight break-words" style="font-size:10.5px; color:var(--primary-dark); font-weight:700;">Docling AST: ${f.page_count || 1} Page(s) · Path C67.2 pT1 + 4.2cm Mass</span>
                 <span class="badge badge-blue">PDF AST</span>
               </div>`;
           } else if (f.detected_format === 'DICOM_IMAGING_STUDY') {
             modalityStripHtml = `
-              <div style="display:flex; align-items:center; justify-content:space-between; gap:6px; background:#ecfdf5; border:1px solid #a7f3d0; border-radius:6px; padding:5px 8px; min-height:44px;">
-                <span class="leading-tight break-words" style="font-size:10.5px; color:#065f46; font-weight:700;">🩻 pydicom Tags: 11.2mm R + 8.4mm L Stone · Gr 3 Hydro</span>
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:6px; background:var(--emerald-bg); border:1px solid var(--emerald-border); border-radius:6px; padding:5px 8px; min-height:44px;">
+                <span class="leading-tight break-words" style="font-size:10.5px; color:var(--emerald-text); font-weight:700;">pydicom Tags: 11.2mm R + 8.4mm L Stone · Gr 3 Hydro</span>
                 <span class="badge badge-emerald">DICM</span>
               </div>`;
           } else {
             const lineCnt = (f.billed_codes || []).length || 5;
             modalityStripHtml = `
-              <div style="display:flex; align-items:center; justify-content:space-between; gap:6px; background:#fff1f2; border:1px solid #fecdd3; border-radius:6px; padding:5px 8px; min-height:44px;">
-                <span class="leading-tight break-words" style="font-size:10.5px; color:#9f1239; font-weight:700;">🧾 X12 005010X222A1: ${lineCnt} Scrubbed SV1 Claim Lines</span>
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:6px; background:var(--rose-bg); border:1px solid var(--rose-border); border-radius:6px; padding:5px 8px; min-height:44px;">
+                <span class="leading-tight break-words" style="font-size:10.5px; color:var(--rose-text); font-weight:700;">X12 005010X222A1: ${lineCnt} Scrubbed SV1 Claim Lines</span>
                 <span class="badge badge-rose">837P</span>
               </div>`;
           }
@@ -2565,7 +3075,7 @@
                   <strong>Magic:</strong> <code>${f.magic_signature}</code> · <strong>${f.size_bytes} B</strong> · <strong>PHI:</strong> ${f.phi_redactions || 0}
                 </div>
                 <div class="truncate" title="${f.parser_engine}" style="font-size:10.5px; color:var(--primary-dark); font-weight:700; margin-bottom:4px;">
-                  ⚙️ ${f.parser_engine}
+                  ${f.parser_engine}
                 </div>
                 ${modalityStripHtml}
               </div>
@@ -2583,7 +3093,7 @@
         const rowsHtml = discrepancies.map(d => {
           const deltaVal = Number(d.revenue_delta_usd || 0);
           const deltaHtml = deltaVal > 0
-            ? `<span style="font-weight:800; font-size:13.5px; color:#047857;">+${formatUsd(deltaVal)}</span>`
+            ? `<span style="font-weight:800; font-size:13.5px; color:var(--emerald-strong);">+${formatUsd(deltaVal)}</span>`
             : `<span class="badge badge-blue">LCD Guardrail</span>`;
           return `
             <tr>
@@ -2601,7 +3111,7 @@
                 ${d.what_billing_837p_coded}
               </td>
               <td class="leading-tight break-words" style="font-size:11.5px;">
-                <div style="font-weight:800; color:#047857;">${d.ai_verified_correction}</div>
+                <div style="font-weight:800; color:var(--emerald-strong);">${d.ai_verified_correction}</div>
                 <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">${d.regulatory_citation}</div>
               </td>
               <td style="font-variant-numeric:tabular-nums;">
@@ -2614,16 +3124,14 @@
         tableContainer.innerHTML = `
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px; padding:10px 14px; background:var(--emerald-bg); border:1px solid var(--emerald-border); border-radius:8px;">
             <div>
-              <strong style="font-size:13.5px; color:var(--emerald-text);">
-                ✅ Multimodal Packet Reconciled: ${parsedFiles.length} Binary Files Ingested · ${discrepancies.length} Coding &amp; Revenue Discrepancies Detected
+              <strong style="font-size:13.5px; color:var(--emerald-text);"> Multimodal Packet Reconciled: ${parsedFiles.length} Binary Files Ingested · ${discrepancies.length} Coding &amp; Revenue Discrepancies Detected
               </strong>
-              <div style="font-size:11.5px; color:var(--text-sub);">
-                Temporal Router: <strong>${formatEnumLabel(audit.version_stamp || 'AMA_CPT_2027')}</strong> · HIPAA Safe Harbor Scrubbed: <strong>${result.total_phi_redactions || 0} PHI Identifiers</strong> · Extracted ICD-10-CM: <strong>${(audit.extracted_icd10 || []).join(', ')}</strong>
+              <div style="font-size:11.5px; color:var(--text-sub);"> Temporal Router: <strong>${formatEnumLabel(audit.version_stamp || 'AMA_CPT_2027')}</strong> · HIPAA Safe Harbor Scrubbed: <strong>${result.total_phi_redactions || 0} PHI Identifiers</strong> · Extracted ICD-10-CM: <strong>${(audit.extracted_icd10 || []).join(', ')}</strong>
               </div>
             </div>
             <div style="text-align:right;">
               <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Billed 837P (${formatUsd(audit.billed_allowed_usd)}) → AI Verified (${formatUsd(audit.verified_allowed_usd)})</div>
-              <div style="font-size:18px; font-weight:800; color:#047857;">Net Discrepancy Recovery: +${formatUsd(audit.money_left_on_table_usd)}</div>
+              <div style="font-size:18px; font-weight:800; color:var(--emerald-strong);">Net Discrepancy Recovery: +${formatUsd(audit.money_left_on_table_usd)}</div>
             </div>
           </div>
 
@@ -2742,18 +3250,18 @@
 
       const outCard = document.getElementById('sim-output-card');
       const vLines = (data.verified_lines || []).map(l => `
-        <div style="padding:8px 10px; background:#f0fdf4; border:1px solid var(--emerald-border); border-radius:7px; margin-bottom:7px;">
+        <div style="padding:8px 10px; background:var(--emerald-bg-soft); border:1px solid var(--emerald-border); border-radius:7px; margin-bottom:7px;">
           <div style="display:flex; justify-content:space-between; font-weight:800;">
             <span>${l.code}${l.modifiers && l.modifiers.length ? '-' + l.modifiers.join('-') : ''} (Units: ${l.units}) — ${l.descriptor}</span>
-            <span style="color:#047857;">${formatUsd(l.allowed_usd)}</span>
+            <span style="color:var(--emerald-strong);">${formatUsd(l.allowed_usd)}</span>
           </div>
           <div style="font-size:11.5px; color:var(--text-sub); margin-top:2px;">${l.reason} · ICD-10: ${(l.icd10 || []).join(', ')}</div>
         </div>
       `).join('');
 
       const findingsHtml = (data.findings || []).map(f => `
-        <div style="padding:8px 10px; background:#eff6ff; border:1px solid var(--primary-border); border-radius:7px; margin-bottom:7px; font-size:12px;">
-          <div style="font-weight:800; color:var(--primary-dark);">★ ${f.title}</div>
+        <div style="padding:8px 10px; background:var(--primary-bg); border:1px solid var(--primary-border); border-radius:7px; margin-bottom:7px; font-size:12px;">
+          <div style="font-weight:800; color:var(--primary-dark);">${f.title}</div>
           <div style="color:var(--text-sub); margin-top:2px;">${f.citation}</div>
         </div>
       `).join('');
@@ -2765,8 +3273,8 @@
               <strong style="font-size:14px;">6-Node LangGraph Live Audit Result</strong>
               <span class="badge badge-amber">${formatEnumLabel(data.version_stamp)}</span>
             </div>
-            <div style="background:#f8fafc; border:1px solid var(--border-light); border-radius:7px; padding:8px 11px; margin-bottom:10px; font-size:12px;">
-              <strong>🛡️ Node 1 HIPAA Safe Harbor PHI Gate (${data.phi_redaction?.redactions_applied || 0} Identifiers Scrubbed):</strong><br/>
+            <div style="background:var(--bg-canvas); border:1px solid var(--border-light); border-radius:7px; padding:8px 11px; margin-bottom:10px; font-size:12px;">
+              <strong>Node 1 HIPAA Safe Harbor PHI Gate (${data.phi_redaction?.redactions_applied || 0} Identifiers Scrubbed):</strong><br/>
               <span style="color:var(--text-sub); font-family:monospace;">${data.phi_redaction?.clean_text || ''}</span>
             </div>
             <div style="font-size:11.5px; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:5px;">AI-Verified Claim Lines (${formatUsd(data.verified_allowed_usd)} vs Billed ${formatUsd(data.billed_allowed_usd)}):</div>
@@ -2775,13 +3283,16 @@
           </div>
           <div style="padding-top:10px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center;">
             <span style="font-size:12.5px; font-weight:700;">Net Money Left on the Table Recovered:</span>
-            <span style="font-size:20px; font-weight:800; color:#047857;">+${formatUsd(data.money_left_on_table_usd)}</span>
+            <span style="font-size:20px; font-weight:800; color:var(--emerald-strong);">+${formatUsd(data.money_left_on_table_usd)}</span>
           </div>
         </div>
       `;
     }
 
+    let SIM_RUN_IN_FLIGHT = false;
+
     async function runLiveSimulator() {
+      if (SIM_RUN_IN_FLIGHT) return;
       const dos = document.getElementById('sim-dos').value;
       const facility = document.getElementById('sim-facility').value;
       const locality = document.getElementById('sim-locality').value;
@@ -2795,7 +3306,14 @@
         return { code: (parts[0] || '').trim().toUpperCase(), units: Number(parts[1] || 1), modifiers: [] };
       }).filter(x => x.code);
 
+      const btn = document.getElementById('btn-run-sim');
+      const outCard = document.getElementById('sim-output-card');
+      SIM_RUN_IN_FLIGHT = true;
+      setButtonBusy(btn, true, 'Running Nodes 0–5…');
+      renderSkeleton(outCard, 8);
+
       let data = null;
+      let failureDetail = '';
       try {
         const res = await fetch('/api/audit', {
           method: 'POST',
@@ -2811,9 +3329,19 @@
           })
         });
         if (res.ok) data = await res.json();
-      } catch (e) {}
+        else failureDetail = `The audit graph returned HTTP ${res.status}.`;
+      } catch (e) {
+        failureDetail = 'The audit graph could not be reached.';
+      } finally {
+        SIM_RUN_IN_FLIGHT = false;
+        setButtonBusy(btn, false);
+      }
 
-      if (!data) return;
+      if (!data) {
+        renderErrorState(outCard, '6-node audit', failureDetail || 'The audit graph returned an empty result.', 'runLiveSimulator()');
+        return;
+      }
+      outCard.removeAttribute('aria-busy');
       renderSimulatorAuditCard(data);
     }
 
@@ -2853,7 +3381,7 @@
         if (lcdEl) {
           const lcds = STATE.versionDiff.mac_lcd_articles || [];
           lcdEl.innerHTML = lcds.map(l => `
-            <div style="padding:10px 11px; background:#f8fafc; border:1px solid var(--border-light); border-radius:8px; display:flex; flex-direction:column; justify-content:space-between; gap:6px;">
+            <div style="padding:10px 11px; background:var(--bg-canvas); border:1px solid var(--border-light); border-radius:8px; display:flex; flex-direction:column; justify-content:space-between; gap:6px;">
               <div>
                 <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; margin-bottom:4px;">
                   <span class="badge badge-amber">${l.lcd_id} / ${l.article_id}</span>
@@ -2872,7 +3400,7 @@
         }
 
         const guidanceHtml = (STATE.versionDiff.interpretive_guidance || []).map(g => `
-          <div style="padding:9px 11px; background:#f8fafc; border:1px solid var(--border-light); border-radius:7px; margin-bottom:8px;">
+          <div style="padding:9px 11px; background:var(--bg-canvas); border:1px solid var(--border-light); border-radius:7px; margin-bottom:8px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
               <span class="badge badge-blue">${formatEnumLabel(g.pillar_type)}</span>
               <span style="font-size:11px; font-weight:700; color:var(--text-muted);">${g.citation_ref}</span>
@@ -2929,7 +3457,7 @@
                 <div style="font-weight:800; color:var(--text-main);">${b.provider_name}</div>
                 <div style="margin:2px 0;"><span class="code-chip">NPI ${b.npi}</span> <span class="badge badge-blue">Urology (34)</span></div>
                 <div class="leading-tight break-words" style="font-size:11px; color:var(--text-sub); font-weight:600;">${b.practice_name} (${b.city}, ${b.state_code})</div>
-                <div style="font-size:10.5px; color:var(--text-muted); margin-top:2px;">📊 CMS PUF Volume: ${beneCounts[idx % beneCounts.length]}</div>
+                <div style="font-size:10.5px; color:var(--text-muted); margin-top:2px;">CMS PUF Volume: ${beneCounts[idx % beneCounts.length]}</div>
               </td>
               <td>
                 <div class="leading-tight break-words" style="font-weight:700; font-size:12px; color:var(--text-main); margin-bottom:3px;">${b.mac_contractor}</div>
@@ -2950,7 +3478,7 @@
               </td>
               <td>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
-                  <span style="font-size:15px; font-weight:800; color:#047857;">+${formatUsd(b.estimated_annual_unbilled_usd)} / yr</span>
+                  <span style="font-size:15px; font-weight:800; color:var(--emerald-strong);">+${formatUsd(b.estimated_annual_unbilled_usd)} / yr</span>
                   <span class="badge ${b.peer_percentile_rank < 30 ? 'badge-amber' : 'badge-emerald'}">${b.peer_percentile_rank < 30 ? 'High Recovery' : 'Benchmark Peer'}</span>
                 </div>
                 <div class="leading-tight break-words" style="font-size:11px; color:var(--text-sub);">${b.cold_open_insight}</div>
@@ -2981,7 +3509,7 @@
         hitlTbody.innerHTML = STATE.feedbackLoop.slice(0, 7).map(fb => `
           <tr>
             <td>
-              <strong style="font-size:11.5px; color:var(--primary-dark); cursor:pointer;" onclick="openDrawer('${fb.encounter_id}')">${fb.encounter_id}</strong>
+              <button type="button" class="link-btn" style="font-size:11.5px;" onclick="openDrawer('${fb.encounter_id}', { trigger: this })" aria-label="Open dossier ${fb.encounter_id}">${fb.encounter_id}</button>
               <div style="font-size:10.5px; color:var(--text-muted);">${fb.reviewer_role}</div>
             </td>
             <td>
@@ -2990,7 +3518,7 @@
             </td>
             <td class="leading-tight break-words" style="font-size:11px; font-family:monospace; font-weight:700;">${fb.target_code}</td>
             <td class="leading-tight break-words" style="font-size:11px; color:var(--text-sub);">${fb.rationale_note}</td>
-            <td style="font-variant-numeric:tabular-nums; font-weight:800; color:#047857;">+${formatUsd(fb.revenue_delta_usd)}</td>
+            <td style="font-variant-numeric:tabular-nums; font-weight:800; color:var(--emerald-strong);">+${formatUsd(fb.revenue_delta_usd)}</td>
           </tr>
         `).join('');
       }
@@ -3031,11 +3559,23 @@
       }
 
       renderEncounterTable();
+      updateHeaderHitlPills();
       renderPtpFullMatrixTable();
       runPtpEvaluation();
       loadSimScenario('AQUA_2027');
+      renderEmptyState(
+        document.getElementById('upload-discrepancy-table-container'),
+        'No packet analyzed yet',
+        'Drop PDF, PNG/JPEG, DICOM, or 837P files above — or load the 5 sample files — to see line-by-line discrepancies.',
+        'Load 5 sample files',
+        'loadAndAnalyzeSampleBinaryPacket()'
+      );
       loadAndAnalyzeSampleBinaryPacket(true);
       renderGovernanceAndBenchmarks();
+
+      // Deep-link restore (?tab=&enc=) after data is available; replaceState keeps Back history clean
+      restoreFromUrl();
+      writeUrlState({ tabKey: currentTabKey(), replace: true });
     }
 
     window.addEventListener('DOMContentLoaded', bootstrapApp);

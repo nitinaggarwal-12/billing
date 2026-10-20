@@ -164,6 +164,46 @@ The end user uploads clinical files via the HTML5 Multi-File Drag-and-Drop & Fil
 
 ---
 
+## 6A. Navigation Model, URL Contract & Keyboard Map (Rule 25A/25D/25H, WAI-ARIA Tabs, WCAG 2.4.3)
+
+**Single navigation surface.** Five task-named top tabs own all routing; no panel renders a second navigation rail or page switcher. Technical descriptors (NCCI Ch. 7, 6-node LangGraph, 4-pillar authority) live in each panel's section header, never in the tab label.
+
+| Tab | Label (user sees) | Internal key | URL slug | Primary action (`Cmd/Ctrl+Enter`) |
+| :-- | :-- | :-- | :-- | :-- |
+| 1 | Work Queue | `queue` | `?tab=queue` | — (`/` focuses search) |
+| 2 | Code Pair Check | `ptp` | `?tab=pairs` | `runPtpEvaluation()` |
+| 3 | Upload & Analyze | `simulator` | `?tab=upload` | `runLiveSimulator()` |
+| 4 | Rules & Versions | `governance` | `?tab=rules` | — |
+| 5 | Peer Benchmarks | `benchmarks` | `?tab=benchmarks` | — |
+
+**URL state.** `switchWorkspace(key)` writes `?tab=<slug>` with `history.pushState` (user action) or `replaceState` (restore); an open dossier adds `&enc=<ENCOUNTER_ID>`. `popstate` → `restoreFromUrl()` so browser Back/Forward and reload restore the exact workspace and open dossier. Bootstrap calls `restoreFromUrl()` after data loads.
+
+**Keyboard map.**
+
+| Keys | Behaviour |
+| :-- | :-- |
+| `←` `→` `Home` `End` (focus on a tab) | Move selection + focus across the tablist (roving `tabindex`: active tab `0`, others `-1`) |
+| `Alt+1` … `Alt+5` | Jump to workspace 1–5 |
+| `/` | Focus the Work Queue search (switches to Tab 1 if needed) |
+| `Cmd/Ctrl+Enter` | Run the active workspace's primary action |
+| `Esc` | Close the docked dossier drawer |
+| `Tab` / `Shift+Tab` inside the drawer | Cycle within the drawer while it is open |
+
+**Docked drawer (Rule 25F).** `openDrawer(id, { trigger })` records the originating button, moves focus to the dossier heading (`#drw-title[tabindex=-1]`, retried across frames because `visibility` is still hidden at transition p=0), and writes `&enc=`. Header controls: `Collapse →` (slides to a 52px rail with an `◀ Expand` button so the dossier stays one click away), `✕ Close` (Esc). `closeDrawer()` restores focus to the originating control and removes `&enc=`. Each Work Queue row has exactly **one** drawer trigger (the `Inspect Dossier →` button; the encounter ID is plain text) plus a distinct secondary handoff `Check pair A + B →` that deep-links into Code Pair Check with both AI-verified codes prefilled.
+
+**Header (Rule 25A/25D/25G).** Single compact row (`~91px` including tabs): brand + short context on the left, global-only telemetry pills on the right (`CPT 2026 · 2027 routing by DOS`, `PHI Safe Harbor gate on`, `Pending HITL: N`, `Coder verified: N` — derived live from encounter data). Header pills never repeat values owned by a workspace KPI card; the slogan subtitle was removed. First Work Queue row starts at `346px` (gate threshold `<= 380px`).
+
+## 6B. 5-State Completeness, Honest Failure & Token-Only Components
+
+- **Loading**: `setButtonBusy(btn, true, label)` disables the primary button, sets `aria-busy`, and shows a staged label (`Running Nodes 0–5…`); `renderSkeleton(card)` paints shimmer rows sized to the final layout (`aria-busy` on the card). Busy state is set synchronously before the first `await` so even sub-50ms local calls expose it.
+- **Error / Retry**: `renderErrorState(card, what, detail, retryJs)` renders an inline `role="alert"` box with `↺ Retry`; upload retry re-submits the cached `LAST_UPLOAD_PACKET` so users never re-select files. HITL sign-off **never** fakes `CODER_VERIFIED` on API failure — status stays unchanged and the toast says why.
+- **Empty**: `renderEmptyState(...)` seeds the upload results area before the first analysis; Work Queue keeps `#no-matching-cards` with `↺ Reset All Filters`.
+- **Zero silent synthetic fallback (Rule 25L)**: when served over HTTP, a failed `/api/ptp-check` shows the error state; the illustrative fallback exists only for `file://` standalone demos and is labelled *Offline demo — illustrative only*.
+- **Tokens only**: component templates use CSS custom properties (`--emerald-strong`, `--rose-text`, `--paper-bg`, …); `0` raw hex inside `style="..."`. Motion animates specific properties only (`0` `transition: all`) on the `120/200/320ms` scale and honours `prefers-reduced-motion`. Emoji are not used as icons in chrome (only `✓`/`✕` glyphs; toasts are the single allowed emoji surface).
+- **Fail-closed gate** (`scripts/stop_forensic_gate.mjs` → *Navigation & IA Gate*): `firstRowTopPx <= 380`, `0` header/KPI duplicates, `1` trigger per row and `0` non-button triggers, `ArrowRight` moves selection+focus+URL, `?tab=` survives reload and Back, focus inside drawer on open / returned on Esc, collapse rail `40–70px`, synchronous busy state + skeleton, plus static checks for slogan, `transition: all`, reduced-motion, inline hex, and emoji icons.
+
+---
+
 ## 7. Quick Start & Verification Commands
 
 ```bash

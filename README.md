@@ -39,14 +39,15 @@
 
 ## 3. End-User Multimodal File Upload & Discrepancy Detection Workflow
 
-1. **Multi-File Drag-and-Drop or File Picker (`Workspace 3: 3. Upload Docs & 6-Node Analyzer`)**:
-   - Click **`📤 Upload PDF / PNG / JPEG / DICOM / 837P`** in the top toolbar or navigate to Tab 3 (`#multimodal-dropzone`).
+1. **Multi-File Drag-and-Drop or File Picker (Tab 3 · `Upload & Analyze`, deep link `/?tab=upload`)**:
+   - Open **`3 Upload & Analyze`** in the top tab bar (or press `Alt+3`) and use the dropzone (`#multimodal-dropzone`).
    - Drag and drop (or browse from disk) any combination of:
      - **`.pdf`**: Operative Reports & Surgical Pathology Addenda (`%PDF-1.4` parsed via native text stream / `FlateDecode` extractor).
      - **`.png` / `.jpg` / `.jpeg`**: Handwritten physician superbills or post-op margin notes (`IHDR`/`tEXt` & `SOF0`/`COM` + Vision Handwritten Medical OCR with live image thumbnail preview).
      - **`.dcm`**: DICOM Part 10 CT Urogram / TRUS Ultrasound studies (`128-byte` preamble + `DICM` magic header + Explicit VR Little Endian tags `(0008,0060)`, `(0008,1030)`, `(0018,0050)`, `(0020,4000)`).
      - **`.837p` / `.txt` / `.csv`**: Billing Dept scrubbed ANSI X12 837P EDI claim files (`DTP*472` Date of Service, `HI*` ICD-10-CM diagnosis pointers, and `SV1*HC:` service lines).
-   - Or click **`📂 Load & Analyze 5 Real Binary Sample Files (.PDF + .PNG + .JPG + .DCM + .837P)`** to test all 5 binary formats in 1 click.
+   - Or click **`Load & Analyze 5 Real Binary Sample Files`** to test all 5 binary formats in 1 click. The button shows a staged busy state while Nodes 0–5 run; a failure renders an inline error with `↺ Retry` (your files are kept — no re-selection needed).
+   - **Navigation & keyboard**: tabs are URL-addressable (`?tab=queue|pairs|upload|rules|benchmarks`, plus `&enc=<ID>` for an open dossier — reload and browser Back both restore state); `←`/`→` move between tabs, `Alt+1…5` jump, `/` focuses the Work Queue search, `Cmd/Ctrl+Enter` runs the active workspace's primary action, `Esc` closes the dossier drawer. Each Work Queue row offers `Check pair A + B →` to deep-link into Code Pair Check with both codes prefilled.
 2. **6-Node Pipeline & Line-by-Line Discrepancy Matrix (`#upload-discrepancy-table`)**:
    - **Node 0 (Magika Magic-Byte Gate)** classifies each binary stream independent of file extension.
    - **Node 1 (HIPAA Safe Harbor PHI Gate)** scrubs all 18 PHI identifiers (`[REDACTED-NAME]`, `[REDACTED-MRN]`, `[REDACTED-SSN]`) before downstream analysis.
